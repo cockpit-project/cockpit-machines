@@ -58,23 +58,23 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
     def testDiskEdit(self):
         b = self.browser
-        d = machineslib.MachinesDialogHelpers(b)
         m = self.machine
 
         def openDialog(target, name="subVmTest1"):
             b.click(f"#vm-{name}-disks-{target}-edit")
             b.wait_visible(f"#vm-{name}-disks-{target}-edit-dialog")
+            return machineslib.MachinesDialogHelpers(b, f"#vm-{name}-disks-{target}-edit-dialog")
 
-        def cancel(target, name="subVmTest1"):
+        def cancel(d):
             b.click(d.cancel_button())
-            b.wait_not_present(f"#vm-{name}-disks-{target}-edit-dialog")
+            b.wait_not_present(d.pfx)
 
-        def save(target, name="subVmTest1", xfail=None):
+        def save(d, xfail=None):
             b.click(d.apply_button())
             if xfail:
-                b.wait_in_text(f"#vm-{name}-disks-{target}-edit-dialog .pf-v6-c-alert", xfail)
+                b.wait_in_text(f"{d.pfx} .pf-v6-c-alert", xfail)
             else:
-                b.wait_not_present(f"#vm-{name}-disks-{target}-edit-dialog")
+                b.wait_not_present(d.pfx)
 
         self.createVm("subVmTest1")
 
@@ -110,13 +110,13 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-dialog")
 
         # Test qcow2 disk has both read-only and writeable configurable
-        openDialog("vdg")
+        d = openDialog("vdg")
         b.wait_visible(d.id("access.mode", "readonly"))
         b.wait_visible(d.id("access.mode", "writable"))
-        cancel("vdg")
+        cancel(d)
 
         # Test configuration of readonly and shareable attributes
-        openDialog("vde")
+        d = openDialog("vde")
         # Changing readonly with running VM
         d.set_RadioSelect("access.mode", "readonly")
 
@@ -124,7 +124,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-disks-vde-edit-idle-message")
 
         # Save changes
-        save("vde")
+        save(d)
         # See tooltip present in disk listing table
         b.wait_visible("#vm-subVmTest1-disks-vde-access-tooltip")
         # See label on top of VM details page is visible
@@ -139,14 +139,14 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-vde-access-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
-        openDialog("vde")
+        d = openDialog("vde")
         # Changing to writeable
         d.set_RadioSelect("access.mode", "writable")
         # Tooltip in dialog should not be present
         b.wait_not_present("#vm-subVmTest1-disks-vde-edit-idle-message")
 
         # Close dialog
-        save("vde")
+        save(d)
         b.wait_in_text("#vm-subVmTest1-disks-vde-access", "Writeable")
         b.wait_not_present("#vm-subVmTest1-disks-vde-access-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
@@ -158,22 +158,22 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-disks-vde-bus", "virtio")
         b.wait_in_text("#vm-subVmTest1-disks-vde-cache", "default")
         # Change bus type to scsi and cache mode to writeback
-        openDialog("vde")
+        d = openDialog("vde")
         d.set_DropdownSelect("bus.type", "scsi")
         d.set_DropdownSelect("cache", "writeback")
 
         # Close dialog
-        save("vde")
+        save(d)
         # Target has changed from vdX to sdX
         self.expandDiskRow("sda")
         b.wait_in_text("#vm-subVmTest1-disks-sda-bus", "scsi")
         b.wait_in_text("#vm-subVmTest1-disks-sda-cache", "writeback")
 
         # Configure readonly for the qcow2 disk
-        openDialog("vdg")
+        d = openDialog("vdg")
         d.set_RadioSelect("access.mode", "readonly")
 
-        save("vdg")
+        save(d)
         b.wait_not_present("#vm-subVmTest1-disks-vdg-access-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
         self.expandDiskRow("vdg")
@@ -185,13 +185,13 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.enter_page('/machines')
         # expected devices after bus type change
         self.waitDisks(["sda", "sdb", "vda", "vdg"])
-        openDialog("sdb")
+        d = openDialog("sdb")
         d.set_RadioSelect("access.mode", "readonly")
-        save("sdb", xfail="readonly sata disks are not supported")
-        cancel("sdb")
-        openDialog("sdb")
+        save(d, xfail="readonly sata disks are not supported")
+        cancel(d)
+        d = openDialog("sdb")
         b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-v6-c-alert")
-        cancel("sdb")
+        cancel(d)
 
         # Virtio bus type should not be shown for CDROM devices
         m.execute("touch /var/lib/libvirt/novell.iso")
@@ -205,21 +205,21 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # expected devices after bus type change
         self.waitDisks(["hda", "sdb", "vda", "vdg"])
 
-        openDialog("hda")
+        d = openDialog("hda")
         b._wait_present(d.field("bus.type") + " option[value=sata]")
         self.assertFalse(b.is_present(d.field("bus.type") + " option[value=virtio]"))
 
         # As CDROMs are readonly access mode editing should be disabled
         b.wait_visible(d.id("access.mode", "readonly"))
         b.wait_not_present(d.id("access.mode", "writable"))
-        cancel("hda")
+        cancel(d)
 
         # Start Vm
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test disk's bus cannot be changed on running VM
-        openDialog("sda")
+        d = openDialog("sda")
         b.wait_visible(d.field("bus.type") + ":disabled")
         b.click("#vm-subVmTest1-disks-sda-edit-dialog button[aria-label='Close']")
         b.wait_not_present("#vm-subVmTest1-disks-sda-edit-dialog")
@@ -236,22 +236,21 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.expandDiskRow("hda")
         b.wait_in_text("#vm-subVmTest2-disks-hda-bus", "ide")
 
-        openDialog("hda", name="subVmTest2")
+        d = openDialog("hda", name="subVmTest2")
         # "ide" is not among the supported bus types, but it is the
         # current bus type, so it should be an option.
         b._wait_present(d.field("bus.type") + " option[value=ide]")
         d.set_DropdownSelect("bus.type", "sata")
-        save("hda", name="subVmTest2")
+        save(d)
 
         self.expandDiskRow("sda")
         b.wait_in_text("#vm-subVmTest2-disks-sda-bus", "sata")
-        openDialog("sda", name="subVmTest2")
+        d = openDialog("sda", name="subVmTest2")
         # Now "ide" should not be an option anymore.
         b.wait_not_present(d.field("bus.type") + " option[value=ide]")
 
     def testDisks(self):
         b = self.browser
-        d = machineslib.MachinesDialogHelpers(b)
         m = self.machine
         prefix = "#vm-subVmTest1-disks-adddisk"
 
@@ -299,6 +298,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             b.wait_in_text("#vm-subVmTest1-disks-vdc-used", "0")
             b.wait_in_text("#vm-subVmTest1-disks-vdc-capacity", "0.12")  # 128 MB
 
+        d = machineslib.MachinesDialogHelpers(b, f"{prefix}-dialog-modal-window")
+
         # Check a warning message about a volume being used by another VM
         b.click(f"{prefix}")
         d.set_RadioSelect("mode", "use-existing")
@@ -334,7 +335,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             force=False,
             pixel_tag=None,
         ):
-            super().__init__(test_obj.browser)
+            super().__init__(test_obj.browser,
+                             f"#vm-{vm_name}-disks-{target}-insert-dialog-adddisk-dialog-modal-window")
 
             self.test_obj = test_obj
             self.mode = mode
@@ -528,7 +530,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             xwarning_object=None, xwarning_message=None,
             pixel_test_ignore=None,
         ):
-            super().__init__(test_obj.browser)
+            super().__init__(test_obj.browser, f"#vm-{vm_name}-disks-adddisk-dialog-modal-window")
 
             self.test_obj = test_obj
             self.vm_name = vm_name
@@ -770,7 +772,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
     @testlib.skipImage("Debian images' -cloud kernel don't have target-cli-mod kmod", "debian*")
     def testAddDiskSCSI(self):
         b = self.browser
-        d = machineslib.MachinesDialogHelpers(b)
         m = self.machine
 
         used_targets = ['vda']
@@ -807,7 +808,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
 
         # ISCSI driver does not support virStorageVolCreate API
-        self.VMAddDiskDialog(
+        d = self.VMAddDiskDialog(
             self,
             mode='use-existing',
             pool_name='iscsi-pool',
@@ -894,7 +895,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
     def testAddDiskPool(self):
         b = self.browser
-        d = machineslib.MachinesDialogHelpers(b)
         m = self.machine
 
         dev = self.add_ram_disk(2)
@@ -975,19 +975,18 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         )
         dialog.openDialog()
         # First select some iso file, where disk type is set to "cdrom"
-        d.set_DropdownSelect("use_existing.pool", "images")
-        d.set_DropdownSelect("use_existing.volume", "defaultVol.iso")
+        dialog.set_DropdownSelect("use_existing.pool", "images")
+        dialog.set_DropdownSelect("use_existing.volume", "defaultVol.iso")
         # Then choose a different storage pool without selecting the volume
         # (let UI automatically select the first volume from loop-disk storage pool)
         # This tests that type of disk automatically resets back to default "disk"
-        d.set_DropdownSelect("use_existing.pool", "loop-disk")
+        dialog.set_DropdownSelect("use_existing.pool", "loop-disk")
         # Check that newly attached disk is indeed of type "disk"
         dialog.add_disk().verify_disk_added()
 
     @testlib.timeout(900)
     def testAddDiskDirPool(self):
         b = self.browser
-        d = machineslib.MachinesDialogHelpers(b)
         m = self.machine
         prefix = "#vm-subVmTest1-disks-adddisk"
 
@@ -1031,7 +1030,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             expected_target=transient_targets[-1],
         ).execute()
 
-        self.VMAddDiskDialog(
+        d = self.VMAddDiskDialog(
             self,
             pool_name='myPoolOne',
             mode='use-existing',
@@ -1138,6 +1137,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             m.execute(f"virsh pool-undefine {pool}")
         b.wait_visible("#vm-details[data-pools-count='0']")
 
+        d = machineslib.MachinesDialogHelpers(b, f"{prefix}-dialog-modal-window")
+
         b.click(prefix)
         b.wait_visible(d.id("mode", "create-new") + ":disabled")
         b.wait_visible(d.id("mode", "use-existing") + ":disabled")
@@ -1155,7 +1156,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
     def testAddDiskCustomPath(self):
         b = self.browser
         m = self.machine
-        d = machineslib.MachinesDialogHelpers(b)
 
         prefix = "#vm-subVmTest1-disks-adddisk"
 
@@ -1256,7 +1256,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Ensure that pressing a few times arrow-down in the file selector will not cause an oops
         # https://bugzilla.redhat.com/show_bug.cgi?id=1977554
-        self.VMAddDiskDialog(
+        d = self.VMAddDiskDialog(
             self,
             mode='custom-path'
         ).openDialog()
@@ -1291,6 +1291,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             file_path='/var/lib/libvirt/novell.iso',
             mode='custom-path'
         ).execute()
+
+        d = machineslib.MachinesDialogHelpers(b, f"{prefix}-dialog-modal-window")
 
         # Ensure that the bus type autofilled value is according to the bus types of the existing disks of the guest,
         # even when these are not in the predefined value (see ide)

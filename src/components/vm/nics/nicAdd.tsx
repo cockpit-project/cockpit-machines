@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2019 Red Hat, Inc.
  */
-import React from 'react';
+import React, { useId } from 'react';
 import cockpit from 'cockpit';
 
 import { useDialogs } from 'dialogs';
@@ -75,6 +75,7 @@ const NetworkMacRow = ({
 } : {
     field: DialogField<NetworkMacValue>
 }) => {
+    const id = useId();
     const f_set = field.sub("set");
     const f_val = field.sub("val");
 
@@ -85,21 +86,23 @@ const NetworkMacRow = ({
             isInline
         >
             <Radio
-                id={f_set.id("off")}
+                id={id + "-off"}
+                ouiaId={f_set.ouia_id("off")}
                 name="mac-setting"
                 isChecked={!f_set.get()}
                 label={_("Generate automatically")}
                 onChange={() => f_set.set(false)}
             />
             <Radio
-                id={f_set.id("on")}
+                id={id + "-on"}
+                ouiaId={f_set.ouia_id("on")}
                 name="mac-setting"
                 isChecked={f_set.get()}
                 label={_("Set manually")}
                 onChange={() => f_set.set(true)}
             />
             <TextInput
-                id={f_val.id()}
+                ouiaId={f_val.ouia_id()}
                 className="nic-add-mac-setting-manual"
                 isDisabled={!f_set.get()}
                 value={f_val.get()}

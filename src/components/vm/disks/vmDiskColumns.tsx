@@ -26,7 +26,7 @@ import {
 } from '../../../libvirtApi/domain.js';
 import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
-import { AddDisk } from './diskAdd.jsx';
+import { InsertMedia } from './diskAdd.jsx';
 import { DeleteResourceModal } from '../../common/deleteResource.jsx';
 import { appState } from '../../../state';
 
@@ -205,10 +205,10 @@ export const DiskActions = ({
 
     function openMediaInsertionDialog() {
         Dialogs.show(
-            <AddDisk
+            <InsertMedia
                 idPrefix={idPrefixRow + "-insert-dialog-adddisk"}
                 vm={vm}
-                isMediaInsertion disk={disk}
+                disk={disk}
             />
         );
     }

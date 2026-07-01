@@ -4,50 +4,42 @@
  * Copyright (C) 2017 Red Hat, Inc.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo, useId } from 'react';
 
-import type { optString, ConnectionName, VM, StoragePool, Network, NodeDevice, OSInfo } from '../../types';
-import type { Dialogs } from 'dialogs';
+import type { ConnectionName, VM, StoragePool, OSInfo } from '../../types';
+import { useDialogs } from 'dialogs';
 
-import { debounce } from 'throttle-debounce';
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup, FormSection } from "@patternfly/react-core/dist/esm/components/Form";
-import { FormSelect, FormSelectOption, type FormSelectProps } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
-import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
 } from '@patternfly/react-core/dist/esm/components/Modal';
 import { Tab, TabTitleText, Tabs } from "@patternfly/react-core/dist/esm/components/Tabs";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
 import { ExternalLinkAltIcon, TrashIcon } from '@patternfly/react-icons';
+import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 
-import { DialogsContext } from 'dialogs.jsx';
 import { useInit } from "hooks.js";
 import cockpit from 'cockpit';
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { TypeaheadSelect, type TypeaheadSelectOption } from 'cockpit-components-typeahead-select';
-import { FormHelper } from "cockpit-components-form-helper.jsx";
-import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import { SimpleSelect, type SimpleSelectOption } from "cockpit-components-simple-select";
 import {
     isEmpty,
-    digitFilter,
     convertToUnit,
     getBestUnit,
     toReadableNumber,
     units,
     getStorageVolumesUsage, type StorageVolumesUsage,
     LIBVIRT_SYSTEM_CONNECTION,
-    LIBVIRT_SESSION_CONNECTION,
 } from "../../helpers.js";
 import {
     getPXEInitialNetworkSource,
-    getPXENetworkRows,
+    getPXENetworkOptions,
     getVirtualNetworkByName,
     getVirtualNetworkPXESupport
 } from './pxe-helpers.js';
@@ -59,9 +51,6 @@ import {
     DOWNLOAD_AN_OS,
     EXISTING_DISK_IMAGE_SOURCE,
     PXE_SOURCE,
-    NONE,
-    RUN,
-    EDIT,
     autodetectOS,
     compareDates,
     correctSpecialCases,
@@ -78,9 +67,24 @@ import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh, storagePoolGetAll } from '../../libvirtApi/storagePool.js';
 import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { getOsInfoList } from '../../libvirtApi/common.js';
-import { PasswordFormFields } from 'cockpit-components-password.jsx';
-import { DynamicListForm } from 'cockpit-components-dynamic-list.jsx';
 import { appState } from '../../state';
+
+import {
+    useDialogState_async, DialogState, DialogField,
+    DialogErrorMessage,
+    DialogHelperText,
+    DialogTextInput, OptionalFormGroup,
+    DialogDropdownSelect, DialogDropdownSelectObject,
+    DialogActionButton, DialogCancelButton
+} from 'cockpit/dialog';
+
+import {
+    FileAutoComplete,
+    PasswordInput,
+    DynamicList,
+} from "../common/dialog";
+
+import { DialogFileChooserInput, regexFilter } from "cockpit/react/FileChooser";
 
 import './createVmDialog.css';
 
@@ -140,29 +144,6 @@ function getSpaceAvailable(storagePools: StoragePool[], connectionName: Connecti
     return space;
 }
 
-function getMemoryDefaults(nodeMaxMemory: number | undefined) {
-    // Use available memory on host as initial default value in modal
-    let memorySizeUnit = units.MiB.name;
-    let memorySize = nodeMaxMemory && Math.floor(convertToUnit(nodeMaxMemory, units.KiB, units.MiB));
-    // If available memory is higher than 1GiB, set 1GiB as default value in modal
-    if (memorySize && memorySize > 1024) {
-        memorySizeUnit = units.GiB.name;
-        memorySize = 1;
-    }
-
-    const minimumMemory = 0;
-
-    return { memorySize: memorySize || 0, memorySizeUnit, minimumMemory };
-}
-
-function getStorageDefaults() {
-    const storageSize = convertToUnit(10 * 1024, units.MiB, units.GiB); // tied to Unit
-    const storageSizeUnit = units.GiB.name;
-    const minimumStorage = 0;
-
-    return { storageSize, storageSizeUnit, minimumStorage };
-}
-
 function getVmName(connectionName: ConnectionName, vms: VM[], os: OSInfo) {
     let retName = os.shortId;
 
@@ -181,433 +162,384 @@ function getVmName(connectionName: ConnectionName, vms: VM[], os: OSInfo) {
     return tmpRetName;
 }
 
-interface VmParams {
-    connectionName: ConnectionName;
-    vmName: string;
-    suggestedVmName: string;
-    os: OSInfo | undefined;
-    profile: string;
-    source: optString;
-    sourceType: string;
-    offlineToken: optString;
-    accessToken: optString;
-    memorySize: number;
-    memorySizeUnit: string;
-    storagePool: string;
-    storageVolume: string | undefined;
-    storageSize: number;
-    storageSizeUnit: string;
-    userLogin: optString;
-    userPassword: optString;
-    rootPassword: optString;
-    sshKeys: { value: string }[];
-    startVm: boolean;
-    extraArguments: optString,
+interface SourceValue {
+    type: string;
+    os: OSInfo | null;
+    mediaId: string;
+    source: string;
+    offlineToken: string,
+    accessToken: string,
 }
 
-type OnValueChanged = <K extends keyof VmParams>(key: K, value: VmParams[K]) => void;
+function init_Source(initialSourceType: string, initialSource: string, initialOS: string, osInfoList: OSInfo[]): SourceValue {
+    let os = null;
+    if (initialOS)
+        os = osInfoList.find(os => os.shortId === initialOS) || null;
 
-interface ValidationFailed {
-    vmName?: string;
-    os?: string;
-    source?: string;
-    offlineToken?: string;
-    memory?: string;
-    storage?: string;
-    userLogin?: string;
-    userPassword?: string;
+    return {
+        type: initialSourceType,
+        os,
+        mediaId: "",
+        source: initialSource,
+        offlineToken: "",
+        accessToken: ""
+    };
 }
 
-interface ValidateParamsExtraArgs {
-    osInfoList: OSInfo[];
-    nodeMaxMemory: number | undefined;
-    vms: VM[];
-}
+function validate_Source(field: DialogField<SourceValue>) {
+    field.validate(val => {
+        const { type, os, source, offlineToken } = val;
 
-function validateParams(vmParams: VmParams & ValidateParamsExtraArgs): ValidationFailed {
-    const validationFailed: ValidationFailed = {};
-
-    if (isEmpty(vmParams.vmName.trim()) && isEmpty(vmParams.suggestedVmName.trim()))
-        validationFailed.vmName = _("Name must not be empty");
-    else if (vmParams.vms.some(vm => vm.name === vmParams.vmName))
-        validationFailed.vmName = cockpit.format(_("VM $0 already exists"), vmParams.vmName);
-
-    if (vmParams.os == undefined)
-        validationFailed.os = _("You need to select the most closely matching operating system");
-
-    const source = vmParams.source ? vmParams.source.trim() : null;
-
-    if (!isEmpty(source)) {
-        cockpit.assert(source);
-        switch (vmParams.sourceType) {
-        case PXE_SOURCE:
-            break;
-        case LOCAL_INSTALL_MEDIA_SOURCE:
-        case CLOUD_IMAGE:
-        case EXISTING_DISK_IMAGE_SOURCE:
-            if (!source.startsWith("/")) {
-                validationFailed.source = _("Invalid filename");
-            }
-            break;
-        case URL_SOURCE:
-        default:
-            if (!source.startsWith("http") &&
-                !source.startsWith("ftp") &&
-                !source.startsWith("nfs")) {
-                validationFailed.source = _("Source should start with http, ftp or nfs protocol");
-            }
-            break;
+        function validate_os() {
+            if (!os)
+                return _("You need to select the most closely matching operating system");
         }
-    } else if (vmParams.sourceType != DOWNLOAD_AN_OS) {
-        if (vmParams.sourceType == EXISTING_DISK_IMAGE_SOURCE)
-            validationFailed.source = _("Disk image path must not be empty");
-        else
-            validationFailed.source = _("Installation source must not be empty");
-    }
 
-    if (vmParams.sourceType == DOWNLOAD_AN_OS && vmParams.os && needsRHToken(vmParams.os.shortId) && isEmpty(vmParams.offlineToken))
-        validationFailed.offlineToken = _("Offline token must not be empty");
+        function validate_source() {
+            if (!isEmpty(source)) {
+                switch (type) {
+                case PXE_SOURCE:
+                    break;
+                case LOCAL_INSTALL_MEDIA_SOURCE:
+                case CLOUD_IMAGE:
+                case EXISTING_DISK_IMAGE_SOURCE:
+                    if (!source.startsWith("/"))
+                        return _("Invalid filename");
+                    break;
+                case URL_SOURCE:
+                default:
+                    if (!source.startsWith("http") &&
+                            !source.startsWith("ftp") &&
+                            !source.startsWith("nfs")) {
+                        return _("Source should start with http, ftp or nfs protocol");
+                    }
+                    break;
+                }
+            } else if (type != DOWNLOAD_AN_OS) {
+                if (type == EXISTING_DISK_IMAGE_SOURCE)
+                    return _("Disk image path must not be empty");
+                else
+                    return _("Installation source must not be empty");
+            }
+        }
 
-    if (vmParams.memorySize === 0) {
-        validationFailed.memory = _("Memory must not be 0");
-    }
+        function validate_offlineToken() {
+            if (type == DOWNLOAD_AN_OS && os && needsRHToken(os.shortId) && isEmpty(offlineToken))
+                return _("Offline token must not be empty");
+        }
 
-    if ((vmParams.storagePool == 'NewVolumeQCOW2' || vmParams.storagePool == 'NewVolumeRAW') && vmParams.storageSize === 0) {
-        validationFailed.storage = _("Storage size must not be 0");
-    }
-
-    if (vmParams.nodeMaxMemory && vmParams.memorySize > convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit)) {
-        validationFailed.memory = cockpit.format(
-            _("$0 $1 available on host"),
-            toReadableNumber(convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit)),
-            vmParams.memorySizeUnit
-        );
-    }
-
-    if (vmParams.userLogin && !((!!vmParams.userPassword) || vmParams.sshKeys.length > 0)) {
-        validationFailed.userPassword = _("User password must not be empty when user login is set");
-    }
-    if (vmParams.userPassword && !vmParams.userLogin) {
-        validationFailed.userLogin = _("User login must not be empty when user password is set");
-    } else if (vmParams.sshKeys.length > 0 && !vmParams.userLogin) {
-        validationFailed.userLogin = _("User login must not be empty when SSH keys are set");
-    }
-
-    return validationFailed;
+        return {
+            os: validate_os(),
+            source: validate_source(),
+            offlineToken: validate_offlineToken(),
+        };
+    });
 }
 
-const NameRow = ({
-    vmName,
-    suggestedVmName,
-    onValueChanged,
-    validationFailed
-} : {
-    vmName: string,
-    suggestedVmName: string,
-    onValueChanged: OnValueChanged,
-    validationFailed: ValidationFailed,
-}) => {
-    const validationStateName = validationFailed.vmName ? 'error' : 'default';
+function downloadingDisabled(source: SourceValue): boolean {
+    // This happens if a offlineToken is needed and we are either
+    // still obtaining access token (validating offline token) or
+    // failed to obtain one.
 
-    return (
-        <FormGroup label={_("Name")} fieldId="vm-name"
-                   id="vm-name-group">
-            <TextInput id='vm-name'
-                       validated={validationStateName}
-                       minLength={1}
-                       value={vmName || ''}
-                       placeholder={isEmpty(suggestedVmName.trim()) ? _("Unique name") : cockpit.format(_("Unique name, default: $0"), suggestedVmName)}
-                       onChange={(_, value) => onValueChanged('vmName', value)} />
-            <FormHelper helperTextInvalid={validationStateName && validationFailed.vmName} />
-        </FormGroup>
-    );
-};
+    return source.type == DOWNLOAD_AN_OS && !!source.os && needsRHToken(source.os.shortId) && isEmpty(source.accessToken);
+}
 
-const SourceRow = ({
+const Source = ({
+    field,
     connectionName,
-    source,
-    sourceType,
-    networks,
-    nodeDevices,
-    os,
     osInfoList,
-    cloudInitSupported,
-    downloadOSSupported,
-    offlineToken,
-    onValueChanged,
-    validationFailed
+    updateOs,
 } : {
+    field: DialogField<SourceValue>,
     connectionName: ConnectionName,
-    source: optString,
-    sourceType: string,
-    networks: Network[],
-    nodeDevices: NodeDevice[],
-    os: OSInfo | undefined,
     osInfoList: OSInfo[],
-    cloudInitSupported: boolean | undefined,
-    downloadOSSupported: boolean | undefined,
-    offlineToken: optString,
-    onValueChanged: OnValueChanged,
-    validationFailed: ValidationFailed,
+    updateOs: (os: OSInfo | null) => void,
 }) => {
-    let installationSource;
-    let installationSourceId;
-    let installationSourceWarning;
-    let validationStateSource: FormSelectProps["validated"] = validationFailed.source ? 'error' : 'default';
+    const [autodetectOSInProgress, setAutodetectOSInProgress] = useState(false);
+    const { type, os, source } = field.get();
 
-    switch (sourceType) {
-    case LOCAL_INSTALL_MEDIA_SOURCE:
-        installationSourceId = "source-file";
-        installationSource = (
-            <FileAutoComplete id={installationSourceId}
-                placeholder={_("Path to ISO file on host's file system")}
-                onChange={(value: string) => onValueChanged('source', value)}
-                value={source || ''}
-                superuser="try" />
-        );
-        break;
-    case CLOUD_IMAGE:
-        installationSourceId = "source-file";
-        installationSource = (
-            <FileAutoComplete id={installationSourceId}
-                placeholder={_("Path to cloud image file on host's file system")}
-                onChange={(value: string) => onValueChanged('source', value)}
-                value={source || ''}
-                superuser="try" />
-        );
-        break;
-    case EXISTING_DISK_IMAGE_SOURCE:
-        installationSourceId = "source-disk";
-        installationSource = (
-            <FileAutoComplete id={installationSourceId}
-                placeholder={_("Existing disk image on host's file system")}
-                onChange={(value: string) => onValueChanged('source', value)}
-                value={source || ''}
-                superuser="try" />
-        );
-        break;
-    case PXE_SOURCE:
-        installationSourceId = "network";
-        if (source && source.includes('type=direct')) {
-            installationSourceWarning = _("In most configurations, macvtap does not work for host to guest network communication.");
-            if (validationStateSource !== 'error')
-                validationStateSource = 'warning';
-        } else if (source && source.includes('network=')) {
-            const netObj = getVirtualNetworkByName(source.split('network=')[1],
-                                                   networks);
+    function update_type(new_type: string) {
+        if (new_type == PXE_SOURCE) {
+            const source = getPXEInitialNetworkSource(
+                appState.nodeDevices.filter(nodeDevice => nodeDevice.connectionName == connectionName),
+                appState.networks.filter(network => network.connectionName == connectionName));
+            field.sub("source").set(source || "");
+        } else if (type == PXE_SOURCE) {
+            field.sub("source").set("");
+        }
+    }
 
-            if (!netObj || !getVirtualNetworkPXESupport(netObj)) {
-                installationSourceWarning = _("Network selection does not support PXE.");
-                if (validationStateSource !== 'error')
-                    validationStateSource = 'warning';
+    function update_source() {
+        field.sub("source").get_async(250, async (installMedia, signal) => {
+            if (!installMedia || installMedia.endsWith("/"))
+                return;
+
+            setAutodetectOSInProgress(true);
+            try {
+                const resJSON = await autodetectOS(installMedia, signal);
+                const res = JSON.parse(resJSON);
+                const osEntry = osInfoList.filter(osEntry => osEntry.id == res.os);
+
+                if (!signal.aborted && osEntry && osEntry[0]) {
+                    field.sub("os", updateOs).set(osEntry[0]);
+                    if (typeof res.media == "string")
+                        field.sub("mediaId").set(res.media);
+                }
+            } catch (ex) {
+                console.log("osinfo-detect command failed: ", String(ex));
             }
+            setAutodetectOSInProgress(false);
+        });
+    }
+
+    let installationSource;
+    let installationSourceWarning;
+    switch (type) {
+    case DOWNLOAD_AN_OS:
+        installationSource = (
+            <>
+                <OSRow
+                        field={field.sub("os", updateOs)}
+                        osInfoList={osInfoList.filter(isDownloadableOs)}
+                        isLoading={false}
+                />
+                { os && needsRHToken(os.shortId) &&
+                <OfflineTokenRow
+                            offlineField={field.sub("offlineToken")}
+                            accessField={field.sub("accessToken")}
+                />
+                }
+            </>
+        );
+        break;
+
+    case LOCAL_INSTALL_MEDIA_SOURCE:
+        const iso_filters = [
+            regexFilter("ISO files", "\\.iso$")
+        ];
+
+        installationSource = (
+            <DialogFileChooserInput
+                field={field.sub("source", update_source)}
+                label={_("Installation source")}
+                placeholder={_("Path to ISO file on host's file system")}
+                fileChooserProps={
+                    {
+                        title: _("Select ISO file"),
+                        filters: iso_filters,
+                        superuser: "try",
+                    }
+                }
+            />
+        );
+        break;
+
+    case CLOUD_IMAGE:
+        const qcow2_filters = [
+            regexFilter("QCOW2 files", "\\.qcow2$")
+        ];
+
+        installationSource = (
+            <DialogFileChooserInput
+                field={field.sub("source", update_source)}
+                label={_("Installation source")}
+                placeholder={_("Path to cloud image file on host's file system")}
+                fileChooserProps={
+                    {
+                        title: _("Select cloud image"),
+                        filters: qcow2_filters,
+                        superuser: "try",
+                    }
+                }
+            />
+        );
+        break;
+
+    case EXISTING_DISK_IMAGE_SOURCE:
+        const image_filters = [
+            regexFilter("QCOW2 or RAW files", "\\.(qcow2|raw)$")
+        ];
+
+        installationSource = (
+            <DialogFileChooserInput
+                field={field.sub("source", update_source)}
+                label={_("Installation source")}
+                placeholder={_("Existing disk image on host's file system")}
+                fileChooserProps={
+                    {
+                        title: _("Select disk file"),
+                        filters: image_filters,
+                        superuser: "try",
+                    }
+                }
+            />
+        );
+        break;
+
+    case PXE_SOURCE:
+        if (source.includes('type=direct')) {
+            installationSourceWarning = _("In most configurations, macvtap does not work for host to guest network communication.");
+        } else if (source.includes('network=')) {
+            const netObj = getVirtualNetworkByName(connectionName, source.split('network=')[1]);
+
+            if (!netObj || !getVirtualNetworkPXESupport(netObj))
+                installationSourceWarning = _("Network selection does not support PXE.");
         }
 
         installationSource = (
-            <FormSelect id="network-select"
-                        validated={validationStateSource}
-                        value={source || 'no-resource'}
-                        onChange={(_event, value) => onValueChanged('source', value)}>
-                {getPXENetworkRows(nodeDevices, networks)}
-            </FormSelect>
+            <DialogDropdownSelect
+                    label={_("Installation source")}
+                    field={field.sub("source")}
+                    options={getPXENetworkOptions(connectionName)}
+                    warning={installationSourceWarning}
+            />
         );
         break;
+
     case URL_SOURCE:
-        installationSourceId = "source-url";
         installationSource = (
-            <TextInput id={installationSourceId}
-                       validated={validationStateSource}
-                       minLength={1}
-                       placeholder={_("Remote URL")}
-                       value={source || ""}
-                       onChange={(_, value) => onValueChanged('source', value)} />
+            <DialogTextInput
+                    label={_("Installation source")}
+                field={field.sub("source", update_source)}
+                    minLength={1}
+                    placeholder={_("Remote URL")}
+            />
         );
-        break;
-    default:
-        installationSourceId = "";
         break;
     }
 
     return (
         <>
-            {sourceType != EXISTING_DISK_IMAGE_SOURCE &&
-            <FormGroup label={_("Installation type")}
-                       id="source-type-group"
-                       fieldId="source-type">
-                <FormSelect id="source-type"
-                            value={sourceType}
-                            onChange={(_evnet, value) => onValueChanged('sourceType', value)}>
-                    {downloadOSSupported
-                        ? <FormSelectOption value={DOWNLOAD_AN_OS}
-                                            label={_("Download an OS")} />
-                        : null}
-                    {cloudInitSupported
-                        ? <FormSelectOption value={CLOUD_IMAGE}
-                                            label={_("Cloud base image")} />
-                        : null}
-                    <FormSelectOption value={LOCAL_INSTALL_MEDIA_SOURCE}
-                                      label={_("Local install media (ISO image or distro install tree)")} />
-                    <FormSelectOption value={URL_SOURCE}
-                                      label={_("URL (ISO image or distro install tree)")} />
-                    {connectionName == 'system' &&
-                    <FormSelectOption value={PXE_SOURCE}
-                                      label={_("Network boot (PXE)")} />}
-                </FormSelect>
-            </FormGroup>}
+            {type != EXISTING_DISK_IMAGE_SOURCE &&
+                <DialogDropdownSelect
+                    label={_("Installation type")}
+                    field={field.sub("type", update_type)}
+                    options={[
+                        {
+                            value: DOWNLOAD_AN_OS,
+                            label: _("Download an OS"),
+                        },
+                        {
+                            value: CLOUD_IMAGE,
+                            label: _("Cloud base image")
+                        },
+                        {
+                            value: LOCAL_INSTALL_MEDIA_SOURCE,
+                            label: _("Local ISO install media"),
+                        },
+                        {
+                            value: URL_SOURCE,
+                            label: _("URL (ISO image or distro install tree)"),
+                        },
+                        {
+                            value: PXE_SOURCE,
+                            label: _("Network boot (PXE)")
+                        },
+                    ]}
+                />
+            }
 
-            {sourceType != DOWNLOAD_AN_OS
-                ? <FormGroup label={sourceType != EXISTING_DISK_IMAGE_SOURCE ? _("Installation source") : _("Disk image")}
-                             id={installationSourceId + "-group"} fieldId={installationSourceId}>
-                    {installationSource}
-                    <FormHelper
-                        variant={validationStateSource}
-                        helperTextInvalid={validationStateSource == "error" && validationFailed.source}
-                        helperText={installationSourceWarning} />
-                </FormGroup>
-                : <>
-                    <OSRow os={os}
-                           osInfoList={osInfoList.filter(isDownloadableOs)}
-                           onValueChanged={onValueChanged}
-                           isLoading={false}
-                           validationFailed={validationFailed} />
-                    {os && needsRHToken(os.shortId) &&
-                        <OfflineTokenRow
-                            offlineToken={offlineToken}
-                            onValueChanged={onValueChanged}
-                            formValidationFailed={validationFailed} />}
-                </>}
+            { installationSource }
+
+            { type != DOWNLOAD_AN_OS &&
+                <OSRow
+                    field={field.sub("os", updateOs)}
+                    osInfoList={osInfoList}
+                    isLoading={autodetectOSInProgress}
+                />
+            }
         </>
     );
 };
 
-interface OSRowProps {
-    os: OSInfo | undefined;
-    osInfoList: OSInfo[];
-    onValueChanged: OnValueChanged;
-    isLoading: boolean;
-    validationFailed: ValidationFailed;
+function getInfoListExt(osInfoList: OSInfo[]): OSInfo[] {
+    return osInfoList
+            .map(os => correctSpecialCases(os))
+            .sort((a, b) => {
+                if (a.vendor == b.vendor) {
+                    // Sort OS with numbered version by version
+                    if ((a.version && b.version) && (a.version !== b.version))
+                        return b.version.localeCompare(a.version, undefined, { numeric: true, sensitivity: 'base' });
+                    // Sort OS with non-numbered version (e.g. "testing", "rawhide") by release date
+                    else if ((a.releaseDate || b.releaseDate) && (a.releaseDate !== b.releaseDate))
+                        return (compareDates(a.releaseDate, b.releaseDate, true) > 0) ? 1 : -1;
+
+                    // Sort OSes of the same vendor in DESCENDING order
+                    return getOSStringRepresentation(a).toLowerCase() < getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
+                }
+
+                // Sort different vendors in ASCENDING order
+                return getOSStringRepresentation(a).toLowerCase() > getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
+            });
 }
 
-interface OSRowState {
-    typeAheadKey: number,
-    selectOptions: TypeaheadSelectOption[],
-    osInfoListExt: OSInfo[],
-}
-
-class OSRow extends React.Component<OSRowProps, OSRowState> {
-    constructor(props: OSRowProps) {
-        super(props);
-        const osInfoListExt = this.props.osInfoList
-                .map(os => correctSpecialCases(os))
-                .sort((a, b) => {
-                    if (a.vendor == b.vendor) {
-                        // Sort OS with numbered version by version
-                        if ((a.version && b.version) && (a.version !== b.version))
-                            return b.version.localeCompare(a.version, undefined, { numeric: true, sensitivity: 'base' });
-                        // Sort OS with non-numbered version (e.g. "testing", "rawhide") by release date
-                        else if ((a.releaseDate || b.releaseDate) && (a.releaseDate !== b.releaseDate))
-                            return (compareDates(a.releaseDate, b.releaseDate, true) > 0) ? 1 : -1;
-
-                        // Sort OSes of the same vendor in DESCENDING order
-                        return getOSStringRepresentation(a).toLowerCase() < getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
-                    }
-
-                    // Sort different vendors in ASCENDING order
-                    return getOSStringRepresentation(a).toLowerCase() > getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
-                });
-
-        const IGNORE_VENDORS = ['ALTLinux', 'Mandriva', 'GNOME Project'];
-        const newOsEntries = [];
-        const oldOsEntries = [];
-        for (const os of osInfoListExt) {
-            if (filterReleaseEolDates(os) && !IGNORE_VENDORS.find(vendor => vendor == os.vendor))
-                newOsEntries.push(os);
-            else
-                oldOsEntries.push(os);
-        }
-
-        const make_option = (os: OSInfo): TypeaheadSelectOption => ({
-            value: os.shortId,
-            content: getOSStringRepresentation(os),
-            description: getOSDescription(os),
-        });
-
-        const selectOptions: TypeaheadSelectOption[] = [
-            { decorator: "header", content: _("Recommended operating systems"), key: "recommended-header" },
-            ...newOsEntries.map(make_option),
-            { decorator: "divider", key: "divider" },
-            { decorator: "header", content: _("Unsupported and older operating systems"), key: "unsupported-header" },
-            ...oldOsEntries.map(make_option),
-        ];
-
-        this.state = {
-            typeAheadKey: Math.random(),
-            selectOptions,
-            osInfoListExt,
-        };
+function getOSSelectOptions(osInfoListExt: OSInfo[]): TypeaheadSelectOption[] {
+    const IGNORE_VENDORS = ['ALTLinux', 'Mandriva', 'GNOME Project'];
+    const newOsEntries = [];
+    const oldOsEntries = [];
+    for (const os of osInfoListExt) {
+        if (filterReleaseEolDates(os) && !IGNORE_VENDORS.find(vendor => vendor == os.vendor))
+            newOsEntries.push(os);
+        else
+            oldOsEntries.push(os);
     }
 
-    render() {
-        const { os, onValueChanged, isLoading, validationFailed } = this.props;
-        const validationStateOS = validationFailed.os ? 'error' : 'default';
+    const make_option = (os: OSInfo): TypeaheadSelectOption => ({
+        value: os.shortId,
+        content: getOSStringRepresentation(os),
+        description: getOSDescription(os),
+    });
 
-        return (
-            <FormGroup fieldId='os-select'
-                       data-loading={!!isLoading}
-                       id="os-select-group"
-                       label={_("Operating system")}>
-                <TypeaheadSelect key={this.state.typeAheadKey}
-                                 id='os-select'
-                                 isDisabled={isLoading}
-                                 isScrollable
-                                 placeholder={_("Choose an operating system")}
-                                 selectOptions={this.state.selectOptions}
-                                 selected={os?.shortId}
-                                 onSelect={(_event, value) => {
-                                     const os = this.state.osInfoListExt.find(os => os.shortId === value);
-                                     onValueChanged('os', os);
-                                 }}
-                                 onClearSelection={() => {
-                                     onValueChanged('os', undefined);
-                                 }}
-                />
-                <FormHelper helperTextInvalid={validationStateOS == "error" && validationFailed.os} />
-            </FormGroup>
-        );
-    }
+    return [
+        { decorator: "header", content: _("Recommended operating systems"), key: "recommended-header" },
+        ...newOsEntries.map(make_option),
+        { decorator: "divider", key: "divider" },
+        { decorator: "header", content: _("Unsupported and older operating systems"), key: "unsupported-header" },
+        ...oldOsEntries.map(make_option),
+    ];
 }
 
-// This method needs to be outside of component as re-render would create a new instance of debounce
-// Debounce will trigger "getAccessToken" only if >500ms has passed since user changed offlineToken
-// Since "getAccessToken" basically triggers HTTP request, this prevents user from triggering dozens of HTTP requests
-// while typing an offline token
+const OSRow = ({
+    field,
+    osInfoList,
+    isLoading,
+} : {
+    field: DialogField<OSInfo | null>,
+    osInfoList: OSInfo[],
+    isLoading: boolean,
+}) => {
+    const osInfoListExt = useMemo(() => getInfoListExt(osInfoList), [osInfoList]);
+    const selectOptions = useMemo(() => getOSSelectOptions(osInfoListExt), [osInfoListExt]);
+
+    return (
+        <FormGroup
+            data-loading={!!isLoading}
+            label={_("Operating system")}
+            data-ouia-component-id={field.ouia_id()}
+        >
+            <TypeaheadSelect
+                isDisabled={isLoading}
+                isScrollable
+                placeholder={_("Choose an operating system")}
+                selectOptions={selectOptions}
+                selected={field.get()?.shortId}
+                onSelect={(_event, value) => {
+                    const os = osInfoListExt.find(os => os.shortId === value);
+                    field.set(os || null);
+                }}
+                onClearSelection={() => {
+                    field.set(null);
+                }}
+            />
+            <DialogHelperText field={field} />
+        </FormGroup>
+    );
+};
 
 interface ValidationState {
     option: "default" | "error" | "success";
     message: React.ReactNode;
 }
-
-function getAccessTokenHelper(
-    offlineToken: string,
-    onValueChanged: OnValueChanged,
-    setValidationState: (val: ValidationState) => void,
-    validationStates: Record<string, ValidationState>,
-    saveOfflineToken: (val: string) => void,
-): void {
-    getAccessToken(offlineToken)
-            .then(out => {
-                const accessToken = out.trim();
-                onValueChanged("accessToken", accessToken);
-                setValidationState(validationStates.SUCCESS);
-                saveOfflineToken(offlineToken);
-            })
-            .catch(ex => {
-                console.error(`Offline token validation failed: "${JSON.stringify(ex)}"`);
-                onValueChanged("accessToken", "");
-                setValidationState(validationStates.FAILED);
-            });
-}
-const getAccessTokenDebounce = debounce(500, getAccessTokenHelper);
 
 const HelperMessageToken = ({ message } : { message?: string }) => {
     const link = (
@@ -652,28 +584,27 @@ const validationStates: Record<string, ValidationState> = {
 };
 
 const OfflineTokenRow = ({
-    offlineToken,
-    onValueChanged,
-    formValidationFailed
+    offlineField,
+    accessField,
 } : {
-    offlineToken: optString,
-    onValueChanged: OnValueChanged,
-    formValidationFailed: ValidationFailed;
+    offlineField: DialogField<string>,
+    accessField: DialogField<string>,
 }) => {
     const [validationState, setValidationState] = useState(validationStates.DEFAULT);
     const [disabled, setDisabled] = useState(false);
+    const id = useId();
 
-    useEffect(() => {
+    useInit(() => {
         loadOfflineToken((token) => {
             if (token) {
-                onValueChanged("offlineToken", token);
+                offlineField.set(token);
                 setDisabled(true);
                 setValidationState(validationStates.INPROGRESS);
                 getAccessToken(token)
                         .then(out => {
                             const accessToken = out.trim();
                             setDisabled(false);
-                            onValueChanged("accessToken", accessToken);
+                            accessField.set(accessToken);
                             setValidationState(validationStates.SUCCESS);
                         })
                         .catch(ex => {
@@ -682,444 +613,540 @@ const OfflineTokenRow = ({
                             else
                                 setValidationState(validationStates.FAILED);
 
-                            onValueChanged("offlineToken", "");
+                            offlineField.set("");
                             removeOfflineToken();
                             setDisabled(false);
                             console.info(`Could not validate saved offline token from localStorage: "${JSON.stringify(ex)}"`);
                         });
             }
         });
-    }, [onValueChanged]);
+    });
 
     const setOfflineTokenHelper = (offlineToken: string) => {
-        onValueChanged("offlineToken", offlineToken);
-        // Reset accessToken to prevent race conditions where state could still have access token paired with an old offline token
-        // e.g. user inputs offline token, we obtain an access token, then they change offline token and quickly click on "Create" before new access token can be obtained
-        onValueChanged("accessToken", "");
-
+        offlineField.set(offlineToken);
         if (isEmpty(offlineToken)) {
+            accessField.set("");
             setValidationState(validationStates.DEFAULT);
-            onValueChanged("accessToken", "");
         } else {
-            setValidationState(validationStates.INPROGRESS);
-            getAccessTokenDebounce(offlineToken, onValueChanged, setValidationState, validationStates, saveOfflineToken);
+            offlineField.get_async(500, async (val, signal) => {
+                setValidationState(validationStates.INPROGRESS);
+                try {
+                    const out = await getAccessToken(val);
+                    if (!signal.aborted) {
+                        accessField.set(out.trim());
+                        setValidationState(validationStates.SUCCESS);
+                        saveOfflineToken(offlineToken);
+                    }
+                } catch (ex) {
+                    console.error(`Offline token validation failed: "${JSON.stringify(ex)}"`);
+                    accessField.set("");
+                    setValidationState(validationStates.FAILED);
+                }
+            });
         }
     };
 
-    const helperTextVariant = formValidationFailed.offlineToken ? "error" : validationState.option;
     return (
-        <FormGroup label={_("Offline token")} fieldId="offline-token"
-                   id="offline-token-group">
-            <TextArea id="offline-token"
-                      validated={helperTextVariant}
-                      disabled={disabled}
-                      minLength={1}
-                      value={offlineToken || ""}
-                      onChange={(_, value) => setOfflineTokenHelper(value)}
-                      rows={4} />
-            <FormHelper fieldId="offline-token"
-                        helperTextInvalid={formValidationFailed.offlineToken && <HelperMessageToken message={formValidationFailed.offlineToken} />}
-                        helperText={validationState.message} />
+        <FormGroup
+            label={_("Offline token")}
+            fieldId={id}
+        >
+            <TextArea
+                id={id}
+                data-ouia-component-id={offlineField.ouia_id()}
+                validated={offlineField.validation_text() ? "error" : validationState.option}
+                disabled={disabled}
+                minLength={1}
+                value={offlineField.get()}
+                onChange={(_, value) => setOfflineTokenHelper(value)}
+                rows={4}
+            />
+            <DialogHelperText field={offlineField} explanation={validationState.message} />
         </FormGroup>
     );
 };
 
-const UnattendedRow = ({
-    onValueChanged,
-    os,
-    profile,
-    rootPassword,
-    unattendedUserLogin,
-    userLogin, userPassword,
-    validationFailed,
-} : {
-    onValueChanged: OnValueChanged,
-    os: OSInfo,
-    profile: string,
-    rootPassword: optString,
-    unattendedUserLogin: boolean | undefined,
-    userLogin: optString,
-    userPassword: optString,
-    validationFailed: ValidationFailed,
-}) => {
-    return (
-        <>
-            {os.profiles.length > 0 &&
-            <FormGroup fieldId="profile-select"
-                       label={_("Profile")}>
-                <FormSelect id="profile-select"
-                            value={profile || (os.profiles && os.profiles[0])}
-                            onChange={(_event, e) => onValueChanged('profile', e)}>
-                    { (os.profiles || []).sort()
-                            .reverse() // Let jeos (Server) appear always first on the list since in osinfo-db it's not consistent
-                            .map(profile => {
-                                let profileName;
-                                if (profile == 'jeos')
-                                    profileName = 'Server';
-                                else if (profile == 'desktop')
-                                    profileName = 'Workstation';
-                                else
-                                    profileName = profile;
-                                return (
-                                    <FormSelectOption value={profile}
-                                                      key={profile}
-                                                      label={profileName} />
-                                );
-                            }) }
-                </FormSelect>
-            </FormGroup>}
-            <UsersConfigurationRow rootPassword={rootPassword}
-                                   rootPasswordLabelInfo={_("Leave the password blank if you do not wish to have a root account created")}
-                                   showUserFields={unattendedUserLogin}
-                                   userLogin={userLogin}
-                                   userPassword={userPassword}
-                                   validationFailed={validationFailed}
-                                   onValueChanged={onValueChanged} />
-        </>
-    );
-};
+interface UsersConfigurationValue {
+    rootPassword: string,
+    userLogin: string,
+    userPassword: string,
+}
 
 const UsersConfigurationRow = ({
-    rootPassword,
+    field,
     rootPasswordLabelInfo,
-    showUserFields,
-    userLogin,
-    userPassword,
-    onValueChanged,
-    validationFailed,
+    forUnattended = false,
 } : {
-    rootPassword: optString,
+    field: DialogField<UsersConfigurationValue>,
     rootPasswordLabelInfo: string,
-    showUserFields: boolean | undefined,
-    userLogin: optString,
-    userPassword: optString,
-    onValueChanged: OnValueChanged,
-    validationFailed: ValidationFailed,
+    forUnattended?: boolean,
 }) => {
     return (
         <>
-            <PasswordFormFields initial_password={rootPassword || ""}
-                                password_label={_("Root password")}
-                                idPrefix="create-vm-dialog-root-password"
-                                password_label_info={rootPasswordLabelInfo}
-                                change={(_, value) => onValueChanged('rootPassword', value)} />
-            {showUserFields &&
-            <>
-                <FormGroup fieldId="user-login"
-                           id="create-vm-dialog-user-login-group"
-                           label={_("User login")}>
-                    <TextInput id='user-login'
-                               validated={validationFailed.userLogin ? "error" : "default"}
-                               value={userLogin || ''}
-                               onChange={(_, value) => onValueChanged('userLogin', value)} />
-                    <FormHelper helperTextInvalid={validationFailed.userLogin} />
-                </FormGroup>
-                <PasswordFormFields initial_password={userPassword || ""}
-                                    password_label={_("User password")}
-                                    idPrefix="create-vm-dialog-user-password"
-                                    password_label_info={_("Leave the password blank if you do not wish to have a user account created")}
-                                    error_password={validationFailed.userPassword ? validationFailed.userPassword : undefined}
-                                    change={(_, value) => onValueChanged('userPassword', value)} />
-            </>}
+            <PasswordInput
+                label={_("Root password")}
+                labelInfo={rootPasswordLabelInfo}
+                field={field.sub("rootPassword")}
+            />
+            {(!forUnattended || appState.virtInstallCapabilities?.unattendedUserLogin) &&
+                <>
+                    <DialogTextInput
+                        label={_("User login")}
+                        field={field.sub("userLogin")}
+                    />
+                    <PasswordInput
+                        label={_("User password")}
+                        labelInfo={_("Leave the password blank if you do not wish to have a user account created")}
+                        field={field.sub("userPassword")}
+                    />
+                </>}
         </>
     );
 };
 
-interface Key {
+interface SshKey {
     type: string;
     data: string;
     comment: string;
 }
 
-const useParsedKey = (value: string): [Key | undefined, boolean] => {
-    const [keyObject, setKeyObject] = useState<Key | undefined>();
-    const [keyInvalid, setKeyInvalid] = useState(false);
+interface SshKeyValue {
+    text: string;
+    parsedKey: SshKey | null;
+}
 
-    const parseKey = (key: string) => {
-        if (isEmpty(key))
-            return;
-
-        // Validate correctness of the key
-        return cockpit.spawn(["ssh-keygen", "-l", "-f", "-"], { err: "message" })
-                .input(key)
-                .then(() => {
-                    setKeyInvalid(false);
-                    const parts = key.split(" ");
-                    if (parts.length >= 2) {
-                        setKeyObject({
-                            type: parts[0],
-                            data: parts[1],
-                            comment: parts[2], // comment is optional in SSH-format
-                        });
-                    }
-                })
-                .catch(() => {
-                    setKeyObject(undefined);
-                    setKeyInvalid(true);
-                    console.warn("Could not validate the public key");
-                });
-    };
-
-    const debouncedParseKey = useInit(() => debounce(500, parseKey));
-    useInit(() => debouncedParseKey(value), [value]);
-
-    return [keyObject, keyInvalid];
-};
+async function parseKey(key: string): Promise<SshKey | null> {
+    const parts = key.split(" ");
+    if (parts.length >= 2) {
+        try {
+            await cockpit.spawn(["ssh-keygen", "-l", "-f", "-"], { err: "message" }).input(key);
+            return {
+                type: parts[0],
+                data: parts[1],
+                comment: parts[2], // comment is optional in SSH-format
+            };
+        } catch (ex) {
+            console.debug("failed to parse key", String(ex));
+        }
+    }
+    return null;
+}
 
 const SshKeysRow = ({
-    id,
-    item,
-    onChange,
-    idx,
-    removeitem,
-    additem
+    field,
+    removeItem,
+    addItem,
 } : {
-    id: string,
-    item: { value: string },
-    onChange: (idx: number, key: "value", value: string) => void,
-    idx: number,
-    removeitem: (idx: number) => void,
-    additem: () => void,
+    field: DialogField<SshKeyValue>,
+    removeItem: () => void,
+    addItem: (v: SshKeyValue) => void,
 }) => {
-    const [keyObject, keyInvalid] = useParsedKey(item.value);
+    const { text, parsedKey } = field.get();
 
     const onChangeHelper = (value: string) => {
-        const lines = value.split(/\r?\n/);
-
-        // The first line is for us.
-        value = lines[0];
-        onChange(idx, "value", value);
-
-        // If there are more lines, create additional entries for them.
-        for (let i = 1; i < lines.length; i++) {
-            if (lines[i]) {
-                additem();
-                onChange(idx + i, "value", lines[i]);
+        field.sub("text").set(value);
+        field.get_async(500, async (value, signal) => {
+            const lines = value.text.split(/\r?\n/);
+            const keys = [];
+            for (const l of lines) {
+                keys.push(await parseKey(l));
             }
-        }
+            if (!signal.aborted) {
+                // First is for us
+                field.sub("parsedKey").set(keys[0]);
+                // Rest will be added as new items
+                for (let i = 1; i < lines.length; i++) {
+                    if (lines[i].trim())
+                        addItem({ text: lines[i], parsedKey: keys[i] });
+                }
+            }
+        });
     };
 
     return (
-        <Grid id={id} key={id}>
+        <Grid data-ouia-component-id={field.ouia_id()}>
             <GridItem span={11}>
-                {keyObject
-                    ? <FlexItem id="validated">
-                        <strong>{keyObject.comment}</strong>
-                        <span>{keyObject.comment ? " - " + keyObject.type : keyObject.type}</span>
-                        <div>{keyObject.data}</div>
+                {parsedKey
+                    ? <FlexItem
+                          id="validated"
+                    >
+                        <strong>{parsedKey.comment}</strong>
+                        <span>{parsedKey.comment ? " - " + parsedKey.type : parsedKey.type}</span>
+                        <div>{parsedKey.data}</div>
                     </FlexItem>
-                    : <FormGroup label={_("Public key")}
-                        test-data={keyInvalid ? "key-invalid" : undefined}
-                        fieldId='public-key'>
-                        <TextArea value={item.value || ""}
-                            aria-label={_("Public SSH key")}
-                            onChange={(_, value) => onChangeHelper(value)}
-                            rows={3} />
-                        <FormHelper helperText={_("Keys are located in ~/.ssh/ and have a \".pub\" extension.")} />
+                    : <FormGroup
+                          label={_("Public key")}
+                          fieldId='public-key'>
+                        <TextArea
+                              value={text}
+                              aria-label={_("Public SSH key")}
+                              onChange={(_, value) => onChangeHelper(value)}
+                              rows={3}
+                        />
+                        <DialogHelperText
+                              field={field}
+                              explanation={_("Keys are located in ~/.ssh/ and have a \".pub\" extension.")}
+                        />
                     </FormGroup>
                 }
             </GridItem>
-            <GridItem span={1} className="pf-m-1-col-on-md remove-button-group">
-                <Button variant='plain'
+            <GridItem
+                span={1}
+                className="pf-m-1-col-on-md remove-button-group"
+            >
+                <Button
+                    variant='plain'
                     className="btn-close"
-                    id={id + "-btn-close"}
+                    ouiaId={field.ouia_id("remove")}
                     size="sm"
                     aria-label={_("Remove item")}
                     icon={<TrashIcon />}
-                    onClick={() => removeitem(idx)} />
+                    onClick={() => removeItem()}
+                />
             </GridItem>
         </Grid>
     );
 };
 
-const CloudInitOptionsRow = ({
-    onValueChanged,
-    rootPassword,
-    userLogin, userPassword,
-    validationFailed,
+interface AutomationValue {
+    profile: string;
+    users: UsersConfigurationValue,
+    sshKeys: SshKeyValue[];
+    extraArgs: string;
+}
+
+const UnattendedRow = ({
+    field,
+    os,
 } : {
-    onValueChanged: OnValueChanged,
-    rootPassword: optString,
-    userLogin: optString,
-    userPassword: optString,
-    validationFailed: ValidationFailed,
+    field: DialogField<AutomationValue>,
+    os: OSInfo,
 }) => {
+    function makeProfileOption(profile: string) {
+        let profileName;
+        if (profile == 'jeos')
+            profileName = 'Server';
+        else if (profile == 'desktop')
+            profileName = 'Workstation';
+        else
+            profileName = profile;
+        return {
+            value: profile,
+            label: profileName,
+        };
+    }
+
     return (
         <>
-            <UsersConfigurationRow rootPassword={rootPassword}
-                                   rootPasswordLabelInfo={_("Leave the password blank if you do not wish to set a root password")}
-                                   showUserFields
-                                   userLogin={userLogin}
-                                   userPassword={userPassword}
-                                   validationFailed={validationFailed}
-                                   onValueChanged={onValueChanged} />
-            <DynamicListForm id="create-vm-dialog-ssh-key"
-                emptyStateString={_("No SSH keys specified")}
-                label={_("SSH keys")}
-                actionLabel={_("Add SSH keys")}
-                onChange={value => onValueChanged('sshKeys', value.filter(x => !!x) as unknown as { value: string }[])}
-                itemcomponent={SshKeysRow as unknown as InstanceType<typeof DynamicListForm>["props"]["itemcomponent"]} />
+            {os.profiles.length > 0 &&
+                <DialogDropdownSelect
+                    label={_("Profile")}
+                    field={field.sub("profile")}
+                    options={
+                        // Let jeos (Server) appear always first on the list since in osinfo-db
+                        // it's not consistent
+                        os.profiles.sort().reverse()
+                                .map(makeProfileOption)
+                    }
+                />
+            }
+            <UsersConfigurationRow
+                forUnattended
+                field={field.sub("users")}
+                rootPasswordLabelInfo={_("Leave the password blank if you do not wish to have a root account created")}
+            />
         </>
     );
 };
 
-const MemoryRow = ({
-    memorySize,
-    memorySizeUnit,
-    nodeMaxMemory,
-    minimumMemory,
-    onValueChanged,
-    validationFailed
-} : {
-    memorySize: number,
-    memorySizeUnit: string,
-    nodeMaxMemory: number | undefined,
-    minimumMemory: number,
-    onValueChanged: OnValueChanged,
-    validationFailed: ValidationFailed,
-}) => {
-    let validationStateMemory: 'error' | 'default' | 'warning' = validationFailed.memory ? 'error' : 'default';
-    let helperText = (
-        nodeMaxMemory
-            ? cockpit.format(
-                _("$0 $1 available on host"),
-                toReadableNumber(convertToUnit(nodeMaxMemory, units.KiB, memorySizeUnit)),
-                memorySizeUnit
-            )
-            : ""
-    );
+function validate_CloudInit(field: DialogField<AutomationValue>) {
+    field.validate(val => {
+        let userPassword;
+        let userLogin;
+        if (val.users.userLogin && !val.users.userPassword && val.sshKeys.length === 0)
+            userPassword = _("User password must not be empty when user login is set");
+        if (val.users.userPassword && !val.users.userLogin)
+            userLogin = _("User login must not be empty when user password is set");
+        else if (val.sshKeys.length > 0 && !val.users.userLogin)
+            userLogin = _("User login must not be empty when SSH keys are set");
+        return {
+            users: {
+                userPassword,
+                userLogin,
+            }
+        };
+    });
+}
 
-    if (validationStateMemory != 'error' && minimumMemory && convertToUnit(memorySize, memorySizeUnit, units.B) < minimumMemory) {
-        validationStateMemory = 'warning';
-        helperText = (
+const CloudInitOptionsRow = ({
+    field,
+} : {
+    field: DialogField<AutomationValue>,
+}) => {
+    const sub_sshKeys = field.sub("sshKeys");
+
+    return (
+        <>
+            <UsersConfigurationRow
+                field={field.sub("users")}
+                rootPasswordLabelInfo={_("Leave the password blank if you do not wish to set a root password")}
+            />
+            <DynamicList<SshKeyValue>
+                emptyStateString={_("No SSH keys specified")}
+                label={_("SSH keys")}
+                actionLabel={_("Add SSH keys")}
+                field={sub_sshKeys}
+                init={{ text: "", parsedKey: null }}
+                render={(f, i) => <SshKeysRow
+                                      key={i}
+                                      field={f}
+                                      removeItem={() => sub_sshKeys.remove(i)}
+                                      addItem={val => sub_sshKeys.add(val)}
+                />
+                }
+            />
+        </>
+    );
+};
+
+interface SizeValue {
+    size: string,
+    unit: string,
+}
+
+const SizeInput = ({
+    label,
+    field,
+    warning,
+    explanation,
+} : {
+    label: React.ReactNode,
+    field: DialogField<SizeValue>,
+    warning?: React.ReactNode;
+    explanation?: React.ReactNode;
+}) => {
+    const { size, unit } = field.get();
+    const id = useId();
+
+    function unit_changed(newUnit: string) {
+        field.sub("size").set(String(convertToUnit(size, unit, newUnit)));
+    }
+
+    return (
+        <OptionalFormGroup
+            label={label}
+            fieldId={id}
+        >
+            <InputGroup>
+                <DialogTextInput
+                    id={id}
+                    className="size-input"
+                    field={field.sub("size")}
+                    type="text"
+                    inputMode='numeric'
+                />
+                <DialogDropdownSelect
+                    className="unit-select"
+                    field={field.sub("unit", unit_changed)}
+                    options={[
+                        { value: units.MiB.name, label: _("MiB") },
+                        { value: units.GiB.name, label: _("GiB") },
+                    ]}
+                />
+            </InputGroup>
+            <DialogHelperText field={field} warning={warning} explanation={explanation} />
+        </OptionalFormGroup>
+    );
+};
+
+function init_Memory(minimum: number = 0): SizeValue {
+    if (minimum) {
+        // Set memory to minimum required by OS.
+        let bestUnit = getBestUnit(minimum, units.B);
+        if (bestUnit.base1024Exponent >= 4) bestUnit = units.GiB;
+        if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
+        const converted = convertToUnit(minimum, units.B, bestUnit);
+        return { size: String(converted), unit: bestUnit.name };
+    } else {
+        // Use available memory on host as initial default value in
+        // modal, but not more than one GiB.
+        let unit = units.MiB.name;
+        let size = appState.nodeMaxMemory && Math.floor(convertToUnit(appState.nodeMaxMemory, units.KiB, units.MiB));
+        if (size && size > 1024) {
+            unit = units.GiB.name;
+            size = 1;
+        }
+        return { size: String(size), unit };
+    }
+}
+
+function validate_Memory(field: DialogField<SizeValue>) {
+    field.validate(v => {
+        if (Number(v.size) === 0) {
+            return _("Memory must not be 0");
+        }
+        if (appState.nodeMaxMemory && Number(v.size) > convertToUnit(appState.nodeMaxMemory, units.KiB, v.unit)) {
+            return cockpit.format(
+                _("$0 $1 available on host"),
+                toReadableNumber(convertToUnit(appState.nodeMaxMemory, units.KiB, v.unit)),
+                v.unit);
+        }
+    });
+}
+
+const MemoryRow = ({
+    field,
+    minimumMemory,
+} : {
+    field: DialogField<SizeValue>,
+    minimumMemory: number,
+}) => {
+    const { size, unit } = field.get();
+
+    let explanation;
+    if (appState.nodeMaxMemory) {
+        explanation = cockpit.format(
+            _("$0 $1 available on host"),
+            toReadableNumber(convertToUnit(appState.nodeMaxMemory, units.KiB, unit)),
+            unit
+        );
+    }
+
+    let warning;
+    if (minimumMemory && convertToUnit(size, unit, units.B) < minimumMemory) {
+        warning = (
             cockpit.format(
                 _("The selected operating system has minimum memory requirement of $0 $1"),
-                convertToUnit(minimumMemory, units.B, memorySizeUnit),
-                memorySizeUnit)
+                convertToUnit(minimumMemory, units.B, unit),
+                unit)
         );
     }
 
     return (
-        <FormGroup label={_("Memory")}
-                       fieldId='memory-size' id='memory-group'>
-            <InputGroup>
-                <TextInput id='memory-size' value={memorySize}
-                               className="size-input"
-                               onKeyUp={digitFilter}
-                               onChange={(_, value) => onValueChanged('memorySize', Number(value))} />
-                <FormSelect id="memory-size-unit-select"
-                                className="unit-select"
-                                data-value={memorySizeUnit}
-                                value={memorySizeUnit}
-                                onChange={(_event, value) => onValueChanged('memorySizeUnit', value)}>
-                    <FormSelectOption value={units.MiB.name} key={units.MiB.name}
-                                          label={_("MiB")} />
-                    <FormSelectOption value={units.GiB.name} key={units.GiB.name}
-                                          label={_("GiB")} />
-                </FormSelect>
-            </InputGroup>
-            <FormHelper fieldId="memory-size"
-                            variant={validationStateMemory}
-                            helperTextInvalid={validationStateMemory == "error" && validationFailed.memory}
-                            helperText={helperText} />
-        </FormGroup>
+        <SizeInput
+            label={_("Memory")}
+            field={field}
+            warning={warning}
+            explanation={explanation}
+        />
     );
 };
 
 const ExtraArgumentsRow = ({
-    extraArguments,
-    onValueChanged,
+    field,
     os,
 } : {
-    extraArguments: optString,
-    onValueChanged: OnValueChanged,
+    field: DialogField<string>,
     os: OSInfo,
 }) => {
     return (
-        <FormGroup label={_("Boot arguments")}
-                       fieldId='extra-arguments' id='argument-group'>
-            <InputGroup>
-                <TextInput id='extra-argument' value={extraArguments || ''}
-                               className="extra-argument-input"
-                               onChange={(_, value) => onValueChanged('extraArguments', value)} />
-            </InputGroup>
-            <FormHelper fieldId="extra-argument-help"
-                            helperText={(
-                                <p>
-                                    {cockpit.format(
-                                        _("Arguments passed to the booted kernel can often be used to control the installer. Refer to the documentation of the installer of $0."),
-                                        os.name
-                                    )}
-                                </p>
-                            )} />
-        </FormGroup>
+        <DialogTextInput
+            label={_("Boot arguments")}
+            field={field}
+            explanation={cockpit.format(_("Arguments passed to the booted kernel can often be used to control the installer. Refer to the documentation of the installer of $0."), os.name)}
+        />
     );
 };
 
-const StorageRow = ({
-    connectionName,
-    allowNoDisk,
-    storageSize,
-    storageSizeUnit,
-    onValueChanged,
-    minimumStorage,
-    storagePoolName,
-    storagePools,
-    storageVolume,
-    vms,
-    validationFailed,
-    createMode
-} : {
-    connectionName: ConnectionName,
-    allowNoDisk: boolean,
-    storageSize: number,
-    storageSizeUnit: string,
-    onValueChanged: OnValueChanged,
-    minimumStorage: number,
+interface StorageValue {
+    newSize: SizeValue,
     storagePoolName: string,
+    storageVolume: string,
+
+    connectionName: ConnectionName,
     storagePools: StoragePool[],
-    storageVolume: optString,
-    vms: VM[],
-    validationFailed: ValidationFailed,
-    createMode: number,
+}
+
+function init_Storage(connectionName: ConnectionName): StorageValue {
+    return {
+        newSize: {
+            size: String(convertToUnit(10 * 1024, units.MiB, units.GiB)),
+            unit: units.GiB.name,
+        },
+        storagePoolName: "NewVolumeQCOW2",
+        storageVolume: "",
+
+        connectionName,
+        storagePools: appState.storagePools.filter(pool => pool.connectionName === connectionName),
+    };
+}
+
+function update_Storage(field: DialogField<StorageValue>, minimum: number) {
+    if (minimum) {
+        let bestUnit = getBestUnit(minimum, units.B);
+        if (bestUnit.base1024Exponent >= 4) bestUnit = units.GiB;
+        if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
+        const converted = convertToUnit(minimum, units.B, bestUnit);
+
+        field.sub("newSize").set(
+            {
+                size: String(converted),
+                unit: bestUnit.name
+            }
+        );
+    } else {
+        field.sub("newSize").set(
+            {
+                size: String(convertToUnit(10 * 1024, units.MiB, units.GiB)),
+                unit: units.GiB.name,
+            }
+        );
+    }
+}
+
+function validate_Storage(field: DialogField<StorageValue>) {
+    const { storagePoolName } = field.get();
+
+    if (storagePoolName == 'NewVolumeQCOW2' || storagePoolName == 'NewVolumeRAW')
+        field.sub("newSize").validate(v => {
+            if (Number(v.size) === 0)
+                return _("Storage size must not be 0");
+        });
+}
+
+const StorageRow = ({
+    field,
+    allowNoDisk,
+    minimumStorage,
+} : {
+    field: DialogField<StorageValue>,
+    allowNoDisk: boolean,
+    minimumStorage: number,
 }) => {
-    let validationStateStorage: 'error' | 'default' | 'warning' = validationFailed.storage ? 'error' : 'default';
+    const { newSize, storagePoolName, storageVolume, connectionName, storagePools } = field.get();
+
     const poolSpaceAvailable = getSpaceAvailable(storagePools, connectionName);
-    let helperTextNewVolume = (
+    const explanationNewVolume = (
         poolSpaceAvailable
             ? cockpit.format(
                 _("$0 $1 available at default location"),
-                toReadableNumber(convertToUnit(poolSpaceAvailable, units.B, storageSizeUnit)),
-                storageSizeUnit
-            )
+                toReadableNumber(convertToUnit(poolSpaceAvailable, units.B, newSize.unit)),
+                newSize.unit)
             : ""
     );
 
-    if (validationStateStorage != 'error' && minimumStorage && convertToUnit(storageSize, storageSizeUnit, units.B) < minimumStorage) {
-        validationStateStorage = 'warning';
-        helperTextNewVolume = (
+    let warningNewVolume;
+    if (minimumStorage && convertToUnit(newSize.size, newSize.unit, units.B) < minimumStorage) {
+        warningNewVolume = (
             cockpit.format(
                 _("The selected operating system has minimum storage size requirement of $0 $1"),
-                toReadableNumber(convertToUnit(minimumStorage, units.B, storageSizeUnit)),
-                storageSizeUnit)
+                toReadableNumber(convertToUnit(minimumStorage, units.B, newSize.unit)),
+                newSize.unit)
         );
     }
 
-    let volumeEntries;
+    let volumeEntries: string[] = [];
     let isVolumeUsed: StorageVolumesUsage = {};
     // Existing storage pool is chosen
     if (storagePoolName !== "NewVolumeQCOW2" && storagePoolName !== "NewVolumeRAW" && storagePoolName !== "NoStorage") {
         const storagePool = storagePools.find(pool => pool.name === storagePoolName);
         if (storagePool) {
-            isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
-            volumeEntries = (
-                storagePool.volumes.map(vol => (<FormSelectOption value={vol.name}
-                                                                  label={vol.name}
-                                                    key={vol.name} />))
-            );
+            isVolumeUsed = getStorageVolumesUsage(appState.vms, storagePool);
+            volumeEntries = storagePool.volumes.map(vol => vol.name);
         }
     }
-    const helperTextVariant = createMode == NONE && (storageVolume && isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default";
+
+    const alreadyUsed = storageVolume && isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0;
 
     const StorageSelectOptions: SimpleSelectOption<string>[] = [
         { value: "NewVolumeQCOW2", content: _("Create new qcow2 volume") },
@@ -1135,105 +1162,299 @@ const StorageRow = ({
         StorageSelectOptions.push({ decorator: "header", key: "Storage pools", content: _("Storage pools") });
         nonEmptyStoragePools.forEach(pool => StorageSelectOptions.push({ value: pool.name, content: pool.name }));
     }
+
     return (
         <>
-            <FormGroup label={_("Storage")} id="storage-select-group">
+            <FormGroup
+                label={_("Storage")}
+            >
                 <SimpleSelect
-                    toggleProps={{ id: "storage-select" }}
+                    toggleProps={{ ouiaId: field.ouia_id() }}
                     toggleWidth="100%"
                     selected={storagePoolName}
-                    onSelect={value => { onValueChanged('storagePool', value) }}
-                    options={StorageSelectOptions} />
+                    onSelect={value => {
+                        field.sub("storagePoolName").set(value);
+                        const storagePool = storagePools.find(pool => pool.name === value);
+                        if (storagePool)
+                            field.sub("storageVolume").set(storagePool.volumes[0].name);
+                    }}
+                    options={StorageSelectOptions}
+                />
             </FormGroup>
 
             { storagePoolName !== "NewVolumeQCOW2" &&
-            storagePoolName !== "NewVolumeRAW" &&
-            storagePoolName !== "NoStorage" &&
-            <FormGroup label={_("Volume")}
-                       fieldId="storage-volume-select">
-                <FormSelect id="storage-volume-select"
-                            value={storageVolume}
-                            validated={helperTextVariant}
-                            onChange={(_event, value) => onValueChanged('storageVolume', value)}>
-                    {volumeEntries}
-                </FormSelect>
-                {helperTextVariant == "warning" &&
-                <FormHelper
-                    variant={helperTextVariant}
-                    helperText={_("This volume is already used by another VM.")} />}
-            </FormGroup>}
+                storagePoolName !== "NewVolumeRAW" &&
+                storagePoolName !== "NoStorage" &&
+                <DialogDropdownSelectObject
+                    label={_("Volume")}
+                    field={field.sub("storageVolume")}
+                    options={volumeEntries}
+                    warning={alreadyUsed && _("This volume is already used by another VM.")}
+                />
+            }
 
             { (storagePoolName === "NewVolumeQCOW2" || storagePoolName === "NewVolumeRAW") &&
-            <FormGroup label={_("Storage limit")} fieldId='storage-limit'
-                           id='storage-group'>
-                <InputGroup>
-                    <TextInput id='storage-limit' value={storageSize}
-                                   className="size-input"
-                                   onKeyUp={digitFilter}
-                                   onChange={(_, value) => onValueChanged('storageSize', Number(value))} />
-                    <FormSelect id="storage-limit-unit-select"
-                                    data-value={storageSizeUnit}
-                                    className="unit-select"
-                                    value={storageSizeUnit}
-                                    onChange={(_event, value) => onValueChanged('storageSizeUnit', value)}>
-                        <FormSelectOption value={units.MiB.name} key={units.MiB.name}
-                                               label={_("MiB")} />
-                        <FormSelectOption value={units.GiB.name} key={units.GiB.name}
-                                               label={_("GiB")} />
-                    </FormSelect>
-                </InputGroup>
-                <FormHelper
-                        fieldId="storage-limit"
-                        variant={validationStateStorage}
-                        helperTextInvalid={validationStateStorage == "error" && validationFailed.storage}
-                        helperText={helperTextNewVolume} />
-            </FormGroup>}
+                <SizeInput
+                    label={_("Storage limit")}
+                    field={field.sub("newSize")}
+                    warning={warningNewVolume}
+                    explanation={explanationNewVolume}
+                />
+            }
         </>
     );
 };
 
-interface CreateVmModalProps {
-    mode: string;
-    downloadOSSupported: boolean | undefined;
-    cloudInitSupported: boolean | undefined;
-    unattendedSupported: boolean | undefined;
-    nodeMaxMemory: number | undefined;
-    vms: VM[];
-    unattendedUserLogin: boolean | undefined,
+interface DetailsValue {
+    connectionName: ConnectionName,
+    source: SourceValue,
+    memory: SizeValue,
+    storage: StorageValue,
+}
+
+function init_Details(initialSourceType: string, initialSource: string, initialOS: string, osInfoList: OSInfo[]): DetailsValue {
+    const connectionName = appState.systemSocketInactive ? "session" : "system";
+
+    return {
+        connectionName,
+        source: init_Source(initialSourceType, initialSource, initialOS, osInfoList),
+        memory: init_Memory(),
+        storage: init_Storage(connectionName),
+    };
+}
+
+function validate_Details(field: DialogField<DetailsValue>) {
+    validate_Source(field.sub("source"));
+    validate_Storage(field.sub("storage"));
+    validate_Memory(field.sub("memory"));
+}
+
+const Details = ({
+    field,
+    osInfoList,
+    setSuggestedName,
+} : {
+    field: DialogField<DetailsValue>,
+    osInfoList: OSInfo[],
+    setSuggestedName: (name: string) => void,
+}) => {
+    const sub_connectionName = field.sub("connectionName");
+
+    function updateOs(os: OSInfo | null) {
+        if (os) {
+            setSuggestedName(getVmName(sub_connectionName.get(), appState.vms, os));
+            field.sub("memory").set(init_Memory(os.minimumResources.ram));
+            update_Storage(field.sub("storage"), os.minimumResources.storage || 0);
+        } else {
+            setSuggestedName("");
+            field.sub("memory").set(init_Memory());
+            field.sub("storage").set(init_Storage(sub_connectionName.get()));
+        }
+    }
+
+    const sourceType = field.get().source.type;
+
+    return (
+        <>
+            <MachinesConnectionSelector
+                ouiaId={sub_connectionName.ouia_id()}
+                connectionName={sub_connectionName.get()}
+                onValueChanged={(_, val) => {
+                    sub_connectionName.set(val);
+                    const { storagePoolName } = field.sub("storage").get();
+                    if (storagePoolName !== "NewVolumeQCOW2" && storagePoolName !== "NewVolumeRAW" && storagePoolName !== "NoStorage") {
+                        // storage pools are different for each connection, so we set storagePool value to default (newVolume)
+                        field.sub("storage").sub("storagePoolName")
+                                .set("NewVolumeQCOW2");
+                    }
+
+                    // For different connections the generated VM names might differ
+                    // try to regenerate it
+                    const { os } = field.sub("source").get();
+                    if (os)
+                        setSuggestedName(getVmName(sub_connectionName.get(), appState.vms, os));
+                }}
+                showInfoHelper
+                isReadonly={appState.systemSocketInactive}
+            />
+            <Source
+                field={field.sub("source")}
+                connectionName={sub_connectionName.get()}
+                osInfoList={osInfoList}
+                updateOs={updateOs}
+            />
+
+            { sourceType != EXISTING_DISK_IMAGE_SOURCE &&
+                <StorageRow
+                    field={field.sub("storage")}
+                    allowNoDisk={sourceType !== CLOUD_IMAGE}
+                    minimumStorage={field.get().source.os?.minimumResources.storage || 0}
+                />
+            }
+
+            <MemoryRow
+                field={field.sub("memory")}
+                minimumMemory={field.get().source.os?.minimumResources.ram || 0}
+            />
+        </>
+    );
+};
+
+interface AutomationState {
+    excuse: undefined | string,
+    unattendedInstructionsMessage: string,
+    showUnattendedRow: boolean,
+    showCloudInitRow: boolean,
+    showExtraArgsRow: boolean,
+}
+
+function compute_AutomationState(source: SourceValue): AutomationState {
+    const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");
+    const unattendedUnavailableMessage = _("Automated installs are only available when downloading an image, an install tree or using cloud-init.");
+    const unattendedOsUnsupportedMessageFormat = (os: string) => cockpit.format(_("$0 does not support unattended installation."), os);
+
+    let showUnattendedRow = false;
+    let showCloudInitRow = false;
+    let showExtraArgsRow = false;
+    if ((source.type == URL_SOURCE || source.type == LOCAL_INSTALL_MEDIA_SOURCE) && source.os) {
+        if (source.source && !source.source.endsWith(".iso"))
+            showExtraArgsRow = source.os.treeInstallable;
+    } else if (source.type == DOWNLOAD_AN_OS) {
+        showUnattendedRow = !!source.os?.unattendedInstallable;
+        showExtraArgsRow = !!source.os?.treeInstallable;
+    } else if (source.type === CLOUD_IMAGE && appState.virtInstallCapabilities?.cloudInitSupported) {
+        showCloudInitRow = true;
+    }
+
+    let excuse;
+    if (!showUnattendedRow && !showCloudInitRow && !showExtraArgsRow) {
+        excuse = unattendedUnavailableMessage;
+    } else if (source.os && source.type === DOWNLOAD_AN_OS && appState.virtInstallCapabilities?.unattendedSupported) {
+        if (!showUnattendedRow && !showExtraArgsRow) {
+            excuse = unattendedOsUnsupportedMessageFormat(getOSStringRepresentation(source.os));
+        }
+    }
+
+    return {
+        excuse,
+        unattendedInstructionsMessage,
+        showUnattendedRow,
+        showCloudInitRow,
+        showExtraArgsRow,
+    };
+}
+
+function init_Automation(): AutomationValue {
+    return {
+        profile: "",
+        users: {
+            rootPassword: "",
+            userLogin: "",
+            userPassword: "",
+        },
+        sshKeys: [],
+        extraArgs: "",
+    };
+}
+
+function validate_Automation(field: DialogField<AutomationValue>, source: SourceValue) {
+    if (source.type === CLOUD_IMAGE && appState.virtInstallCapabilities?.cloudInitSupported) {
+        validate_CloudInit(field);
+    }
+}
+
+const Automation = ({
+    field,
+    source,
+    state,
+} : {
+    field: DialogField<AutomationValue>,
+    source: SourceValue,
+    state: AutomationState,
+}) => {
+    return (
+        <>
+            {(state.showUnattendedRow || state.showCloudInitRow) && state.unattendedInstructionsMessage}
+            {state.showUnattendedRow && source.os &&
+                <UnattendedRow
+                    field={field}
+                    os={source.os}
+                />
+            }
+            {state.showCloudInitRow &&
+                <CloudInitOptionsRow
+                    field={field}
+                />
+            }
+            {state.showExtraArgsRow && source.os &&
+                <ExtraArgumentsRow
+                    field={field.sub("extraArgs")}
+                    os={source.os}
+                />
+            }
+        </>
+    );
+};
+
+interface CreateVmModalValues {
+    name: string,
+    suggestedName: string,
+    details: DetailsValue,
+    automation: AutomationValue,
+    osInfoList: OSInfo[],
+}
+
+function isUnattendedInstallation(values: CreateVmModalValues): boolean {
+    function emptyUsers(users: UsersConfigurationValue) {
+        return !users.rootPassword && !users.userLogin && !users.userPassword;
+    }
+    return values.details.source.type == DOWNLOAD_AN_OS && !emptyUsers(values.automation.users);
+}
+
+export const CreateVmModal = ({
+    mode,
+    initialSource,
+    initialOS,
+    initialName,
+    initialSourceType,
+    onClose,
+} : {
+    mode: 'create' | 'import';
     initialSource?: string | undefined;
     initialOS?: string | undefined;
     initialName?: string | undefined;
     initialSourceType?: string | undefined;
     onClose?: () => void;
-}
+}) => {
+    const Dialogs = useDialogs();
+    const [activeTabKey, setActiveTabKey] = useState<string | number>(0);
 
-interface CreateVmModalState extends VmParams {
-    createMode: number;
-    activeTabKey: string | number;
-    validate: boolean;
-    autodetectOSInProgress?: boolean;
-    osInfoListLoading: boolean;
-    osInfoList: OSInfo[];
-    minimumMemory: number;
-    minimumStorage: number;
-    unattendedInstallation?: boolean;
-    sourceMediaID?: string;
-}
+    async function init(): Promise<CreateVmModalValues> {
+        async function poolGetAll(connectionName: ConnectionName) {
+            try {
+                await storagePoolGetAll({ connectionName });
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            } catch (ex) {
+                // Error has been logged by storagePoolGetAll and been
+                // re-thrown.  We don't want any error here from
+                // stopping the dialog from opening.
+            }
+        }
 
-export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalState> {
-    static contextType = DialogsContext;
-    declare context: Dialogs;
+        const [osInfoList] = await Promise.all(
+            [
+                getOsInfoList(),
+                poolGetAll("session"),
+                poolGetAll("system"),
+            ]
+        );
 
-    onOsAutodetect: (val: string) => void;
-    autodetectOSPromise: cockpit.Spawn<string> | null = null;
-
-    constructor(props: CreateVmModalProps) {
         let defaultSourceType;
-        if (props.mode == 'create') {
+        if (mode == 'create') {
             // Use initialSourceType if provided, otherwise fall back to defaults
-            if (props.initialSourceType) {
-                defaultSourceType = props.initialSourceType;
-            } else if (!props.downloadOSSupported) {
+            if (initialSourceType) {
+                defaultSourceType = initialSourceType;
+            } else if (!appState.virtInstallCapabilities?.downloadOSSupported) {
                 defaultSourceType = LOCAL_INSTALL_MEDIA_SOURCE;
             } else {
                 defaultSourceType = DOWNLOAD_AN_OS;
@@ -1241,503 +1462,216 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
         } else {
             defaultSourceType = EXISTING_DISK_IMAGE_SOURCE;
         }
-        super(props);
-        this.state = {
-            createMode: NONE,
-            activeTabKey: 0,
-            validate: false,
-            osInfoListLoading: true,
-            osInfoList: [],
-            vmName: props.initialName || '',
-            suggestedVmName: '',
-            connectionName: (appState.systemSocketInactive
-                ? LIBVIRT_SESSION_CONNECTION
-                : LIBVIRT_SYSTEM_CONNECTION),
-            sourceType: defaultSourceType,
-            source: props.initialSource || '',
-            os: undefined,
-            ...getMemoryDefaults(props.nodeMaxMemory),
-            ...getStorageDefaults(),
-            storagePool: 'NewVolumeQCOW2',
-            storageVolume: '',
-            startVm: true,
 
-            // Unattended installation or cloud init options for cloud images
-            profile: '',
-            userPassword: '',
-            rootPassword: '',
-            userLogin: '',
-            accessToken: '',
-            offlineToken: '',
-            extraArguments: '',
-            sshKeys: [],
+        return {
+            name: initialName || "",
+            suggestedName: "",
+            details: init_Details(defaultSourceType, initialSource || "", initialOS || "", osInfoList),
+            automation: init_Automation(),
+            osInfoList
         };
-        this.onCreateClicked = this.onCreateClicked.bind(this);
-        this.onValueChanged = this.onValueChanged.bind(this);
-        this.onOsAutodetect = debounce(250, (installMedia) => {
-            this.setState({ autodetectOSInProgress: true });
-            if (this.autodetectOSPromise)
-                this.autodetectOSPromise.close("cancelled");
-
-            this.autodetectOSPromise = autodetectOS(installMedia);
-            this.autodetectOSPromise.then(resJSON => {
-                const res = JSON.parse(resJSON.trim());
-                const osEntry = this.state.osInfoList.filter(osEntry => osEntry.id == res.os);
-
-                if (osEntry && osEntry[0]) {
-                    this.onValueChanged('os', osEntry[0]);
-                    this.setState({ sourceMediaID: res.media });
-                }
-                this.setState({ autodetectOSInProgress: false });
-                this.autodetectOSPromise = null;
-            });
-            this.autodetectOSPromise.catch(ex => {
-                if (ex.problem == "cancelled")
-                    return;
-
-                this.setState({ autodetectOSInProgress: false });
-                this.autodetectOSPromise = null;
-                console.log("osinfo-detect command failed: ", ex.message);
-            });
-        });
     }
 
-    async componentDidMount() {
-        const osInfoList = await getOsInfoList();
-        await storagePoolGetAll({ connectionName: this.state.connectionName });
+    function validate(dlg: DialogState<CreateVmModalValues>) {
+        dlg.field("name").validate(name => {
+            name = name.trim();
+            if (isEmpty(name))
+                name = dlg.values.suggestedName.trim();
+            if (isEmpty(name))
+                return _("Name must not be empty");
+            else if (appState.vms.some(vm => vm.name === name && vm.connectionName == dlg.values.details.connectionName))
+                return cockpit.format(_("VM $0 already exists"), name);
+        });
 
-        this.setState({ osInfoListLoading: false, osInfoList });
+        validate_Details(dlg.field("details"));
+        validate_Automation(dlg.field("automation"), dlg.values.details.source);
+    }
 
-        // If initialOS was provided via props, find and set the matching OS
-        if (this.props.initialOS) {
-            const matchingOS = osInfoList.find(os => os.shortId === this.props.initialOS);
-            if (matchingOS) {
-                this.onValueChanged('os', matchingOS);
+    async function onCreateClicked(values: CreateVmModalValues, variant: string) {
+        const { storagePools } = appState;
+        const { details, automation } = values;
+        const { source } = details;
+        const vmName = isEmpty(values.name.trim()) ? values.suggestedName : values.name;
+
+        const users = automation.users;
+        const unattendedInstallation = !(source.type === CLOUD_IMAGE) && !!(users.rootPassword || users.userLogin || users.userPassword);
+        const vmParams = {
+            connectionName: details.connectionName,
+            vmName,
+            source: source.source,
+            sourceType: source.type,
+            os: source.os ? source.os.shortId : 'auto',
+            osVersion: source.os ? source.os.version : '',
+            profile: automation.profile,
+            memorySize: convertToUnit(details.memory.size, details.memory.unit, units.MiB),
+            storageSize: convertToUnit(details.storage.newSize.size, details.storage.newSize.unit, units.GiB),
+            storagePool: details.storage.storagePoolName,
+            storageVolume: details.storage.storageVolume,
+            unattended: unattendedInstallation,
+            userPassword: users.userPassword,
+            rootPassword: users.rootPassword,
+            userLogin: users.userLogin,
+            sshKeys: automation.sshKeys.map(key => key.text),
+            startVm: variant == "main",
+            accessToken: source.accessToken,
+            extraArguments: automation.extraArgs,
+        };
+
+        domainCreate(vmParams).then(() => {
+            if (details.storage.storagePoolName === "NewVolumeQCOW2" || details.storage.storagePoolName === "NewVolumeRAW") {
+                const storagePool = storagePools.find(pool => pool.connectionName === details.connectionName && pool.name === "default");
+                if (storagePool)
+                    storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
             }
+        }, (exception) => {
+            console.error(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}"`);
+            appState.addNotification({
+                text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
+                detail: exception.message.split(/Traceback(.+)/)[0],
+            });
+        });
+
+        if (variant == "edit") {
+            cockpit.location.go(["vm"], {
+                ...cockpit.location.options,
+                name: vmName,
+                connection: details.connectionName
+            });
         }
     }
 
-    handleTabClick = (event: React.MouseEvent, tabIndex: number | string) => {
+    const dlg = useDialogState_async(init, validate);
+
+    let dialogBody;
+
+    const handleTabClick = (event: React.MouseEvent, tabIndex: number | string) => {
         // Prevent the form from being submitted.
         event.preventDefault();
-        this.setState({
-            activeTabKey: tabIndex,
-        });
+        setActiveTabKey(tabIndex);
     };
 
-    onValueChanged<K extends keyof VmParams>(key: K, value: VmParams[K]): void {
-        switch (key) {
-        case 'vmName':
-            cockpit.assert(typeof value == "string");
-            this.setState({ vmName: value.split(" ").join("_") });
-            break;
-        case 'source':
-            cockpit.assert(typeof value == "string");
-            this.setState({ source: value });
-            if ((this.state.sourceType == URL_SOURCE || this.state.sourceType == LOCAL_INSTALL_MEDIA_SOURCE) && value != '' && value != undefined)
-                this.onOsAutodetect(value);
-            break;
-        case 'sourceType':
-            cockpit.assert(typeof value == "string");
-            this.setState({ sourceType: value });
-            if (value == PXE_SOURCE) {
-                const { networks } = appState;
-                const initialPXESource = getPXEInitialNetworkSource(appState.nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName),
-                                                                    networks.filter(network => network.connectionName == this.state.connectionName));
-                this.setState({ source: initialPXESource });
-            } else if (this.state.sourceType == PXE_SOURCE && value != PXE_SOURCE) {
-                // Reset the source when the previous selection was PXE;
-                // all the other choices are string set by the user
-                this.setState({ source: '' });
-            }
-            break;
-        case 'storagePool': {
-            cockpit.assert(typeof value == "string");
-            const storagePool = appState.storagePools.filter(pool => pool.connectionName === this.state.connectionName).find(pool => pool.name === value);
-            const storageVolumes = storagePool ? storagePool.volumes : undefined;
-            const storageVolume = storageVolumes ? storageVolumes[0] : undefined;
-            this.setState({
-                storagePool: value,
-                storageVolume: storageVolume ? storageVolume.name : undefined,
-            });
-            break;
-        }
-        case 'storageVolume':
-            this.setState({ [key]: value } as Pick<CreateVmModalState, K>);
-            break;
-        case 'memorySize': {
-            // virt-install doesn't allow memory, supplied in MiB, to be a float number
-            // check if number is a integer, and if not, round up (ceil)
-            const valueMiB = Math.ceil(convertToUnit(value, this.state.memorySizeUnit, units.MiB));
-            this.setState(prevState => ({ memorySize: convertToUnit(valueMiB, units.MiB, prevState.memorySizeUnit) }));
-            break;
-        }
-        case 'memorySizeUnit':
-            cockpit.assert(typeof value == "string");
-            this.setState(prevState => ({
-                memorySizeUnit: value,
-                memorySize: convertToUnit(prevState.memorySize, prevState.memorySizeUnit, value)
-            }));
-            break;
-        case 'storageSizeUnit':
-            cockpit.assert(typeof value == "string");
-            this.setState(prevState => ({
-                storageSizeUnit: value,
-                storageSize: convertToUnit(prevState.storageSize, prevState.storageSizeUnit, value)
-            }));
-            break;
-        case 'connectionName':
-            cockpit.assert(value == "session" || value == "system");
-            this.setState({ connectionName: value });
-            if (this.state.sourceType == PXE_SOURCE && value == LIBVIRT_SESSION_CONNECTION) {
-                // When changing to session connection, reset media source
-                this.onValueChanged('sourceType', LOCAL_INSTALL_MEDIA_SOURCE);
-            }
+    if (dlg == null) {
+        dialogBody = (
+            <Flex justifyContent={{ default: 'justifyContentCenter' }} alignItems={{ default: 'alignItemsCenter' }} style={{ minHeight: '200px' }}>
+                <FlexItem>
+                    <Spinner size="lg" />
+                </FlexItem>
+                <FlexItem>
+                    {_("Loading operating system information...")}
+                </FlexItem>
+            </Flex>
+        );
+    } else if (dlg instanceof DialogState) {
+        const autoState = compute_AutomationState(dlg.values.details.source);
 
-            // specific storage pool is selected
-            if (this.state.storagePool !== "NewVolumeQCOW2" && this.state.storagePool !== "NewVolumeRAW" && this.state.storagePool !== "NoStorage") {
-                // storage pools are different for each connection, so we set storagePool value to default (newVolume)
-                this.setState({ storagePool: "NewVolumeQCOW2" });
-            }
-
-            // For different connections the generated VM names might differ
-            // try to regenerate it
-            if (this.state.os)
-                this.setState((prevState, prevProps) => ({ suggestedVmName: getVmName(value, prevProps.vms, prevState.os!) }));
-
-            break;
-        case 'os': {
-            cockpit.assert(((x: unknown): x is OSInfo => !!x || !x)(value));
-            const stateDelta: Partial<CreateVmModalState> = { os: value };
-
-            if (value && value.profiles)
-                stateDelta.profile = value.profiles.sort().reverse()[0];
-
-            if (value && value.minimumResources.ram) {
-                stateDelta.minimumMemory = value.minimumResources.ram;
-
-                let bestUnit = getBestUnit(stateDelta.minimumMemory, units.B);
-                if (bestUnit.base1024Exponent >= 4) bestUnit = units.GiB;
-                if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
-                const converted = convertToUnit(stateDelta.minimumMemory, units.B, bestUnit);
-                this.setState({ memorySizeUnit: bestUnit.name }, () => this.onValueChanged("memorySize", converted));
-            } else {
-                this.setState((_, prevProps) => getMemoryDefaults(prevProps.nodeMaxMemory));
-            }
-
-            if (value && value.minimumResources.storage) {
-                stateDelta.minimumStorage = value.minimumResources.storage;
-
-                let bestUnit = getBestUnit(stateDelta.minimumStorage, units.B);
-                if (bestUnit.base1024Exponent >= 4) bestUnit = units.GiB;
-                if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
-                const converted = convertToUnit(stateDelta.minimumStorage, units.B, bestUnit);
-                this.setState({ storageSizeUnit: bestUnit.name }, () => this.onValueChanged("storageSize", converted));
-            } else {
-                this.setState(getStorageDefaults());
-            }
-
-            if (!value || !value.unattendedInstallable)
-                this.setState({ unattendedInstallation: false });
-
-            // generate VM name based on OS if user selects an OS
-            // clear generated VM name if they unselect an OS
-            stateDelta.suggestedVmName = value ? getVmName(this.state.connectionName, this.props.vms, value) : "";
-
-            this.setState(stateDelta as Pick<CreateVmModalState, K>);
-            break;
-        }
-        default:
-            this.setState({ [key]: value } as Pick<CreateVmModalState, K>);
-            break;
-        }
+        dialogBody = (
+            <Form isHorizontal>
+                <DialogTextInput
+                    label={_("Name")}
+                    field={dlg.field("name")}
+                    placeholder={
+                        isEmpty(dlg.values.suggestedName.trim())
+                            ? _("Unique name")
+                            : cockpit.format(_("Unique name, default: $0"), dlg.values.suggestedName)
+                    }
+                />
+                { mode === "create"
+                    ? <Tabs activeKey={activeTabKey} onSelect={handleTabClick}>
+                        <Tab
+                              eventKey={0}
+                              title={<TabTitleText>{_("Details")}</TabTitleText>}
+                              id="details-tab"
+                        >
+                            <FormSection>
+                                <Details
+                                      field={dlg.field("details")}
+                                      osInfoList={dlg.values.osInfoList}
+                                      setSuggestedName={val => dlg.field("suggestedName").set(val)}
+                                />
+                            </FormSection>
+                        </Tab>
+                        <Tab
+                              eventKey={1}
+                              title={<TabTitleText>{_("Automation")}</TabTitleText>}
+                              id="automation"
+                              {...autoState.excuse && { tooltip: <Tooltip content={autoState.excuse} /> }}
+                              isAriaDisabled={!!autoState.excuse}
+                        >
+                            <FormSection>
+                                <Automation
+                                      field={dlg.field("automation")}
+                                      source={dlg.values.details.source}
+                                      state={autoState}
+                                />
+                            </FormSection>
+                        </Tab>
+                    </Tabs>
+                    : <Details
+                          field={dlg.field("details")}
+                          osInfoList={dlg.values.osInfoList}
+                          setSuggestedName={val => dlg.field("suggestedName").set(val)}
+                    />
+                }
+            </Form>
+        );
     }
 
-    onCreateClicked(startVm: boolean) {
-        const Dialogs = this.context;
-        const { nodeMaxMemory, vms } = this.props;
-        const { osInfoList } = this.state;
-        const { storagePools } = appState;
-        const vmName = isEmpty(this.state.vmName.trim()) ? this.state.suggestedVmName : this.state.vmName;
+    const handleClose = onClose ?? Dialogs.close;
 
-        const validation = validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
-        if (Object.getOwnPropertyNames(validation).length > 0) {
-            this.setState({ createMode: NONE, validate: true });
-        } else {
-            // leave dialog open to show immediate errors from the backend
-            // close the dialog after VMS_CONFIG.LeaveCreateVmDialogVisibleAfterSubmit
-            // then show errors in the notification area
-            this.setState({ createMode: startVm ? RUN : EDIT, validate: false });
+    const unattendedInstallation = dlg instanceof DialogState && isUnattendedInstallation(dlg.values);
+    const downloadingIsDisabled = dlg instanceof DialogState && downloadingDisabled(dlg.values.details.source);
 
-            const unattendedInstallation = !(this.state.sourceType === CLOUD_IMAGE) && !!(this.state.rootPassword || this.state.userLogin || this.state.userPassword);
-            const vmParams = {
-                connectionName: this.state.connectionName,
-                vmName,
-                source: this.state.source,
-                sourceType: this.state.sourceType,
-                os: this.state.os ? this.state.os.shortId : 'auto',
-                osVersion: this.state.os ? this.state.os.version : '',
-                profile: this.state.profile,
-                memorySize: convertToUnit(this.state.memorySize, this.state.memorySizeUnit, units.MiB),
-                storageSize: convertToUnit(this.state.storageSize, this.state.storageSizeUnit, units.GiB),
-                storagePool: this.state.storagePool,
-                storageVolume: this.state.storageVolume,
-                unattended: unattendedInstallation,
-                userPassword: this.state.userPassword,
-                rootPassword: this.state.rootPassword,
-                userLogin: this.state.userLogin,
-                sshKeys: this.state.sshKeys.map(key => key.value),
-                startVm,
-                accessToken: this.state.accessToken,
-                extraArguments: this.state.extraArguments,
-            };
-
-            domainCreate(vmParams).then(() => {
-                if (this.state.storagePool === "NewVolumeQCOW2" || this.state.storagePool === "NewVolumeRAW") {
-                    const storagePool = storagePools.find(pool => pool.connectionName === this.state.connectionName && pool.name === "default");
-                    if (storagePool)
-                        storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
-                }
-            }, (exception) => {
-                console.error(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}"`);
-                appState.addNotification({
-                    text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
-                    detail: exception.message.split(/Traceback(.+)/)[0],
-                });
-            });
-
-            (this.props.onClose ?? Dialogs.close)();
-
-            if (!startVm) {
-                cockpit.location.go(["vm"], {
-                    ...cockpit.location.options,
-                    name: vmName,
-                    connection: this.state.connectionName
-                });
+    const createAndEdit = (
+        <DialogActionButton
+            dialog={dlg}
+            variant="edit"
+            action={onCreateClicked}
+            excuse={
+                unattendedInstallation
+                    ? _("Setting the user passwords for unattended installation requires starting the VM when creating it")
+                    : undefined
             }
-        }
-    }
+            isDisabled={downloadingIsDisabled}
+        >
+            {mode == 'create' ? _("Create and edit") : _("Import and edit")}
+        </DialogActionButton>
+    );
 
-    render() {
-        const Dialogs = this.context;
-        const { nodeMaxMemory, vms } = this.props;
-        const { osInfoList } = this.state;
-        const { storagePools, networks } = appState;
-        const validationFailed = this.state.validate ? validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) }) : { };
-
-        const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");
-        const unattendedUnavailableMessage = _("Automated installs are only available when downloading an image, an install tree or using cloud-init.");
-        const unattendedOsUnsupportedMessageFormat = (os: string) => cockpit.format(_("$0 does not support unattended installation."), os);
-
-        let showUnattendedRow = false;
-        let showCloudInitRow = false;
-        let showExtraArgsRow = false;
-        if ((this.state.sourceType == URL_SOURCE || this.state.sourceType == LOCAL_INSTALL_MEDIA_SOURCE) && this.state.os) {
-            if (this.state.source && !this.state.source.endsWith(".iso"))
-                showExtraArgsRow = this.state.os.treeInstallable;
-        } else if (this.state.sourceType == DOWNLOAD_AN_OS) {
-            showUnattendedRow = !!this.state.os?.unattendedInstallable;
-            showExtraArgsRow = !!this.state.os?.treeInstallable;
-        } else if (this.state.sourceType === CLOUD_IMAGE && this.props.cloudInitSupported) {
-            showCloudInitRow = true;
-        }
-
-        let automationTabTooltip;
-        if (!showUnattendedRow && !showCloudInitRow && !showExtraArgsRow) {
-            automationTabTooltip = <Tooltip content={unattendedUnavailableMessage} />;
-        } else if (this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported) {
-            if (!showUnattendedRow && !showExtraArgsRow) {
-                automationTabTooltip = <Tooltip content={unattendedOsUnsupportedMessageFormat(getOSStringRepresentation(this.state.os))} />;
-            }
-        }
-
-        const detailsTab = (
-            <>
-                <MachinesConnectionSelector
-                    id='connection'
-                    connectionName={this.state.connectionName}
-                    onValueChanged={this.onValueChanged}
-                    showInfoHelper
-                    isReadonly={appState.systemSocketInactive}
-                />
-                <SourceRow
-                    connectionName={this.state.connectionName}
-                    networks={networks.filter(network => network.connectionName == this.state.connectionName)}
-                    nodeDevices={appState.nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName)}
-                    source={this.state.source}
-                    sourceType={this.state.sourceType}
-                    os={this.state.os}
-                    offlineToken={this.state.offlineToken}
-                    osInfoList={this.state.osInfoList}
-                    cloudInitSupported={this.props.cloudInitSupported}
-                    downloadOSSupported={this.props.downloadOSSupported}
-                    onValueChanged={this.onValueChanged}
-                    validationFailed={validationFailed} />
-
-                {this.state.sourceType != DOWNLOAD_AN_OS &&
-                <OSRow
-                        os={this.state.os}
-                        osInfoList={this.state.osInfoList}
-                        onValueChanged={this.onValueChanged}
-                        isLoading={!!this.state.autodetectOSInProgress}
-                        validationFailed={validationFailed} />}
-                { this.state.sourceType != EXISTING_DISK_IMAGE_SOURCE &&
-                <StorageRow
-                    allowNoDisk={this.state.sourceType !== CLOUD_IMAGE}
-                    connectionName={this.state.connectionName}
-                    storageSize={this.state.storageSize}
-                    storageSizeUnit={this.state.storageSizeUnit}
-                    onValueChanged={this.onValueChanged}
-                    storagePoolName={this.state.storagePool}
-                    storagePools={storagePools.filter(pool => pool.connectionName === this.state.connectionName)}
-                    storageVolume={this.state.storageVolume}
-                    vms={vms}
-                    minimumStorage={this.state.minimumStorage}
-                    validationFailed={validationFailed}
-                    createMode={this.state.createMode}
-                />}
-
-                <MemoryRow
-                    memorySize={this.state.memorySize}
-                    memorySizeUnit={this.state.memorySizeUnit}
-                    nodeMaxMemory={nodeMaxMemory}
-                    onValueChanged={this.onValueChanged}
-                    validationFailed={validationFailed}
-                    minimumMemory={this.state.minimumMemory}
-                />
-            </>
-        );
-
-        const automationTab = (
-            <>
-                {(showUnattendedRow || showCloudInitRow) && unattendedInstructionsMessage}
-                {showUnattendedRow && this.state.os &&
-                <UnattendedRow
-                    validationFailed={validationFailed}
-                    rootPassword={this.state.rootPassword}
-                    userLogin={this.state.userLogin}
-                    userPassword={this.state.userPassword}
-                    unattendedUserLogin={this.props.unattendedUserLogin}
-                    os={this.state.os}
-                    profile={this.state.profile}
-                    onValueChanged={this.onValueChanged} />
-                }
-                {showCloudInitRow &&
-                <CloudInitOptionsRow validationFailed={validationFailed}
-                                     rootPassword={this.state.rootPassword}
-                                     userLogin={this.state.userLogin}
-                                     userPassword={this.state.userPassword}
-                                     onValueChanged={this.onValueChanged} />
-                }
-                {showExtraArgsRow && this.state.os &&
-                <ExtraArgumentsRow
-                    extraArguments={this.state.extraArguments}
-                    onValueChanged={this.onValueChanged}
-                    os={this.state.os}
-                />
-                }
-            </>
-        );
-
-        const dialogBody = this.state.osInfoListLoading
-            ? (
-                <Flex justifyContent={{ default: 'justifyContentCenter' }} alignItems={{ default: 'alignItemsCenter' }} style={{ minHeight: '200px' }}>
-                    <FlexItem>
-                        <Spinner size="lg" />
-                    </FlexItem>
-                    <FlexItem>
-                        {_("Loading operating system information...")}
-                    </FlexItem>
-                </Flex>
-            )
-            : (
-                <Form isHorizontal>
-                    <NameRow
-                        vmName={this.state.vmName}
-                        suggestedVmName={this.state.suggestedVmName}
-                        onValueChanged={this.onValueChanged}
-                        validationFailed={validationFailed} />
-                    { this.props.mode === "create"
-                        ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
-                            <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab">
-                                <FormSection>
-                                    {detailsTab}
-                                </FormSection>
-                            </Tab>
-                            <Tab eventKey={1}
-                                  title={<TabTitleText>{_("Automation")}</TabTitleText>}
-                                  id="automation"
-                                  {...automationTabTooltip && { tooltip: automationTabTooltip } }
-                                  isAriaDisabled={!!automationTabTooltip}>
-                                <FormSection>
-                                    {automationTab}
-                                </FormSection>
-                            </Tab>
-                        </Tabs>
-                        : detailsTab }
-                </Form>
-            );
-
-        const unattendedInstallation = this.state.rootPassword || this.state.userLogin || this.state.userPassword;
-        // This happens if offlineToken was supplied and we are either still obtaining access token (validating offline token) or failed to obtain one
-        const downloadingRhelDisabled = !isEmpty(this.state.offlineToken) && isEmpty(this.state.accessToken);
-        let createAndEdit = (
-            <Button variant="secondary"
-                    key="secondary-button"
-                    id="create-and-edit"
-                    isLoading={this.state.createMode === EDIT}
-                    isAriaDisabled={!!(
-                        this.state.createMode === EDIT ||
-                        Object.getOwnPropertyNames(validationFailed).length > 0 ||
-                        (this.state.sourceType === DOWNLOAD_AN_OS && unattendedInstallation) ||
-                        downloadingRhelDisabled
-                    )}
-                    onClick={() => this.onCreateClicked(false)}>
-                {this.props.mode == 'create' ? _("Create and edit") : _("Import and edit")}
-            </Button>
-        );
-        if (unattendedInstallation) {
-            createAndEdit = (
-                <Tooltip id='create-and-edit-disabled-tooltip'
-                         key="create-and-edit-tooltip"
-                         content={_("Setting the user passwords for unattended installation requires starting the VM when creating it")}>
-                    {createAndEdit}
-                </Tooltip>
-            );
-        }
-
-        const handleClose = this.props.onClose ?? Dialogs.close;
-
-        return (
-            <Modal position="top" variant="medium" id='create-vm-dialog' isOpen onClose={handleClose}>
-                <ModalHeader title={this.props.mode == 'create' ? _("Create new virtual machine") : _("Import a virtual machine")} />
-                <ModalBody>
-                    {dialogBody}
-                </ModalBody>
-                <ModalFooter>
-                    <Button variant="primary"
-                            key="primary-button"
-                            id="create-and-run"
-                            isLoading={this.state.createMode === RUN}
-                            isDisabled={
-                                this.state.createMode === RUN ||
-                                Object.getOwnPropertyNames(validationFailed).length > 0 ||
-                                downloadingRhelDisabled
-                            }
-                            onClick={() => this.onCreateClicked(true)}>
-                        {this.props.mode == 'create' ? _("Create and run") : _("Import and run")}
-                    </Button>
-                    {createAndEdit}
-                    <Button variant='link'
-                            key="cancel-button"
-                            onClick={handleClose}>
-                        {_("Cancel")}
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        );
-    }
-}
+    return (
+        <Modal
+            position="top"
+            variant="medium"
+            id='create-vm-dialog'
+            isOpen
+            onClose={handleClose}
+        >
+            <ModalHeader
+                title={mode == 'create' ? _("Create new virtual machine") : _("Import a virtual machine")}
+            />
+            <ModalBody>
+                <DialogErrorMessage dialog={dlg} />
+                {dialogBody}
+            </ModalBody>
+            <ModalFooter>
+                <DialogActionButton
+                    dialog={dlg}
+                    action={onCreateClicked}
+                    onClose={handleClose}
+                    isDisabled={downloadingIsDisabled}
+                >
+                    {mode == 'create' ? _("Create and run") : _("Import and run")}
+                </DialogActionButton>
+                {createAndEdit}
+                <DialogCancelButton
+                    dialog={dlg}
+                    onClose={handleClose}
+                >
+                    {_("Cancel")}
+                </DialogCancelButton>
+            </ModalFooter>
+        </Modal>
+    );
+};
 
 interface CreateVmActionProps {
     mode: 'create' | 'import';
