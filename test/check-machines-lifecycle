@@ -381,7 +381,6 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
     def testDelete(self):
         b = self.browser
-        d = DialogHelpers(b)
         m = self.machine
 
         name = "subVmTest1"
@@ -403,6 +402,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             b.click(f"#vm-{vmName}-disks-adddisk")  # button
             b.wait_visible(f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
             b.wait_visible("label:contains(Create new)")  # radio button label in the modal dialog
+
+            d = DialogHelpers(b, f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
 
             d.set_DropdownSelect("create_new.pool", poolName)
             d.set_TextInput("create_new.volume.name", volName)

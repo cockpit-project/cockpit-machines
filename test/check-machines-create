@@ -14,6 +14,7 @@ from datetime import datetime
 
 import machineslib
 import testlib
+from dialoglib import DialogHelpers
 from machinesxmls import NETWORK_XML_PXE, PXE_SERVER_CFG
 
 NO_STORAGE = "No storage"
@@ -113,21 +114,21 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         # try to CREATE WITH DIALOG ERROR
         # name
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "", storage_size=1, os_name=None),
-                                             {"vm-name": "Name must not be empty"})
+                                             {"name": "Name must not be empty"})
 
         # location
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                                          location="invalid/url",
                                                                          os_name=config.FEDORA_28),
-                                                                         {"source-url": "Source should start with"})
+                                             {"details.source.source": "Source should start with"})
 
         # memory
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, memory_size=0, os_name=None),
-                                             {"memory": "Memory must not be 0"})
+                                             {"details.memory": "Memory must not be 0"})
 
         # storage
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, storage_size=0),
-                                             {"storage": "Storage size must not be 0"})
+                                             {"details.storage.newSize": "Storage size must not be 0"})
 
         # Try setting the memory to value bigger than it's available on the OS
         # The dialog should auto-adjust it to match the OS'es total memory
@@ -136,17 +137,17 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                          memory_size=100000, memory_size_unit='MiB',
                                                                          storage_pool=NO_STORAGE,
                                                                          create_and_run=False),
-                                             {"memory": "available on host"})
+                                             {"details.memory": "available on host"})
 
         # start vm
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, storage_size=1,
                                                                          os_name=config.FEDORA_28,
                                                                          create_and_run=True),
-                                             {"source-file": "Installation source must not be empty"})
+                                             {"details.source.source": "Installation source must not be empty"})
 
         # disallow empty OS
 
-        errors = {"os-select": "You need to select the most closely matching operating system"}
+        errors = {"details.source.os": "You need to select the most closely matching operating system"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                                          location=config.VALID_URL,
                                                                          storage_size=100,
@@ -156,7 +157,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                              errors=errors)
 
         # Check PXE warning about macvtap is present
-        errors = {"network": "macvtap does not work for host to guest network communication"}
+        errors = {"details.source.source": "macvtap does not work for host to guest network communication"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self,
                                                                          sourceType='pxe',
                                                                          location=f"type=direct,source={iface},source.mode=bridge"),
@@ -170,7 +171,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                          location=f"type=direct,source={iface},source.mode=bridge",
                                                                          sourceTypeSecondChoice='url',
                                                                          create_and_run=False),
-                                             {"source-url": "Installation source must not be empty"})
+                                             {"details.source.source": "Installation source must not be empty"})
 
         # user password
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
@@ -178,12 +179,11 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                          location=config.VALID_DISK_IMAGE_PATH,
                                                                          user_login="foo",
                                                                          create_and_run=True),
-                                             {"create-vm-dialog-user-password-pw1":
-                                              "User password must not be empty when user login is set"},
-                                             is_warning=True)
+                                             {"automation.users.userPassword":
+                                              "User password must not be empty when user login is set"})
 
         # user login
-        errors = {"create-vm-dialog-user-login": "User login must not be empty when user password is set"}
+        errors = {"automation.users.userLogin": "User login must not be empty when user password is set"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
@@ -191,8 +191,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                          create_and_run=True),
                                              errors)
 
-        # user login
-        errors = {"create-vm-dialog-root-password-pw1": "Weak password"}
+        # root password
+        errors = {"automation.users.rootPassword": "Weak password"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
@@ -211,7 +211,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         rsakey = self.machine.execute("cat /tmp/rsakey.pub").strip()
         self.addCleanup(self.machine.execute, "rm -f /tmp/rsakey*")
 
-        errors = {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"}
+        errors = {"automation.users.userLogin": "User login must not be empty when SSH keys are set"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
@@ -222,7 +222,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                              errors)
 
         # Without the root password and "Create and edit"
-        errors = {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"}
+        errors = {"automation.users.userLogin": "User login must not be empty when SSH keys are set"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
@@ -239,36 +239,39 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         dialog.open() \
             .fill()
 
+        def key(idx):
+            return dialog.field(f"automation.sshKeys.{idx}")
+
         # initially we have the single rsakey
-        b.wait_in_text("#create-vm-dialog-ssh-key-0 #validated", "ssh-rsa")
-        self.assertFalse(b.is_present("#create-vm-dialog-ssh-key-1"))
+        b.wait_in_text(key(0) + " #validated", "ssh-rsa")
+        self.assertFalse(b.is_present(key(1)))
 
         # add two more empty ones
         b.click("button:contains(Add SSH keys)")
-        b.wait_text_matches("#create-vm-dialog-ssh-key-1 textarea", "^$")
-        self.assertFalse(b.is_present("#create-vm-dialog-ssh-key-2"))
+        b.wait_text_matches(key(1) + " textarea", "^$")
+        self.assertFalse(b.is_present(key(2)))
 
         b.click("button:contains(Add SSH keys)")
-        b.wait_text_matches("#create-vm-dialog-ssh-key-2 textarea", "^$")
-        self.assertFalse(b.is_present("#create-vm-dialog-ssh-key-3"))
+        b.wait_text_matches(key(2) + " textarea", "^$")
+        self.assertFalse(b.is_present(key(3)))
 
         # delete the third (empty) one
-        b.click("#create-vm-dialog-ssh-key-2-btn-close")
-        b.wait_not_present("#create-vm-dialog-ssh-key-2")
+        b.click(key(2) + " .btn-close")
+        b.wait_not_present(key(2))
         # first two still exist
-        b.wait_visible("#create-vm-dialog-ssh-key-0 #validated")
-        b.wait_text_matches("#create-vm-dialog-ssh-key-1 textarea", "^$")
+        b.wait_visible(key(0) + " #validated")
+        b.wait_text_matches(key(1) + " textarea", "^$")
 
         # now delete the first key
-        b.click("#create-vm-dialog-ssh-key-0-btn-close")
+        b.click(key(0) + " .btn-close")
         # only the second (empty) one exists now)
-        b.wait_not_present("#create-vm-dialog-ssh-key-0")
-        b.wait_text_matches("#create-vm-dialog-ssh-key-1 textarea", "^$")
-        b.wait_not_present("#create-vm-dialog-ssh-key-2")
+        b.wait_text_matches(key(0) + " textarea", "^$")
+        b.wait_not_present(key(1))
+        b.wait_not_present(key(2))
 
         # enter a valid EC key
-        b.set_input_text("#create-vm-dialog-ssh-key-1 textarea", ED25519_PUB, value_check=False)
-        b.wait_in_text("#create-vm-dialog-ssh-key-1 #validated", "ssh-ed25519")
+        b.set_input_text(key(0) + " textarea", ED25519_PUB, value_check=False)
+        b.wait_in_text(key(0) + " #validated", "ssh-ed25519")
 
         dialog.cancel()
 
@@ -341,16 +344,18 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             m.execute(f"sed -e 's/NAME/{vm_name}/' </tmp/xml | grep -v uuid >/tmp/xml2; virsh define /tmp/xml2")
             b.wait_visible(f"#vm-{vm_name}-system-name")
 
+        d = machineslib.MachinesDialogHelpers(self.browser)
+
         b.click("#create-new-vm")
         b.wait_visible("#create-vm-dialog")
-        b.wait_attr("#vm-name", "placeholder", "Unique name")
+        b.wait_attr(d.field("name"), "placeholder", "Unique name")
 
-        b.set_input_text("#os-select-group input", config.FEDORA_28)
+        d.set_TypeaheadSelect("details.source.os", config.FEDORA_28)
 
-        b.click("#create-and-edit")
-        b.wait_text("#vm-name-group .pf-v6-c-helper-text__item-text", "Name must not be empty")
-        b.wait_visible("#create-and-run[disabled]")
-        b.wait_visible("#create-and-edit[aria-disabled=true]")
+        b.click(d.apply_button("edit"))
+        b.wait_text(d.helper_text("name"), "Name must not be empty")
+        b.wait_visible(d.apply_button() + "[disabled]")
+        b.wait_visible(d.apply_button("edit") + "[disabled]")
 
     def testCreateCloudBaseImage(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -544,7 +549,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "existing-name", storage_size=1,
                                                                          check_script_finished=False,
                                                                          env_is_empty=False),
-                                             {"vm-name": "already exists"})
+                                             {"name": "already exists"})
 
     @testlib.skipImage("TODO: fails in 50% of runs", "opensuse-tumbleweed")
     def testCreatePXE(self):
@@ -937,7 +942,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                          "existing-name",
                                                                          storage_size=1,
                                                                          env_is_empty=False),
-                                             {"vm-name": "already exists"})
+                                             {"name": "already exists"})
 
         m.execute("virsh undefine existing-name")
 
@@ -1040,7 +1045,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
         CENTOS_7 = 'CentOS 7'
 
-    class VmDialog:
+    class VmDialog(machineslib.MachinesDialogHelpers):
         vmId = 0
 
         def __init__(self, test_obj, name=None, name_generated=False,
@@ -1074,6 +1079,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                      offline_token_autofilled=True,
                      extra_arguments=None,
                      pixel_test_tag=None):
+
+            super().__init__(test_obj.browser, "#create-vm-dialog")
 
             TestMachinesCreate.VmDialog.vmId += 1  # This variable is static - don't use self here
 
@@ -1163,41 +1170,38 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             b = self.browser
             m = self.machine
 
-            b.select_from_dropdown("#memory-size-unit-select", "MiB")
-            b.set_input_text("#memory-size", "128")
-            b.select_from_dropdown("#memory-size-unit-select", "GiB")
-            b.wait_val("#memory-size", "0.125")
+            self.set_DropdownSelect("details.memory.unit", "MiB")
+            self.set_TextInput("details.memory.size", "128")
+            self.set_DropdownSelect("details.memory.unit", "GiB")
+            self.wait_TextInput("details.memory.size", "0.125")
 
             # Check that the best unit is chosen when the storage size is automatically filled after selecting an OS
             # https://bugzilla.redhat.com/show_bug.cgi?id=1987120
-            b.select_from_dropdown("#source-type", "url")
+            self.set_DropdownSelect("details.source.type", "url")
             fake_fedora = "Fedora 28"  # 128 MiB minimum storage
             suse = "SUSE CaaS Platform Unknown (unknown)"  # 20 GiB minimum storage
-            b.set_input_text("#os-select-group input", fake_fedora)
-            b.click(f"#os-select li button:contains('{fake_fedora}')")
-            b.wait_val("#storage-limit", "128")
-            b.wait_visible("#storage-limit-unit-select[data-value=MiB]")
+            self.set_TypeaheadSelect("details.source.os", fake_fedora)
+            self.wait_TextInput("details.storage.newSize.size", "128")
+            self.wait_DropdownSelect("details.storage.newSize.unit", "MiB")
 
             # Check minimum requirement warnings are present
-            b.set_input_text("#memory-size", "127")
+            self.set_TextInput("details.memory.size", "127")
             # memory limit must be a warning, not an error
-            b.wait_in_text("#memory-size-helper.pf-m-warning",
+            b.wait_in_text(self.helper_text("details.memory") + ".pf-m-warning",
                            "The selected operating system has minimum memory requirement of 128 MiB")
 
-            b.set_input_text("#storage-limit", "127")
+            self.set_TextInput("details.storage.newSize.size", "127")
             # storage limit must be a warning, not an error
-            b.wait_in_text("#storage-limit-helper.pf-m-warning",
+            b.wait_in_text(self.helper_text("details.storage.newSize") + ".pf-m-warning",
                            "The selected operating system has minimum storage size requirement of 128 MiB")
 
-            b.set_input_text("#os-select-group input", suse)
-            b.click(f"#os-select li button:contains('{suse}')")
-            b.wait_val("#storage-limit", "20")
-            b.wait_visible("#storage-limit-unit-select[data-value=GiB]")
+            self.set_TypeaheadSelect("details.source.os", suse)
+            self.wait_TextInput("details.storage.newSize.size", "20")
+            self.wait_DropdownSelect("details.storage.newSize.unit", "GiB")
 
             # Check case when minimum requirements are unknown
             fake_fedora = "Fedora 29"  # no minimum memory or storage
-            b.set_input_text("#os-select-group input", fake_fedora)
-            b.click(f"#os-select li button:contains('{fake_fedora}')")
+            self.set_TypeaheadSelect("details.source.os", fake_fedora)
             # get available memory on host
             memory = m.execute("virsh nodeinfo | grep 'Memory size:' | awk '{print $3}'").strip()
             memory = math.floor(int(memory) / 1024)
@@ -1205,17 +1209,18 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             memoryUnit = "MiB" if memory < 1024 else "GiB"
             memory = memory if memory < 1024 else 1
             # Check memory and storage were set to defaults
-            b.wait_val("#memory-size", memory)
-            b.wait_visible(f"#memory-size-unit-select[data-value={memoryUnit}]")
-            b.wait_val("#storage-limit", "10")
-            b.wait_visible("#storage-limit-unit-select[data-value=GiB]")
+            self.wait_TextInput("details.memory.size", memory)
+            self.wait_DropdownSelect("details.memory.unit", memoryUnit)
+            self.wait_TextInput("details.storage.newSize.size", "10")
+            self.wait_DropdownSelect("details.storage.newSize.unit", "GiB")
             # Since minimum requirements are unknown Check no warning about minimum requirement is shown
-            b.select_from_dropdown("#memory-size-unit-select", "MiB")
-            b.set_input_text("#memory-size", "1")
-            b.wait_not_in_text("#memory-size-helper", "The selected operating system has minimum memory requirement")
-            b.select_from_dropdown("#storage-limit-unit-select", "MiB")
-            b.set_input_text("#storage-limit", "1")
-            b.wait_not_in_text("#storage-limit-helper",
+            self.set_DropdownSelect("details.memory.unit", "MiB")
+            self.set_TextInput("details.memory.size", "1")
+            b.wait_not_in_text(self.helper_text("details.memory"),
+                               "The selected operating system has minimum memory requirement")
+            self.set_DropdownSelect("details.storage.newSize.unit", "MiB")
+            self.set_TextInput("details.storage.newSize.size", "1")
+            b.wait_not_in_text(self.helper_text("details.storage.newSize"),
                                "The selected operating system has minimum storage size requirement")
 
             return self
@@ -1225,22 +1230,18 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
             # select "Installation Type" for more complete OS list
             if self.sourceType != "disk_image":
-                b.select_from_dropdown("#source-type", "file")
+                self.set_DropdownSelect("details.source.type", "file")
             # input an OS and check there is no Ooops
-            b.set_input_text("#os-select-group input", self.os_name)
-            b.click(f"#os-select li button:contains('{self.os_name}')")
-            b.wait_attr_contains("#os-select-group input", "value", self.os_name)
+            self.set_TypeaheadSelect("details.source.os", self.os_name)
             b.wait_not_present("#navbar-oops")
 
             # re-input an OS which is "Fedora 28"
-            b.set_input_text("#os-select-group input", "Fedora")
-            b.click("#os-select li button:contains('Fedora 28')")
-            b.wait_attr_contains("#os-select-group input", "value", "Fedora 28")
+            self.set_TypeaheadSelect("details.source.os", "Fedora 28")
             b.wait_not_present("#navbar-oops")
 
             # click the 'X' button to clear the OS input and check there is no Ooops
-            b.click("#os-select-group button[aria-label=\"Clear input value\"]")
-            b.wait_attr("#os-select-group input", "value", "")
+            b.click(self.field("details.source.os") + " button[aria-label=\"Clear input value\"]")
+            self.wait_TypeaheadSelect("details.source.os", "")
             b.wait_not_present("#navbar-oops")
 
             return self
@@ -1248,71 +1249,70 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         def checkPasswordsAreNotReset(self):
             b = self.browser
 
-            b.select_from_dropdown("#source-type", "os")
-            b.set_input_text("#os-select-group input", "Fedora")
-            b.click(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.FEDORA_28}')")
-            b.wait_attr_contains("#os-select-group input", "value", TestMachinesCreate.TestCreateConfig.FEDORA_28)
+            self.set_DropdownSelect("details.source.type", "os")
+            self.set_TypeaheadSelect("details.source.os", TestMachinesCreate.TestCreateConfig.FEDORA_28)
             b.wait_not_present("#navbar-oops")
 
             b.click("#pf-tab-1-automation")
-            b.set_input_text("#create-vm-dialog-user-password-pw1", "foobaruser")
-            b.set_input_text("#create-vm-dialog-root-password-pw1", "foobarroot")
+            self.set_TextInput("automation.users.userPassword", "foobaruser")
+            self.set_TextInput("automation.users.rootPassword", "foobarroot")
 
             b.click("#pf-tab-0-details-tab")
-            b.select_from_dropdown("#source-type", "cloud")
+            self.set_TextInput("details.source.type", "cloud")
 
             b.click("#pf-tab-1-automation")
 
             # Check switching from "os" to "cloud" sourcetype did not reset passwords
-            b.wait_attr("#create-vm-dialog-user-password-pw1", "value", "foobaruser")
-            b.wait_attr("#create-vm-dialog-root-password-pw1", "value", "foobarroot")
+            self.wait_TextInput("automation.users.userPassword", "foobaruser")
+            self.wait_TextInput("automation.users.rootPassword", "foobarroot")
 
             return self
 
         def checkOsFiltered(self):
             b = self.browser
 
-            b.focus("#os-select-group input")
+            b.focus(self.field("details.source.os") + " input")
             # os_search_name is meant to be used to test substring match
             b.input_text(self.os_search_name or self.os_name)
 
             if not self.os_is_not_found:
                 # There should be exactly one entry
-                b.wait_in_text("#os-select li button:not(:disabled)", self.os_name)
+                b.wait_in_text(".pf-v6-c-menu ul li button:not(:disabled)", self.os_name)
                 # It might have a description
                 if self.os_is_unsupported:
-                    b.wait_in_text("#os-select li button:not(:disabled)", "Vendor support ended")
+                    b.wait_in_text(".pf-v6-c-menu ul li button:not(:disabled)", "Vendor support ended")
                 elif self.os_is_old:
-                    b.wait_in_text("#os-select li button:not(:disabled)", "Released ")
+                    b.wait_in_text(".pf-v6-c-menu ul li button:not(:disabled)", "Released ")
             else:
-                b.wait_in_text("#os-select li button", "No results found")
+                b.wait_in_text(".pf-v6-c-menu ul li button", "No results found")
 
             return self
 
         def checkRhelIsDownloadable(self):
             b = self.browser
 
-            b.select_from_dropdown("#source-type", "os")
-            b.set_input_text("#os-select-group input", "Red Hat")
+            self.set_DropdownSelect("details.source.type", "os")
+            b.set_input_text(self.field("details.source.os") + " input", "Red Hat")
 
             # Check only RHEL >= 8 is shown
-            b.wait_visible(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_8_1}')")
-            b.wait_not_present(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_7_1}')")
+            sel = ".pf-v6-c-menu ul li"
+            b.wait_visible(f"{sel} button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_8_1}')")
+            b.wait_not_present(f"{sel} button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_7_1}')")
             # make the select list go away to not obscure other elements
-            b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
-            b.wait_not_present("#os-select li")
+            b.click(self.field("details.source.os") + " button.pf-v6-c-menu-toggle__button")
+            b.wait_not_present(".pf-v6-c-menu")
 
             return self
 
         def checkOsSorted(self, sorted_list):
             b = self.browser
 
-            b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
+            b.click(self.field("details.source.os") + " button.pf-v6-c-menu-toggle__button")
 
             # Find the first OS from the sorted list, and get a text of it's next neighbour
             self.assertIn("Fedora 27 Vendor support ended 2018-11-30Fedora 26", b.text(".pf-v6-c-menu__list"))
             # make the select list go away to not obscure other elements
-            b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
+            b.click(self.field("details.source.os") + " button.pf-v6-c-menu-toggle__button")
             b.wait_not_present(".pf-v6-c-menu")
             return self
 
@@ -1324,9 +1324,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
         def createAndVerifyVirtInstallArgsCloudInit(self):
             if self.create_and_run:
-                self.browser.click(".pf-v6-c-modal-box__footer #create-and-run")
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains('Create and run')")
             else:
-                self.browser.click(".pf-v6-c-modal-box__footer #create-and-edit")
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains('Create and edit')")
             self.browser.wait_not_present("#create-vm-dialog")
 
             if self.create_and_run:
@@ -1433,76 +1433,72 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         def fill(self):
             b = self.browser
             if not self.name_generated:
-                b.set_input_text("#vm-name", self.name)
+                self.set_TextInput("name", self.name)
 
-            b.wait_not_present("#offline-token")
+            b.wait_not_present(self.field("details.source.offlineToken"))
             if self.os_name:
-                b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
-                b.click(f"#os-select li button:contains('{self.os_name}')")
-                b.wait_attr("#os-select-group input", "value", self.os_name)
+                self.set_TypeaheadSelect("details.source.os", self.os_name)
 
             if self.sourceType != 'disk_image':
-                b.select_from_dropdown("#source-type", self.sourceType)
+                self.set_DropdownSelect("details.source.type", self.sourceType)
             else:
-                b.wait_not_present("#source-type")
+                b.wait_not_present(self.field("details.source.type"))
 
             if (self.sourceType == 'file' or self.sourceType == 'cloud') and self.location:
-                b.set_file_autocomplete_val("#source-file-group", self.location)
+                self.set_FileAutoComplete("details.source.source", self.location)
             elif self.sourceType == 'disk_image' and self.location:
-                b.set_file_autocomplete_val("#source-disk-group", self.location)
+                self.set_FileAutoComplete("details.source.source", self.location)
             elif self.sourceType == 'pxe':
                 if self.location:
-                    b.select_from_dropdown("#network-select", self.location)
+                    self.set_DropdownSelect("details.source.source", self.location)
             elif self.sourceType == 'url':
-                b.set_input_text("#source-url", self.location)
+                self.set_TextInput("details.source.source", self.location)
 
             if self.sourceTypeSecondChoice:
-                b.select_from_dropdown("#source-type", self.sourceTypeSecondChoice)
+                self.set_DropdownSelect("details.source.type", self.sourceTypeSecondChoice)
 
             # Data loading doesn't start immediately
             time.sleep(1)
-            b.wait_attr("#os-select-group", "data-loading", "false")
+            b.wait_visible("#create-vm-dialog [data-loading=false]")
             # For the mocked fedora URL installation wait to see that the OS section is automatically filled
             if self.sourceType == "url" and self.location == TestMachinesCreate.TestCreateConfig.TREE_URL:
-                b.wait_attr("#os-select-group input", "value", TestMachinesCreate.TestCreateConfig.FEDORA_28)
+                self.wait_TypeaheadSelect("details.source.os", TestMachinesCreate.TestCreateConfig.FEDORA_28)
 
             if self.expected_os_name:
-                b.wait_attr("#os-select-group input", "value", self.expected_os_name)
+                self.wait_TypeaheadSelect("details.source.os", self.expected_os_name)
 
             if self.sourceType == "os" and self.os_name in [TestMachinesCreate.TestCreateConfig.RHEL_8_1,
                                                             TestMachinesCreate.TestCreateConfig.RHEL_8_2]:
                 if not self.offline_token_autofilled:
-                    b.set_input_text("#offline-token", self.offline_token)
-                b.wait_in_text("#offline-token", self.offline_token)
-                b.wait_in_text("#offline-token-helper", "Valid")
+                    self.set_TextInput("details.source.offlineToken", self.offline_token)
+                self.wait_TextInput("details.source.offlineToken", self.offline_token)
+                b.wait_in_text(self.helper_text("details.source.offlineToken"), "Valid")
 
             if self.sourceType != 'disk_image':
                 if not self.expected_storage_size:
-                    b.click("#storage-select")
-                    b.click(f".pf-v6-c-menu li button:contains('{self.storage_pool}')")
+                    self.set_SimpleSelect("details.storage", self.storage_pool)
 
                     if self.storage_pool in [NEW_VOLUME_QCOW2, NEW_VOLUME_RAW] or self.storage_pool == NO_STORAGE:
-                        b.wait_not_present("#storage-volume-select")
+                        b.wait_not_present(self.field("details.storage.storageVolume"))
                     else:
-                        b.wait_visible("#storage-volume-select")
-                        b.select_from_dropdown("#storage-volume-select", self.storage_volume)
+                        self.set_DropdownSelect("details.storage.storageVolume", self.storage_volume)
 
                     if self.storage_pool not in [NEW_VOLUME_QCOW2, NEW_VOLUME_RAW]:
-                        b.wait_not_present("#storage-limit")
+                        b.wait_not_present(self.field("details.storage.newSize"))
                     else:
-                        b.select_from_dropdown("#storage-limit-unit-select", self.storage_size_unit)
+                        self.set_DropdownSelect("details.storage.newSize.unit", self.storage_size_unit)
                         if self.storage_size is not None:
-                            b.set_input_text("#storage-limit", str(self.storage_size), value_check=False)
+                            self.set_TextInput("details.storage.newSize.size", str(self.storage_size))
                 else:
-                    b.wait_val("#storage-limit", self.expected_storage_size)
+                    self.wait_TextInput("details.storage.newSize.size", self.expected_storage_size)
 
             # First select the unit so that UI will auto-adjust the memory input
             # value according to the available total memory on the host
             if not self.expected_memory_size:
-                b.select_from_dropdown("#memory-size-unit-select", self.memory_size_unit)
-                b.set_input_text("#memory-size", str(self.memory_size), value_check=True)
+                self.set_DropdownSelect("details.memory.unit", self.memory_size_unit)
+                self.set_TextInput("details.memory.size", str(self.memory_size))
             else:
-                b.wait_val("#memory-size", self.expected_memory_size)
+                self.wait_TextInput("details.memory.size", self.expected_memory_size)
 
             if (self.connection):
                 b.set_checked(f"#connectionName-{self.connection}", True)
@@ -1512,13 +1508,13 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                     b.click("#pf-tab-1-automation")
 
                 if self.profile:
-                    b.select_from_dropdown("#profile-select", self.profile)
+                    self.set_DropdownSelect("automation.profile", self.profile)
                 if self.user_password:
-                    b.set_input_text("#create-vm-dialog-user-password-pw1", self.user_password)
+                    self.set_TextInput("automation.users.userPassword", self.user_password)
                 if self.user_login:
-                    b.set_input_text("#user-login", self.user_login)
+                    self.set_TextInput("automation.users.userLogin", self.user_login)
                 if self.root_password:
-                    b.set_input_text("#create-vm-dialog-root-password-pw1", self.root_password)
+                    self.set_TextInput("automation.users.rootPassword", self.root_password)
                 if self.ssh_keys is not None:
                     for idx, key in enumerate(self.ssh_keys):
                         b.click("button:contains(Add SSH keys)")
@@ -1530,39 +1526,37 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                         # not typing individual characters. So we have
                         # use set_val and follow it up with
                         # set_input_text for the event.
-                        b.set_val(f"#create-vm-dialog-ssh-key-{idx} textarea", key)
-                        b.set_input_text(f"#create-vm-dialog-ssh-key-{idx} textarea", " ",
-                                         append=True, value_check=False)
+                        sel = self.field(f"automation.sshKeys.{idx}")
+                        b.set_val(sel + " textarea", key)
+                        b.set_input_text(sel + " textarea", " ", append=True, value_check=False)
                         # Check that ssh key was validated
-                        if self.ssh_key_invalid:
-                            self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v6-c-form__group",
-                                                   "test-data", "key-invalid")
-                        else:
-                            b.wait_visible(f"#create-vm-dialog-ssh-key-{idx} #validated")
+                        if not self.ssh_key_invalid:
+                            b.wait_visible(sel + " #validated")
 
                 if self.is_unattended:
-                    b.wait_visible("#create-and-edit[aria-disabled=true]")
+                    btn = self.apply_button("edit")
+                    b.wait_visible(btn + "[aria-disabled=true]")
 
                     # HACK: make sure the mouse is not already hovering the button before entering it
-                    b.mouse("#create-and-edit", "mouseleave")
+                    b.mouse(btn, "mouseleave")
                     b.wait_not_present("#create-and-edit-disabled-tooltip")
 
-                    b.mouse("#create-and-edit", "mouseenter")
+                    b.mouse(btn, "mouseenter")
                     b.wait_visible("#create-and-edit-disabled-tooltip")
                 else:
-                    b.wait_visible("#create-and-run:not([aria-disabled=true])")
+                    b.wait_visible(self.apply_button() + ":not(disabled)")
 
                 if self.sourceType == "cloud":
-                    b.wait_not_present("#extra-argument")
+                    b.wait_not_present(self.field("automation.extraArgs"))
                 else:
-                    b.wait_visible("#extra-argument")
+                    b.wait_visible(self.field("automation.extraArgs"))
 
             if self.extra_arguments:
                 if (self.sourceType in ["file", "url"] and not self.sourceType.endswith(".iso")) \
                 or self.sourceType == "os":
                     b.click("#pf-tab-1-automation")
 
-                b.set_input_text("#extra-argument", self.extra_arguments)
+                self.set_TextInput("automation.extraArgs", self.extra_arguments)
 
             return self
 
@@ -1579,23 +1573,17 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             b = self.browser
 
             if create:
-                if self.sourceType == 'disk_image':
-                    if self.create_and_run:
-                        b.click(".pf-v6-c-modal-box__footer button:contains(Import and run)")
-                    else:
-                        b.click(".pf-v6-c-modal-box__footer button:contains(Import and edit)")
+                if self.create_and_run:
+                    b.click(self.apply_button())
                 else:
-                    if self.create_and_run:
-                        b.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
-                    else:
-                        b.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
+                    b.click(self.apply_button("edit"))
 
             for error, error_msg in errors.items():
-                form_helper_sel = f".pf-v6-c-modal-box__body #{error}-group .pf-v6-c-form__helper-text"
+                form_helper_sel = self.helper_text(error)
                 if is_warning:
-                    error_location = f"{form_helper_sel} .pf-m-warning"
+                    error_location = f"{form_helper_sel}.pf-m-warning"
                 elif is_error:
-                    error_location = f"{form_helper_sel} .pf-m-error"
+                    error_location = f"{form_helper_sel}.pf-m-error"
                 else:
                     error_location = f"{form_helper_sel}"
                 b.wait_visible(error_location)
@@ -1603,12 +1591,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                     b.wait_in_text(error_location, error_msg)
 
             if create:
-                if self.sourceType == 'disk_image':
-                    b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Import and run)[disabled]")
-                    b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
-                else:
-                    b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and run)[disabled]")
-                    b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+                b.wait_visible(self.apply_button() + "[disabled]")
+                b.wait_visible(self.apply_button("edit") + "[disabled]")
 
             return self
 
@@ -1663,9 +1647,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 tag = self.pixel_test_tag + ("-" + subtag if subtag else "")
                 ignore = ["#memory-size-helper"]
                 if self.storage_pool == NO_STORAGE:
-                    self.browser.wait_text("#storage-select", "No storage")
+                    self.browser.wait_text(self.field("details.storage"), "No storage")
                 else:
-                    ignore += ["#storage-limit-helper"]
+                    ignore += [self.helper_text("details.storage")]
                 self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore, skip_layouts=["rtl"])
             return self
 
@@ -1994,9 +1978,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             else:
                 b.wait_in_text(f"#vm-{name}-disks .pf-v6-c-empty-state", "No disks")
                 b.click(f"#vm-{name}-disks-adddisk")
+                d = DialogHelpers(b, f"#vm-{name}-disks-adddisk-dialog-modal-window")
                 # wait for the dialog to initialize and have a stable layout
-                b.wait_visible("#dialog-field-mode")
-                b.click("#dialog-cancel")
+                b.wait_visible(d.field("mode"))
+                b.click(d.cancel_button())
                 b.wait_not_present(".pf-v6-c-modal-box")
 
             if dialog.sourceType == 'pxe' and "network" not in dialog.location:
@@ -2105,18 +2090,16 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             b = self.browser
             dialog.open() \
 
-            b.select_from_dropdown("#source-type", dialog.sourceType)
-            b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
-            b.click(f"#os-select li:contains('{dialog.os_name}') button")
-            b.wait_attr("#os-select-group input", "value", dialog.os_name)
+            dialog.set_DropdownSelect("details.source.type", dialog.sourceType)
+            dialog.set_TypeaheadSelect("details.source.os", dialog.os_name)
             if not dialog.offline_token_autofilled:
-                b.set_input_text("#offline-token", dialog.offline_token)
+                dialog.set_TextInput("details.source.offlineToken", dialog.offline_token)
 
-            b.wait_in_text("#token-helper-message", error_msg)
-            b.wait_in_text("#token-helper-message", "Get a new RHSM token")
+            b.wait_in_text(dialog.helper_text("details.source.offlineToken"), error_msg)
+            b.wait_in_text(dialog.helper_text("details.source.offlineToken"), "Get a new RHSM token")
             if create_disabled:
-                b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and run)[disabled]")
-                b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+                b.wait_visible(dialog.apply_button() + "[disabled]")
+                b.wait_visible(dialog.apply_button("edit") + "[aria-disabled=true]")
 
             dialog.cancel()
 
@@ -2196,7 +2179,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         def checkAutomationTab(self, dialog):
             dialog.open()
 
-            self.browser.select_from_dropdown("#source-type", dialog.sourceType)
+            dialog.set_DropdownSelect("details.source.type", dialog.sourceType)
 
             if dialog.sourceType != 'cloud':
                 self.browser.mouse(".pf-v6-c-tabs__list button[aria-disabled=true]:contains(Automation)",
@@ -2403,7 +2386,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                              create_and_run=False)
         dialog.open().fill()
 
-        b.click(".pf-v6-c-modal-box__footer #create-and-edit")
+        b.click(dialog.apply_button("edit"))
         b.wait_not_present("#create-vm-dialog")
 
         self.waitVmPage("VmNotInstalledBios")
@@ -2442,7 +2425,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                              storage_size=256, storage_size_unit='MiB',
                                              create_and_run=False)
         dialog.open().fill()
-        b.click(".pf-v6-c-modal-box__footer #create-and-edit")
+        b.click(dialog.apply_button("edit"))
         b.wait_not_present("#create-vm-dialog")
         b.wait_in_text(f"#vm-{vmName}-firmware", "BIOS")
 
@@ -2877,6 +2860,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
     def testImportUrlParameters(self):
         """Test that URL parameters can open the import dialog with pre-filled values (full and partial)"""
         b = self.browser
+        d = machineslib.MachinesDialogHelpers(b)
         m = self.machine
 
         config = TestMachinesCreate.TestCreateConfig
@@ -2896,11 +2880,11 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_visible("#create-vm-dialog")
         b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Import a virtual machine")
-        b.wait_val("#vm-name", test_vm_name)
-        b.wait_val("#source-disk input", test_disk_path)
-        b.wait_attr_contains("#os-select-group input", "value", config.FEDORA_28)
+        d.wait_TextInput("name", test_vm_name)
+        d.wait_TypeaheadSelect("details.source.source", test_disk_path)
+        b.wait_attr_contains(d.field("details.source.os") + " input", "value", config.FEDORA_28)
 
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.click(d.cancel_button())
         b.wait_not_present("#create-vm-dialog")
 
         # Test 2: Partial parameters (source only)
@@ -2909,10 +2893,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_visible("#create-vm-dialog")
         b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Import a virtual machine")
-        b.wait_val("#source-disk input", test_disk_path)
-        b.wait_attr("#os-select-group input", "value", "")
+        d.wait_TypeaheadSelect("details.source.source", test_disk_path)
+        d.wait_TypeaheadSelect("details.source.os", "")
 
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.click(d.cancel_button())
         b.wait_not_present("#create-vm-dialog")
 
         # Test 3: Partial parameters (source + name, no OS)
@@ -2922,16 +2906,17 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_visible("#create-vm-dialog")
         b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Import a virtual machine")
-        b.wait_val("#vm-name", test_vm_name)
-        b.wait_val("#source-disk input", test_disk_path)
-        b.wait_attr("#os-select-group input", "value", "")
+        d.wait_TextInput("name", test_vm_name)
+        d.wait_TypeaheadSelect("details.source.source", test_disk_path)
+        d.wait_TypeaheadSelect("details.source.os", "")
 
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.click(d.cancel_button())
         b.wait_not_present("#create-vm-dialog")
 
     def testCreateUrlParameters(self):
         """Test that URL parameters can open the create dialog with pre-filled values (full and partial)"""
         b = self.browser
+        d = machineslib.MachinesDialogHelpers(b)
 
         config = TestMachinesCreate.TestCreateConfig
 
@@ -2943,11 +2928,11 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_visible("#create-vm-dialog")
         b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Create new virtual machine")
-        b.wait_val("#vm-name", test_vm_name)
-        b.wait_val("#source-type", "os")
-        b.wait_attr_contains("#os-select-group input", "value", config.FEDORA_28)
+        d.wait_TextInput("name", test_vm_name)
+        d.wait_DropdownSelect("details.source.type", "os")
+        b.wait_attr_contains(d.field("details.source.os") + " input", "value", config.FEDORA_28)
 
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.click(d.cancel_button())
         b.wait_not_present("#create-vm-dialog")
 
         # Test 2: Partial parameters (name + type=url, no OS)
@@ -2957,20 +2942,20 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_visible("#create-vm-dialog")
         b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Create new virtual machine")
-        b.wait_val("#vm-name", test_vm_name)
-        b.wait_val("#source-type", "url")
-        b.wait_attr("#os-select-group input", "value", "")
+        d.wait_TextInput("name", test_vm_name)
+        d.wait_DropdownSelect("details.source.type", "url")
+        d.wait_TypeaheadSelect("details.source.os", "")
 
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.click(d.cancel_button())
         b.wait_not_present("#create-vm-dialog")
 
         # Test 3: Partial parameters (type=file only)
         b.go("/machines#?action=create&type=file")
 
         b.wait_visible("#create-vm-dialog")
-        b.wait_val("#source-type", "file")
+        d.wait_DropdownSelect("details.source.type", "file")
 
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.click(d.cancel_button())
         b.wait_not_present("#create-vm-dialog")
 
         # Test 4: Partial parameters (type=url + source)
@@ -2979,10 +2964,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.go(f"/machines#?action=create&type=url&source={encoded_source}")
 
         b.wait_visible("#create-vm-dialog")
-        b.wait_val("#source-type", "url")
-        b.wait_val("#source-url", test_source_url)
+        d.wait_DropdownSelect("details.source.type", "url")
+        d.wait_TextInput("details.source.source", test_source_url)
 
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.click(d.cancel_button())
         b.wait_not_present("#create-vm-dialog")
 
 
