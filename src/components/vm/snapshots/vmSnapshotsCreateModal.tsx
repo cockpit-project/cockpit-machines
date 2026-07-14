@@ -32,9 +32,6 @@ import get_available_space_sh from "./get-available-space.sh";
 
 const _ = cockpit.gettext;
 
-let current_user: cockpit.UserInfo | null = null;
-cockpit.user().then(user => { current_user = user });
-
 interface DialogValues {
     name: string,
     description: string,
@@ -112,8 +109,8 @@ function getDefaultMemoryLocation(vm: VM) {
     } else {
         if (vm.connectionName === LIBVIRT_SYSTEM_CONNECTION)
             return "/var/lib/libvirt/memory";
-        else if (current_user)
-            return current_user.home + "/.local/share/libvirt/memory";
+        else
+            return cockpit.info.user.home + "/.local/share/libvirt/memory";
     }
 
     return "";

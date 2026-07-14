@@ -121,9 +121,6 @@ function getPoolSpaceAvailable({
  * see: virtinstall/storage.py - StoragePool.build_default_pool()
  */
 
-let current_user: cockpit.UserInfo | null = null;
-cockpit.user().then(user => { current_user = user });
-
 function getSpaceAvailable(storagePools: StoragePool[], connectionName: ConnectionName): number | undefined {
     let space = getPoolSpaceAvailable({ storagePools, poolName: "default", connectionName });
 
@@ -131,8 +128,8 @@ function getSpaceAvailable(storagePools: StoragePool[], connectionName: Connecti
         let poolPath;
         if (connectionName === LIBVIRT_SYSTEM_CONNECTION)
             poolPath = "/var/lib/libvirt/images";
-        else if (current_user)
-            poolPath = current_user.home + "/.local/share/libvirt/images";
+        else
+            poolPath = cockpit.info.user.home + "/.local/share/libvirt/images";
 
         space = getPoolSpaceAvailable({ storagePools, poolPath, connectionName });
     }

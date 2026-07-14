@@ -6,8 +6,6 @@
 
 import React from 'react';
 
-import { appState } from '../../state';
-
 import { LIBVIRT_SYSTEM_CONNECTION, LIBVIRT_SESSION_CONNECTION, rephraseUI } from '../../helpers.js';
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
@@ -36,8 +34,7 @@ export const MachinesConnectionSelector = ({
     showInfoHelper,
     isReadonly,
 }: MachinesConnectionSelectorProps) => {
-    cockpit.assert(appState.loggedUser);
-    if (appState.loggedUser.id == 0)
+    if (cockpit.info.user.uid == 0)
         return null;
 
     return (

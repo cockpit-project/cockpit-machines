@@ -506,8 +506,7 @@ export async function domainCreate({
             const url = outObj.url;
             const filename = outObj.filename;
             const isSystem = connectionName === LIBVIRT_SYSTEM_CONNECTION;
-            cockpit.assert(appState.loggedUser);
-            const downloadDir = isSystem ? "/var/lib/libvirt/images/" : appState.loggedUser.home + "/.local/share/libvirt/images/";
+            const downloadDir = isSystem ? "/var/lib/libvirt/images/" : cockpit.info.user.home + "/.local/share/libvirt/images/";
             args.sourceType = LOCAL_INSTALL_MEDIA_SOURCE;
             args.source = downloadDir + filename;
 

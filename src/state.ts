@@ -31,10 +31,9 @@ import type { Notification } from './app';
 const _ = cockpit.gettext;
 
 async function getConnectionNames(): Promise<ConnectionName[]> {
-    const loggedUser = await cockpit.user();
     // The 'root' user does not have its own qemu:///session just qemu:///system
     // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
-    if (loggedUser.name == "root")
+    if (cockpit.info.user.name == "root")
         return ["system"];
     else
         return ["system", "session"];
@@ -97,7 +96,6 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
     // System information
 
-    loggedUser: cockpit.UserInfo | null = null;
     systemSocketInactive: boolean = false;
     hardwareVirtEnabled: boolean = true;
     libvirtVersion: number = 0;
@@ -298,8 +296,6 @@ export class AppState extends EventEmitter<AppStateEvents> {
         };
 
         const doit = async () => {
-            this.loggedUser = await cockpit.user();
-
             // get these in the background, it takes quite long
             getVirtInstallCapabilities().then(caps => { this.virtInstallCapabilities = caps; this.#update() });
             getVirtXmlCapabilities().then(caps => { this.virtXmlCapabilities = caps; this.#update() });

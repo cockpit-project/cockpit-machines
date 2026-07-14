@@ -7,6 +7,7 @@ import "cockpit-dark-theme";
 import 'patternfly/patternfly-6-cockpit.scss';
 import 'polyfills'; // once per application
 
+import cockpit from 'cockpit';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
@@ -25,6 +26,7 @@ function appMain(): void {
 
 (function() {
     document.addEventListener("DOMContentLoaded", async function() {
+        await cockpit.init();
         await load_config();
         appMain();
     });
