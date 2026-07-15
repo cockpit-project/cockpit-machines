@@ -13,8 +13,6 @@ import React, { useId } from 'react';
 
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 
-import { FileAutoComplete as CockpitFileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
-
 import {
     DialogField,
     DialogHelperText, OptionalFormGroup,
@@ -25,32 +23,6 @@ import {
 import { convertToUnit, units } from "../../helpers.js";
 
 const _ = cockpit.gettext;
-
-export const FileAutoComplete = ({
-    label,
-    field,
-    placeholder,
-} : {
-    label: React.ReactNode,
-    field: DialogField<string>,
-    placeholder: string,
-}) => {
-    return (
-        <OptionalFormGroup label={label}>
-            <div
-                data-ouia-component-id={field.ouia_id()}
-            >
-                <CockpitFileAutoComplete
-                    placeholder={placeholder}
-                    onChange={(value: string) => field.set(value)}
-                    value={field.get()}
-                    superuser="try"
-                />
-            </div>
-            <DialogHelperText field={field} />
-        </OptionalFormGroup>
-    );
-};
 
 export interface SizeValue {
     size: string,
@@ -89,6 +61,7 @@ export const SizeInput = ({
                     during validation.
                   */}
                 <DialogTextInput
+                    className="ct-machines-size-input"
                     id={id}
                     field={field.sub("size")}
                     type="number"

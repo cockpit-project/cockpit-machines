@@ -6,7 +6,7 @@
 
 import React, { useState, useMemo, useId } from 'react';
 
-import type { ConnectionName, VM, StoragePool, OSInfo } from '../../types';
+import type { ConnectionName, VM, OSInfo } from '../../types';
 
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
@@ -19,15 +19,12 @@ import { useInit } from "hooks.js";
 import cockpit from 'cockpit';
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { TypeaheadSelect, type TypeaheadSelectOption } from 'cockpit-components-typeahead-select';
-import { SimpleSelect, type SimpleSelectOption } from "cockpit-components-simple-select";
 import {
     isEmpty,
     convertToUnit,
     getBestUnit,
     toReadableNumber,
     units,
-    getStorageVolumesUsage, type StorageVolumesUsage,
-    LIBVIRT_SYSTEM_CONNECTION,
 } from "../../helpers.js";
 import {
     getPXEInitialNetworkSource,
@@ -62,67 +59,18 @@ import {
     DialogField,
     DialogHelperText,
     DialogTextInput, OptionalFormGroup,
-    DialogDropdownSelect, DialogDropdownSelectObject,
+    DialogDropdownSelect,
+    DialogRadioSelect,
 } from 'cockpit/dialog';
 
 import {
-    FileAutoComplete,
-} from "../common/dialog";
+    CreateNewValue, init_CreateNew, validate_CreateNew, CreateNew,
+    UseExistingValue, init_UseExisting, validate_UseExisting, UseExisting,
+} from '../common/storage';
+
+import { DialogFileChooserInput, FileChooserFilter } from "cockpit/react/FileChooser";
 
 const _ = cockpit.gettext;
-
-/* Returns pool's available space
- * Pool needs to be referenced by it's name or path.
- */
-function getPoolSpaceAvailable({
-    storagePools,
-    poolName,
-    poolPath,
-    connectionName
-} : {
-    storagePools: StoragePool[],
-    poolName?: string | undefined,
-    poolPath?: string | undefined,
-    connectionName: ConnectionName,
-}): number | undefined {
-    storagePools = storagePools.filter(pool => pool.connectionName === connectionName);
-
-    let storagePool;
-    if (poolName)
-        storagePool = storagePools.find(pool => pool.name === poolName);
-    else if (poolPath)
-        storagePool = storagePools.find(pool => pool.target && pool.target.path === poolPath);
-
-    return (storagePool && storagePool.available) ? Number(storagePool.available) : undefined;
-}
-
-/* Returns available space of default storage pool
- *
- * First it tries to find storage pool called "default"
- * If there is none, a pool with path "/var/lib/libvirt/images" (system connection)
- * or "~/.local/share/libvirt/images" (session connection)
- * If no default pool could be found, virt-install will create a pool named "default",
- * whose available space we cannot predict
- * see: virtinstall/storage.py - StoragePool.build_default_pool()
- */
-
-function getSpaceAvailable(storagePools: StoragePool[], connectionName: ConnectionName): number | undefined {
-    let space = getPoolSpaceAvailable({ storagePools, poolName: "default", connectionName });
-
-    if (!space) {
-        let poolPath;
-        if (connectionName === LIBVIRT_SYSTEM_CONNECTION)
-            poolPath = "/var/lib/libvirt/images";
-        else {
-            cockpit.assert(appState.loggedUser);
-            poolPath = appState.loggedUser.home + "/.local/share/libvirt/images";
-        }
-
-        space = getPoolSpaceAvailable({ storagePools, poolPath, connectionName });
-    }
-
-    return space;
-}
 
 function getVmName(connectionName: ConnectionName, vms: VM[], os: OSInfo) {
     let retName = os.shortId;
@@ -216,6 +164,13 @@ function validate_Source(field: DialogField<SourceValue>) {
     });
 }
 
+function regexFilter(label: string, regex: string): FileChooserFilter {
+    return {
+        label,
+        filter: name => !!name.match(regex),
+    };
+}
+
 const Source = ({
     field,
     connectionName,
@@ -290,35 +245,71 @@ const Source = ({
         );
         break;
 
-    case LOCAL_INSTALL_MEDIA_SOURCE:
+    case LOCAL_INSTALL_MEDIA_SOURCE: {
+        const iso_filters = [
+            regexFilter("ISO files", "\\.iso$")
+        ];
+
         installationSource = (
-            <FileAutoComplete
-                label={_("Installation source")}
+            <DialogFileChooserInput
                 field={source_field}
+                label={_("Installation source")}
                 placeholder={_("Path to ISO file on host's file system")}
+                fileChooserProps={
+                    {
+                        title: _("Select ISO file"),
+                        filters: iso_filters,
+                        superuser: "try",
+                    }
+                }
             />
         );
         break;
+    }
 
-    case CLOUD_IMAGE:
+    case CLOUD_IMAGE: {
+        const qcow2_filters = [
+            regexFilter("QCOW2 files", "\\.qcow2$")
+        ];
+
         installationSource = (
-            <FileAutoComplete
+            <DialogFileChooserInput
+                field={source_field}
                 label={_("Installation source")}
-                field={source_field}
                 placeholder={_("Path to cloud image file on host's file system")}
+                fileChooserProps={
+                    {
+                        title: _("Select cloud image"),
+                        filters: qcow2_filters,
+                        superuser: "try",
+                    }
+                }
             />
         );
         break;
+    }
 
-    case EXISTING_DISK_IMAGE_SOURCE:
+    case EXISTING_DISK_IMAGE_SOURCE: {
+        const image_filters = [
+            regexFilter("QCOW2 or RAW files", "\\.(qcow2|raw)$")
+        ];
+
         installationSource = (
-            <FileAutoComplete
-                label={_("Disk image")}
+            <DialogFileChooserInput
                 field={source_field}
+                label={_("Installation source")}
                 placeholder={_("Existing disk image on host's file system")}
+                fileChooserProps={
+                    {
+                        title: _("Select disk file"),
+                        filters: image_filters,
+                        superuser: "try",
+                    }
+                }
             />
         );
         break;
+    }
 
     case PXE_SOURCE:
         if (source.includes('type=direct')) {
@@ -369,7 +360,7 @@ const Source = ({
                         },
                         {
                             value: LOCAL_INSTALL_MEDIA_SOURCE,
-                            label: _("Local install media (ISO image or distro install tree)"),
+                            label: _("Local ISO install media"),
                         },
                         {
                             value: URL_SOURCE,
@@ -732,60 +723,51 @@ const MemoryRow = ({
     );
 };
 
-interface StorageValue {
-    newSize: SizeValue,
-    storagePoolName: string,
-    storageVolume: string,
+type StorageMode = "create-new" | "use-existing" | "no-storage";
 
-    connectionName: ConnectionName,
-    storagePools: StoragePool[],
+interface StorageValue {
+    mode: StorageMode;
+    create_new: CreateNewValue;
+    use_existing: UseExistingValue;
 }
 
-function init_Storage(connectionName: ConnectionName): StorageValue {
+async function init_Storage(connectionName: ConnectionName): Promise<StorageValue> {
     return {
-        newSize: {
-            size: String(convertToUnit(10 * 1024, units.MiB, units.GiB)),
-            unit: units.GiB.name,
-        },
-        storagePoolName: "NewVolumeQCOW2",
-        storageVolume: "",
-
-        connectionName,
-        storagePools: appState.storagePools.filter(pool => pool.connectionName === connectionName),
+        mode: "create-new",
+        create_new: await init_CreateNew("", connectionName),
+        use_existing: init_UseExisting(connectionName),
     };
 }
 
 function update_Storage(field: DialogField<StorageValue>, minimum: number) {
+    let new_val;
+
     if (minimum) {
         let bestUnit = getBestUnit(minimum, units.B);
         if (bestUnit.base1024Exponent >= 4) bestUnit = units.GiB;
         if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
         const converted = convertToUnit(minimum, units.B, bestUnit);
 
-        field.sub("newSize").set(
-            {
-                size: String(converted),
-                unit: bestUnit.name
-            }
-        );
+        new_val = {
+            size: String(converted),
+            unit: bestUnit.name
+        };
     } else {
-        field.sub("newSize").set(
-            {
-                size: String(convertToUnit(10 * 1024, units.MiB, units.GiB)),
-                unit: units.GiB.name,
-            }
-        );
+        new_val = {
+            size: String(convertToUnit(10 * 1024, units.MiB, units.GiB)),
+            unit: units.GiB.name,
+        };
     }
+
+    field.sub("create_new").sub("size").set(new_val);
 }
 
 function validate_Storage(field: DialogField<StorageValue>) {
-    const { storagePoolName } = field.get();
-
-    if (storagePoolName == 'NewVolumeQCOW2' || storagePoolName == 'NewVolumeRAW')
-        field.sub("newSize").validate(v => {
-            if (Number(v.size) === 0)
-                return _("Storage size must not be 0");
-        });
+    const { mode } = field.get();
+    if (mode == "create-new")
+        validate_CreateNew(field.sub("create_new"));
+    if (mode == "use-existing")
+        validate_UseExisting(field.sub("use_existing"));
 }
 
 const StorageRow = ({
@@ -797,93 +779,59 @@ const StorageRow = ({
     allowNoDisk: boolean,
     minimumStorage: number,
 }) => {
-    const { newSize, storagePoolName, storageVolume, connectionName, storagePools } = field.get();
+    const { mode, create_new: { size: { size, unit } } } = field.get();
 
-    const poolSpaceAvailable = getSpaceAvailable(storagePools, connectionName);
-    const explanationNewVolume = (
-        poolSpaceAvailable
-            ? cockpit.format(
-                _("$0 $1 available at default location"),
-                toReadableNumber(convertToUnit(poolSpaceAvailable, units.B, newSize.unit)),
-                newSize.unit)
-            : ""
-    );
-
-    let warningNewVolume;
-    if (minimumStorage && convertToUnit(newSize.size, newSize.unit, units.B) < minimumStorage) {
-        warningNewVolume = (
+    let warning;
+    if (minimumStorage && convertToUnit(size, unit, units.B) < minimumStorage) {
+        warning = (
             cockpit.format(
                 _("The selected operating system has minimum storage size requirement of $0 $1"),
-                toReadableNumber(convertToUnit(minimumStorage, units.B, newSize.unit)),
-                newSize.unit)
+                toReadableNumber(convertToUnit(minimumStorage, units.B, unit)),
+                unit)
         );
-    }
-
-    let volumeEntries: string[] = [];
-    let isVolumeUsed: StorageVolumesUsage = {};
-    // Existing storage pool is chosen
-    if (storagePoolName !== "NewVolumeQCOW2" && storagePoolName !== "NewVolumeRAW" && storagePoolName !== "NoStorage") {
-        const storagePool = storagePools.find(pool => pool.name === storagePoolName);
-        if (storagePool) {
-            isVolumeUsed = getStorageVolumesUsage(appState.vms, storagePool);
-            volumeEntries = storagePool.volumes.map(vol => vol.name);
-        }
-    }
-
-    const alreadyUsed = storageVolume && isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0;
-
-    const StorageSelectOptions: SimpleSelectOption<string>[] = [
-        { value: "NewVolumeQCOW2", content: _("Create new qcow2 volume") },
-        { value: "NewVolumeRAW", content: _("Create new raw volume") },
-    ];
-    if (allowNoDisk) {
-        StorageSelectOptions.push({ decorator: "divider", key: "dividerNoStorage" });
-        StorageSelectOptions.push({ value: "NoStorage", content: _("No storage") });
-    }
-    const nonEmptyStoragePools = storagePools.filter(pool => pool.volumes.length);
-    if (nonEmptyStoragePools.length > 0) {
-        StorageSelectOptions.push({ decorator: "divider", key: "dividerPools" });
-        StorageSelectOptions.push({ decorator: "header", key: "Storage pools", content: _("Storage pools") });
-        nonEmptyStoragePools.forEach(pool => StorageSelectOptions.push({ value: pool.name, content: pool.name }));
     }
 
     return (
         <>
-            <FormGroup
+            <DialogRadioSelect<StorageMode>
                 label={_("Storage")}
-            >
-                <SimpleSelect
-                    toggleProps={{ ouiaId: field.ouia_id() }}
-                    toggleWidth="100%"
-                    selected={storagePoolName}
-                    onSelect={value => {
-                        field.sub("storagePoolName").set(value);
-                        const storagePool = storagePools.find(pool => pool.name === value);
-                        if (storagePool)
-                            field.sub("storageVolume").set(storagePool.volumes[0].name);
-                    }}
-                    options={StorageSelectOptions}
-                />
-            </FormGroup>
-
-            { storagePoolName !== "NewVolumeQCOW2" &&
-                storagePoolName !== "NewVolumeRAW" &&
-                storagePoolName !== "NoStorage" &&
-                <DialogDropdownSelectObject
-                    label={_("Volume")}
-                    field={field.sub("storageVolume")}
-                    options={volumeEntries}
-                    warning={alreadyUsed && _("This volume is already used by another VM.")}
-                />
+                field={field.sub("mode")}
+                options={
+                    [
+                        {
+                            label: _("Create a new disk image file"),
+                            value: "create-new",
+                        },
+                        {
+                            label: _("Overwrite an existing disk image file, block device, or storage volume"),
+                            value: "use-existing",
+                        },
+                        {
+                            label: _("No Storage"),
+                            value: "no-storage",
+                            excuse: allowNoDisk ? null : _("Installation from a cloud base image requires storage"),
+                        },
+                    ]
+                }
+            />
+            {
+                mode === "create-new" &&
+                    <FormGroup>
+                        <CreateNew
+                            field={field.sub("create_new")}
+                            warning={warning}
+                            namePlaceholder={_("Leave empty to generate name automatically")}
+                        />
+                    </FormGroup>
             }
-
-            { (storagePoolName === "NewVolumeQCOW2" || storagePoolName === "NewVolumeRAW") &&
-                <SizeInput
-                    label={_("Storage limit")}
-                    field={field.sub("newSize")}
-                    warning={warningNewVolume}
-                    explanation={explanationNewVolume}
-                />
+            {
+                mode === "use-existing" &&
+                    <FormGroup>
+                        <UseExisting
+                            field={field.sub("use_existing")}
+                            hideDeviceRow
+                        />
+                    </FormGroup>
             }
         </>
     );
@@ -897,12 +845,12 @@ export interface DetailsValue {
     storage: StorageValue,
 }
 
-export function init_Details(
+export async function init_Details(
     initialSourceType: string,
     initialSource: string,
     initialOS: string,
     osInfoList: OSInfo[]
-): DetailsValue {
+): Promise<DetailsValue> {
     const connectionName = appState.systemSocketInactive ? "session" : "system";
 
     return {
@@ -910,7 +858,7 @@ export function init_Details(
         suggestedName: "",
         source: init_Source(initialSourceType, initialSource, initialOS, osInfoList),
         memory: init_Memory(),
-        storage: init_Storage(connectionName),
+        storage: await init_Storage(connectionName),
     };
 }
 
@@ -937,7 +885,7 @@ export const Details = ({
         } else {
             field.sub("suggestedName").set("");
             field.sub("memory").set(init_Memory());
-            field.sub("storage").set(init_Storage(sub_connectionName.get()));
+            field.sub("storage").set_async(() => init_Storage(sub_connectionName.get()));
         }
     }
 
@@ -950,13 +898,6 @@ export const Details = ({
                 connectionName={sub_connectionName.get()}
                 onValueChanged={(_, val) => {
                     sub_connectionName.set(val);
-                    const { storagePoolName } = field.sub("storage").get();
-                    if (storagePoolName !== "NewVolumeQCOW2" && storagePoolName !== "NewVolumeRAW" && storagePoolName !== "NoStorage") {
-                        // storage pools are different for each connection, so we set storagePool value to default (newVolume)
-                        field.sub("storage").sub("storagePoolName")
-                                .set("NewVolumeQCOW2");
-                    }
-
                     // For different connections the generated VM names might differ
                     // try to regenerate it
                     const { os } = field.sub("source").get();
@@ -973,6 +914,11 @@ export const Details = ({
                 osChanged={osChanged}
             />
 
+            <MemoryRow
+                field={field.sub("memory")}
+                minimumMemory={field.get().source.os?.minimumResources.ram || 0}
+            />
+
             { sourceType != EXISTING_DISK_IMAGE_SOURCE &&
                 <StorageRow
                     field={field.sub("storage")}
@@ -980,11 +926,6 @@ export const Details = ({
                     minimumStorage={field.get().source.os?.minimumResources.storage || 0}
                 />
             }
-
-            <MemoryRow
-                field={field.sub("memory")}
-                minimumMemory={field.get().source.os?.minimumResources.ram || 0}
-            />
         </>
     );
 };

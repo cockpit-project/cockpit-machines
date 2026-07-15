@@ -34,8 +34,8 @@ import {
     needsRHToken,
 } from "./createVmDialogUtils.js";
 
-import { domainCreate } from '../../libvirtApi/domain.js';
-import { storagePoolRefresh, storagePoolGetAll } from '../../libvirtApi/storagePool.js';
+import { encodeVirtArg, domainCreate } from '../../libvirtApi/domain.js';
+import { storagePoolGetAll } from '../../libvirtApi/storagePool.js';
 import { getOsInfoList } from '../../libvirtApi/common.js';
 import { appState } from '../../state';
 
@@ -48,6 +48,7 @@ import {
 
 import { DetailsValue, init_Details, validate_Details, Details } from "./details";
 import { compute_AutomationState, AutomationValue, init_Automation, validate_Automation, Automation } from "./automation";
+import { getNewDiskImagePath } from '../common/storage';
 
 import './createVmDialog.css';
 
@@ -130,7 +131,7 @@ export const CreateVmModal = ({
 
         return {
             name: initialName || "",
-            details: init_Details(defaultSourceType, initialSource || "", initialOS || "", osInfoList),
+            details: await init_Details(defaultSourceType, initialSource || "", initialOS || "", osInfoList),
             automation: init_Automation(),
             osInfoList
         };
@@ -152,13 +153,33 @@ export const CreateVmModal = ({
     }
 
     async function onCreateClicked(values: CreateVmModalValues, variant: "run" | "edit") {
-        const { storagePools } = appState;
         const { details, automation } = values;
         const { source } = details;
         const vmName = isEmpty(values.name.trim()) ? values.details.suggestedName : values.name;
 
         const users = automation.users;
         const unattendedInstallation = !(source.type === CLOUD_IMAGE) && !!(users.rootPassword || users.userLogin || users.userPassword);
+
+        let storageDisk = null;
+        if (details.storage.mode == "create-new") {
+            const params = details.storage.create_new;
+            storageDisk = encodeVirtArg(
+                {
+                    path: await getNewDiskImagePath(params, vmName),
+                    size: convertToUnit(params.size.size, params.size.unit, units.GiB),
+                    format: params.name.format,
+                }
+            );
+        } else if (details.storage.mode == "use-existing") {
+            const params = details.storage.use_existing;
+            storageDisk = encodeVirtArg(
+                {
+                    path: params.file,
+                }
+            );
+        } else
+            storageDisk = "none";
+
         const vmParams = {
             connectionName: details.connectionName,
             vmName,
@@ -168,9 +189,10 @@ export const CreateVmModal = ({
             osVersion: source.os ? source.os.version : '',
             profile: automation.profile,
             memorySize: convertToUnit(details.memory.size, details.memory.unit, units.MiB),
-            storageSize: convertToUnit(details.storage.newSize.size, details.storage.newSize.unit, units.GiB),
-            storagePool: details.storage.storagePoolName,
-            storageVolume: details.storage.storageVolume,
+            storageDisk,
+            storagePool: "",
+            storageSize: 0,
+            storageVolume: "",
             unattended: unattendedInstallation,
             userPassword: users.userPassword,
             rootPassword: users.rootPassword,
@@ -181,19 +203,15 @@ export const CreateVmModal = ({
             extraArguments: automation.extraArgs,
         };
 
-        domainCreate(vmParams).then(() => {
-            if (details.storage.storagePoolName === "NewVolumeQCOW2" || details.storage.storagePoolName === "NewVolumeRAW") {
-                const storagePool = storagePools.find(pool => pool.connectionName === details.connectionName && pool.name === "default");
-                if (storagePool)
-                    storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
-            }
-        }, (exception) => {
-            console.error(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}"`);
-            appState.addNotification({
-                text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
-                detail: exception.message.split(/Traceback(.+)/)[0],
-            });
-        });
+        domainCreate(vmParams)
+            .catch(
+                exception => {
+                    console.error(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}"`);
+                    appState.addNotification({
+                        text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
+                        detail: exception.message.split(/Traceback(.+)/)[0],
+                    });
+                });
 
         if (variant == "edit") {
             cockpit.location.go(["vm"], {
