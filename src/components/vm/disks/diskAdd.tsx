@@ -4,77 +4,48 @@
  * Copyright (C) 2018 Red Hat, Inc.
  */
 
-import type { VM, VMDisk, VMDiskDevice, StoragePool, StorageVolume } from '../../../types';
-
+import cockpit from 'cockpit';
 import React from 'react';
-import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye";
+
+import type { VM, VMDisk, VMDiskDevice } from '../../../types';
+
 import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/ExpandableSection";
 import { Form } from "@patternfly/react-core/dist/esm/components/Form";
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
 } from '@patternfly/react-core/dist/esm/components/Modal';
-import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
-import cockpit from 'cockpit';
 import { useDialogs } from 'dialogs.jsx';
 
-import { diskBusTypes, diskCacheModes, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getVmStoragePools } from '../../../helpers.js';
-import {
-    VolumeCreate, init_VolumeCreate, update_VolumeCreate, validate_VolumeCreate,
-    type VolumeCreateValue,
-} from '../../storagePools/storageVolumeCreateBody.jsx';
+import { diskBusTypes, diskCacheModes, convertToUnit, getNextAvailableTarget } from '../../../helpers.js';
 import { domainGet, virtXmlHotAdd, virtXmlHotEdit, domainIsRunning } from '../../../libvirtApi/domain.js';
-import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
-import { storageVolumeCreate } from '../../../libvirtApi/storageVolume.js';
-import { appState } from '../../../state';
 
 import {
     useDialogState_async, DialogState,
     DialogField,
     DialogError, DialogErrorMessage,
     DialogRadioSelect, DialogRadioSelectOption,
-    DialogDropdownSelect, DialogDropdownSelectObject,
+    DialogDropdownSelectObject,
     DialogTextInput,
     DialogCheckbox,
     DialogActionButton, DialogCancelButton,
 } from 'cockpit/dialog';
 
-import { FileAutoComplete } from '../../common/dialog';
+import { FileChooser } from "cockpit/react/FileChooser";
+
+import {
+    CreateNewValue, init_CreateNew, validate_CreateNew, CreateNew,
+    createNewDiskImage,
+    UseExistingValue, init_UseExisting, validate_UseExisting, UseExisting,
+} from '../../common/storage';
 
 const _ = cockpit.gettext;
 
 const CREATE_NEW = 'create-new';
 const USE_EXISTING = 'use-existing';
-const CUSTOM_PATH = 'custom-path';
-
-const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
 
 function clearSerial(serial: string): string {
     return serial.replace(' ', '_').replace(/([^A-Za-z0-9_.+-]+)/gi, '');
-}
-
-function getFilteredVolumes(vmStoragePool: StoragePool, disks: Record<string, VMDisk>): StorageVolume[] {
-    const usedDiskPaths = Object.getOwnPropertyNames(disks)
-            .map(target => (disks[target].source && (disks[target].source.file || disks[target].source.volume || disks[target].source.dev)))
-            .filter(Boolean);
-
-    const filteredVolumes = (vmStoragePool.volumes || []).filter(volume => !usedDiskPaths.includes(volume.path) && !usedDiskPaths.includes(volume.name));
-
-    const filteredVolumesSorted = filteredVolumes.sort(function(a, b) {
-        return a.name.localeCompare(b.name);
-    });
-
-    return filteredVolumesSorted;
-}
-
-function getDiskUsageMessage(vms: VM[], storagePool: StoragePool, volumeName: string) {
-    const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
-
-    if (!isVolumeUsed[volumeName] || (isVolumeUsed[volumeName].length === 0))
-        return null;
-
-    const vmsUsing = isVolumeUsed[volumeName].join(', ');
-    return cockpit.format(_("This volume is already used by $0."), vmsUsing);
 }
 
 interface AdditionalOptionsValue {
@@ -196,335 +167,60 @@ const AdditionalOptions = ({
     );
 };
 
-interface CreateNewValue {
-    pool: StoragePool;
-    volume: VolumeCreateValue;
-
-    _pools: StoragePool[];
-}
-
-function init_CreateNew(pools: StoragePool[]): CreateNewValue | string {
-    const filtered_pools = pools.filter(p => !poolTypesNotSupportingVolumeCreation.includes(p.type));
-
-    if (filtered_pools.length == 0)
-        return _("No pools that allow volume creation");
-
-    return {
-        pool: filtered_pools[0],
-        volume: init_VolumeCreate(filtered_pools[0]),
-
-        _pools: filtered_pools,
-    };
-}
-
-function validate_CreateNew(field: DialogField<CreateNewValue | string>) {
-    const val = field.get();
-    if (typeof val == "string")
-        return;
-
-    const vc_field = field.at(val);
-    validate_VolumeCreate(vc_field.sub("volume"));
-}
-
-const CreateNew = ({
-    field,
-} : {
-    field: DialogField<CreateNewValue | string>,
-}) => {
-    const val = field.get();
-    if (typeof val == "string")
-        return null;
-
-    const vc_field = field.at(val);
-    const { _pools } = val;
-
-    function update_pool(p: StoragePool) {
-        update_VolumeCreate(vc_field.sub("volume"), p);
-    }
-
-    return (
-        <>
-            <DialogDropdownSelectObject
-                label={_("Pool")}
-                field={vc_field.sub("pool", update_pool)}
-                options={_pools}
-                option_label={p => p.name}
-            />
-            <VolumeCreate field={vc_field.sub("volume")} />
-        </>
-    );
-};
-
-interface ExistingPool {
-    name: string,
-    volumes: string[],
-
-    _storagePool: StoragePool,
-}
-
-interface UseExistingValue {
-    pool: ExistingPool,
-    volume: string,
-
-    _pools: ExistingPool[];
-    _vms: VM[];
-}
-
-function init_UseExisting(vm: VM, vms: VM[], pools: StoragePool[]): UseExistingValue | string {
-    const filtered_pools: ExistingPool[] = [];
-    for (const p of pools) {
-        const volumes = getFilteredVolumes(p, vm.disks);
-        if (volumes.length > 0) {
-            filtered_pools.push(
-                {
-                    name: p.name,
-                    volumes: volumes.map(v => v.name),
-                    _storagePool: p,
-                }
-            );
-        }
-    }
-
-    if (filtered_pools.length == 0)
-        return _("No usable storage volumes");
-
-    return {
-        pool: filtered_pools[0],
-        volume: filtered_pools[0].volumes[0],
-
-        _pools: filtered_pools,
-        _vms: vms,
-    };
-}
-
-const UseExisting = ({
-    field,
-} : {
-    field: DialogField<UseExistingValue | string>,
-}) => {
-    const val = field.get();
-    if (typeof val == "string")
-        return null;
-
-    const ue_field = field.at(val);
-    const { pool, volume, _pools, _vms } = val;
-
-    function update_pool(p: ExistingPool) {
-        ue_field.sub("volume").set(p.volumes[0]);
-    }
-
-    const diskUsageMessage = pool._storagePool && getDiskUsageMessage(_vms, pool._storagePool, volume);
-
-    return (
-        <>
-            <DialogDropdownSelectObject
-                label={_("Pool")}
-                field={ue_field.sub("pool", update_pool)}
-                options={_pools}
-                option_label={p => p.name}
-            />
-            <DialogDropdownSelectObject
-                label={_("Volume")}
-                field={ue_field.sub("volume")}
-                options={pool.volumes}
-                warning={diskUsageMessage}
-            />
-        </>
-    );
-};
-
-interface FileInfo {
-    format: string;
-    usesBackingFile: boolean;
-}
-
-type FileInfoCache = Record<string, FileInfo>;
-
-async function getFileInfo(file: string, cache: FileInfoCache): Promise<FileInfo> {
-    if (file in cache)
-        return cache[file];
-
-    const file_header = await cockpit.spawn(
-        ["head", "--bytes=16", file],
-        { binary: true, err: "message", superuser: "try" }
-    );
-
-    // https://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/qcow2.txt
-    let result;
-    if (file_header[0] == 81 && file_header[1] == 70 &&
-        file_header[2] == 73 && file_header[3] == 251) {
-        result = {
-            format: "qcow2",
-            // All zeros, no backing file offset
-            usesBackingFile: !file_header.slice(8).every(bytes => bytes === 0),
-        };
-    } else {
-        result = {
-            format: "raw",
-            usesBackingFile: false,
-        };
-    }
-
-    cache[file] = result;
-    return result;
-}
-
-interface CustomPathValue {
-    file: string,
-    device: "disk" | "cdrom",
-    _fileInfoCache: FileInfoCache,
-}
-
-function init_CustomPath(): CustomPathValue {
-    return {
-        file: "",
-        device: "disk",
-        _fileInfoCache: {},
-    };
-}
-
-function validate_CustomPath(field: DialogField<CustomPathValue>) {
-    const { _fileInfoCache } = field.get();
-    field.sub("file").validate_async(0, async file => {
-        if (!file)
-            return _("Path cannot be empty");
-
-        const { usesBackingFile } = await getFileInfo(file, _fileInfoCache);
-        if (usesBackingFile)
-            return _("Importing an image with a backing file is unsupported");
-    });
-}
-
-const CustomPath = ({
-    field,
-    hideDeviceRow
-} : {
-    field: DialogField<CustomPathValue>,
-    hideDeviceRow?: boolean,
-}) => {
-    function update_file(val: string) {
-        if (val.endsWith(".iso"))
-            field.sub("device").set("cdrom");
-    }
-
-    return (
-        <>
-            <FileAutoComplete
-                label={_("Custom path")}
-                field={field.sub("file", update_file)}
-                placeholder={_("Path to file on host's file system")}
-            />
-            {
-                !hideDeviceRow &&
-                    <DialogDropdownSelect
-                        label={_("Device")}
-                        field={field.sub("device")}
-                        options={
-                            [
-                                { value: "disk", label: _("Disk image file") },
-                                { value: "cdrom", label: _("CD/DVD disc") },
-                            ]
-                        }
-                    />
-            }
-        </>
-    );
-};
-
-function getPoolFormatAndDevice(pool: StoragePool | undefined, volName: string | false) {
-    const params: { format: string, device: VMDiskDevice } = {
-        format: pool ? getDefaultVolumeFormat(pool) || "" : "",
-        device: "disk"
-    };
-    if (pool && volName && ['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1) {
-        const volume = (pool.volumes || []).find(vol => vol.name === volName);
-        if (volume?.format) {
-            params.format = volume.format;
-            if (volume.format === "iso")
-                params.device = "cdrom";
-        }
-    }
-    return params;
-}
-
-const sortFunction = (poolA: StoragePool, poolB: StoragePool) => poolA.name.localeCompare(poolB.name);
-
-type Mode = typeof USE_EXISTING | typeof CUSTOM_PATH | typeof CREATE_NEW;
+type Mode = typeof CREATE_NEW | typeof USE_EXISTING;
 
 interface AddDiskValues {
     mode: Mode,
-    custom_path: CustomPathValue,
-    use_existing: UseExistingValue | string,
-    create_new: CreateNewValue | string,
+    create_new: CreateNewValue,
+    use_existing: UseExistingValue,
     permanent: boolean,
     additional_options: AdditionalOptionsValue,
 }
 
 export const AddDisk = ({
-    disk,
     idPrefix,
-    isMediaInsertion = false,
     vm,
 } : {
-    disk?: VMDisk,
     idPrefix: string,
-    isMediaInsertion?: boolean,
     vm: VM,
 }) => {
     const Dialogs = useDialogs();
 
     async function init(): Promise<AddDiskValues> {
-        const vms = await appState.getVms();
-
-        // Refresh storage volume list before displaying the dialog.
-        // There are recently no Libvirt events for storage volumes and polling is ugly.
-        // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
-        await storagePoolGetAll({ connectionName: vm.connectionName });
-        const pools = getVmStoragePools(vm.connectionName).sort(sortFunction);
-
-        const custom_path = init_CustomPath();
-        const use_existing = init_UseExisting(vm, vms, pools);
-        const create_new = init_CreateNew(pools);
-
-        let mode: AddDiskValues["mode"] = CUSTOM_PATH;
-        if (!isMediaInsertion && typeof create_new != "string")
-            mode = CREATE_NEW;
-        else if (!isMediaInsertion && typeof use_existing != "string")
-            mode = USE_EXISTING;
-
         return {
-            mode,
-            custom_path,
-            use_existing,
-            create_new,
+            mode: CREATE_NEW,
+            /* XXX - select default location and basename based on existing disks of vm. */
+            create_new: await init_CreateNew(vm.name, vm.connectionName),
+            use_existing: init_UseExisting(vm.connectionName),
             permanent: vm.persistent,
             additional_options: init_AdditionalOptions(vm, "disk"),
         };
     }
 
     function validate(dlg: DialogState<AddDiskValues>) {
-        if (dlg.values.mode == CREATE_NEW)
+        if (dlg.values.mode == CREATE_NEW) {
             validate_CreateNew(dlg.field("create_new"));
-        if (dlg.values.mode == CUSTOM_PATH)
-            validate_CustomPath(dlg.field("custom_path"));
-        if (!isMediaInsertion)
-            validate_AdditionalOptions(dlg.field("additional_options"));
+            dlg.field("create_new").sub("name").validate(val => {
+                if (val.base == "")
+                    return _("Name can not be empty");
+            });
+        }
+        else if (dlg.values.mode == USE_EXISTING)
+            validate_UseExisting(dlg.field("use_existing"));
+        validate_AdditionalOptions(dlg.field("additional_options"));
     }
 
     function get_device(values: AddDiskValues): VMDiskDevice {
         const { mode } = values;
-        if (mode == USE_EXISTING && typeof values.use_existing != "string") {
-            const { pool, volume } = values.use_existing;
-            return getPoolFormatAndDevice(pool._storagePool, volume).device;
-        } else if (mode == CREATE_NEW) {
+        if (mode == CREATE_NEW) {
             return "disk";
-        } else if (mode == CUSTOM_PATH) {
-            return values.custom_path.device;
+        } else if (mode == USE_EXISTING) {
+            return values.use_existing.device;
         } else
             return "disk";
     }
 
-    function update_bus() {
+    function update_options() {
         cockpit.assert(dlg instanceof DialogState);
         const device = get_device(dlg.values);
         if (device)
@@ -533,62 +229,40 @@ export const AddDisk = ({
 
     const dlg = useDialogState_async<AddDiskValues>(init, validate);
 
+    const mode_options: DialogRadioSelectOption<Mode>[] = [
+        {
+            value: CREATE_NEW,
+            label: _("Create a new disk image"),
+        },
+        {
+            value: USE_EXISTING,
+            label: _("Use an existing disk image, block device, or storage volume"),
+        },
+    ];
+
     let defaultBody;
 
-    if (!dlg) {
-        defaultBody = (
-            <Bullseye>
-                <Spinner />
-            </Bullseye>
-        );
-    } else if (dlg instanceof DialogError) {
-        defaultBody = null;
-    } else {
-        const { mode, use_existing, create_new } = dlg.values;
-
-        let mode_options: DialogRadioSelectOption<Mode>[] = [
-            {
-                value: CREATE_NEW,
-                label: _("Create new"),
-                excuse: typeof create_new == "string" ? create_new : undefined,
-            },
-            {
-                value: USE_EXISTING,
-                label: _("Use existing"),
-                excuse: typeof use_existing == "string" ? use_existing : undefined,
-            },
-            {
-                value: CUSTOM_PATH,
-                label: _("Custom path")
-            },
-        ];
-
-        if (isMediaInsertion)
-            mode_options = [mode_options[2], mode_options[1]];
-
+    if (dlg instanceof DialogState) {
+        const { mode } = dlg.values;
         defaultBody = (
             <>
                 <Form onSubmit={e => e.preventDefault()} isHorizontal>
                     <DialogRadioSelect
                         isInline
-                        label={_("Source")}
-                        field={dlg.field("mode", update_bus)}
+                        label={" "}
+                        field={dlg.field("mode", update_options)}
                         options={mode_options}
                     />
                     {
                         mode === CREATE_NEW &&
-                            <CreateNew field={dlg.field("create_new", update_bus)} />
+                            <CreateNew field={dlg.field("create_new", update_options)} />
                     }
                     {
                         mode === USE_EXISTING &&
-                            <UseExisting field={dlg.field("use_existing", update_bus)} />
+                            <UseExisting field={dlg.field("use_existing", update_options)} />
                     }
                     {
-                        mode === CUSTOM_PATH &&
-                            <CustomPath field={dlg.field("custom_path", update_bus)} hideDeviceRow={isMediaInsertion} />
-                    }
-                    {
-                        !isMediaInsertion && vm.persistent && domainIsRunning(vm.state) &&
+                        vm.persistent && domainIsRunning(vm.state) &&
                             <DialogCheckbox
                                 field_label={_("Persistence")}
                                 checkbox_label={_("Always attach")}
@@ -596,48 +270,9 @@ export const AddDisk = ({
                             />
                     }
                 </Form>
-                { !isMediaInsertion &&
-                    <AdditionalOptions field={dlg.field("additional_options")} />
-                }
+                <AdditionalOptions field={dlg.field("additional_options")} />
             </>
         );
-    }
-
-    async function insert_media(values: AddDiskValues) {
-        try {
-            let xml;
-            if (values.mode === CUSTOM_PATH) {
-                xml = {
-                    type: "file",
-                    source: {
-                        file: values.custom_path.file
-                    }
-                };
-            } else if (values.mode === USE_EXISTING && typeof values.use_existing != "string") {
-                xml = {
-                    type: "volume",
-                    source: {
-                        pool: values.use_existing.pool.name,
-                        volume: values.use_existing.volume,
-                    }
-                };
-            } else
-                return;
-
-            cockpit.assert(disk);
-
-            await virtXmlHotEdit(
-                vm,
-                "disk",
-                { target: { dev: disk.target } },
-                xml
-            );
-
-            // force reload of VM data, events are not reliable (i.e. for a down VM)
-            domainGet({ connectionName: vm.connectionName, id: vm.id });
-        } catch (ex) {
-            throw DialogError.fromError(_("Media failed to be inserted"), ex);
-        }
     }
 
     async function add_disk(values: AddDiskValues) {
@@ -669,50 +304,28 @@ export const AddDisk = ({
                 },
             };
 
-            if (values.mode === CREATE_NEW && typeof values.create_new != "string") {
+            if (values.mode === CREATE_NEW) {
                 const params = values.create_new;
-                const size = convertToUnit(params.volume.newSize.size, params.volume.newSize.unit, 'MiB');
-                await storageVolumeCreate({
-                    connectionName: vm.connectionName,
-                    poolName: params.pool.name,
-                    volName: params.volume.name,
-                    size,
-                    format: params.volume.format,
-                });
+                const path = await createNewDiskImage(params);
                 await virtXmlHotAdd(
                     vm,
                     "disk",
                     {
-                        vol: params.pool.name + "/" + params.volume.name,
-                        format: params.volume.format,
+                        path,
+                        format: params.name.format,
                         ...common,
                     },
                     values.permanent,
                 );
-            } else if (values.mode == CUSTOM_PATH) {
-                const params = values.custom_path;
-                const file_info = await getFileInfo(params.file, params._fileInfoCache);
+            } else if (values.mode == USE_EXISTING) {
+                const params = values.use_existing;
                 await virtXmlHotAdd(
                     vm,
                     "disk",
                     {
                         path: params.file,
-                        format: file_info.format,
+                        format: params.format,
                         device: params.device,
-                        ...common,
-                    },
-                    values.permanent,
-                );
-            } else if (values.mode == USE_EXISTING && typeof values.use_existing != "string") {
-                const params = values.use_existing;
-                const { device, format } = getPoolFormatAndDevice(params.pool._storagePool, params.volume);
-                await virtXmlHotAdd(
-                    vm,
-                    "disk",
-                    {
-                        vol: params.pool.name + "/" + params.volume,
-                        format,
-                        device,
                         ...common,
                     },
                     values.permanent,
@@ -726,6 +339,8 @@ export const AddDisk = ({
         }
     }
 
+    const overwrite = dlg instanceof DialogState && dlg.values.mode == CREATE_NEW && dlg.values.create_new.exists;
+
     return (
         <Modal
             position="top"
@@ -734,23 +349,69 @@ export const AddDisk = ({
             isOpen
             onClose={Dialogs.close}
         >
-            <ModalHeader title={isMediaInsertion ? _("Insert disc media") : _("Add disk")} />
+            <ModalHeader title={_("Add disk")} />
             <ModalBody>
                 <DialogErrorMessage dialog={dlg} />
                 {defaultBody}
             </ModalBody>
             <ModalFooter>
-                {
-                    isMediaInsertion
-                        ? <DialogActionButton dialog={dlg} action={insert_media} onClose={Dialogs.close}>
-                            {_("Insert")}
-                        </DialogActionButton>
-                        : <DialogActionButton dialog={dlg} action={add_disk} onClose={Dialogs.close}>
-                            {_("Add")}
-                        </DialogActionButton>
-                }
+                <DialogActionButton
+                    dialog={dlg}
+                    action={add_disk}
+                    onClose={Dialogs.close}
+                    variant={overwrite ? "danger" : "primary"}
+                >
+                    {overwrite ? _("Overwrite and add") : _("Add")}
+                </DialogActionButton>
                 <DialogCancelButton dialog={dlg} onClose={Dialogs.close} />
             </ModalFooter>
         </Modal>
+    );
+};
+
+export const InsertMedia = ({
+    disk,
+    vm,
+} : {
+    disk: VMDisk,
+    vm: VM,
+}) => {
+    async function insert_media(file: string) {
+        try {
+            const xml = {
+                type: "file",
+                source: {
+                    file
+                }
+            };
+
+            await virtXmlHotEdit(
+                vm,
+                "disk",
+                { target: { dev: disk.target } },
+                xml
+            );
+
+            // force reload of VM data, events are not reliable (i.e. for a down VM)
+            domainGet({ connectionName: vm.connectionName, id: vm.id });
+        } catch (ex) {
+            throw DialogError.fromError(_("Media failed to be inserted"), ex);
+        }
+    }
+
+    return (
+        <FileChooser
+            title={_("Insert media")}
+            actionLabel={_("Insert")}
+            action={insert_media}
+            filters={
+                [
+                    {
+                        label: _("ISO files"),
+                        filter: name => !!name.match("\\.iso$"),
+                    },
+                ]
+            }
+        />
     );
 };
