@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-12 05:43+0000\n"
+"POT-Creation-Date: 2026-07-18 05:12+0000\n"
 "PO-Revision-Date: 2026-06-29 09:17+0000\n"
 "Last-Translator: Luna Jernberg <droidbittin@gmail.com>\n"
 "Language-Team: Swedish <https://translate.fedoraproject.org/projects/cockpit/"
@@ -64,8 +64,8 @@ msgstr "$0 minnesjustering"
 msgid "$0 network"
 msgstr "$0 Nätverk"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:140
 #: src/components/vm/vmUsageCard.tsx:35
+#: src/components/vm/overview/vmOverviewCard.tsx:140
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
@@ -88,8 +88,8 @@ msgstr ""
 "stängs av. Under tiden behåller ursprungsvärden sitt exemplar av VM-"
 "konfigurationen."
 
-#: src/components/vm/disks/vmDisksCard.tsx:246
 #: src/components/vm/disks/diskEdit.tsx:130
+#: src/components/vm/disks/vmDisksCard.tsx:246
 msgid "Access"
 msgstr "Åtkomst"
 
@@ -97,8 +97,8 @@ msgstr "Åtkomst"
 msgid "Action"
 msgstr "Åtgärd"
 
-#: src/components/vm/disks/vmDisksCard.tsx:162
 #: src/components/vm/nics/vmNicsCard.tsx:593
+#: src/components/vm/disks/vmDisksCard.tsx:162
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/storagePools/storagePoolList.tsx:65
 #: src/components/vms/hostvmslist.tsx:317
@@ -115,11 +115,11 @@ msgstr "Aktivera"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Aktivera lagringspoolen för att administrera volymer"
 
-#: src/components/vm/disks/diskAdd.tsx:749
+#: src/components/vm/hostdevs/hostDevAdd.tsx:261
 #: src/components/vm/nics/nicBody.tsx:577 src/components/vm/nics/nicAdd.tsx:277
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/disks/diskAdd.tsx:749
 #: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
 msgstr "Lägg till"
@@ -226,8 +226,8 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "Ta också bort alla volymer i denna pool:"
 
-#: src/components/vm/disks/diskAdd.tsx:594
 #: src/components/vm/nics/nicAdd.tsx:138
+#: src/components/vm/disks/diskAdd.tsx:594
 msgid "Always attach"
 msgstr "Anslut alltid"
 
@@ -315,18 +315,18 @@ msgstr "Uppstartsordningen kunde inte sparas"
 msgid "Bridge"
 msgstr "Brygga"
 
-#: src/components/vm/disks/diskAdd.tsx:177
-#: src/components/vm/disks/vmDisksCard.tsx:241
-#: src/components/vm/disks/diskEdit.tsx:93
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/hostdevs/hostDevCard.tsx:91
+#: src/components/vm/hostdevs/hostDevCard.tsx:99
+#: src/components/vm/hostdevs/hostDevCard.tsx:250
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
-#: src/components/vm/hostdevs/hostDevCard.tsx:91
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/hostdevs/hostDevCard.tsx:250
+#: src/components/vm/disks/diskAdd.tsx:177
+#: src/components/vm/disks/diskEdit.tsx:93
+#: src/components/vm/disks/vmDisksCard.tsx:241
 msgid "Bus"
 msgstr "Buss"
 
@@ -334,10 +334,10 @@ msgstr "Buss"
 msgid "CD/DVD disc"
 msgstr "CD/DVD skiva"
 
-#: src/components/common/needsShutdown.tsx:206
+#: src/components/vm/vmUsageCard.tsx:52
 #: src/components/vm/overview/vmOverviewCard.tsx:178
-#: src/components/vm/vmUsageCard.tsx:52 src/components/vms/hostvmslist.tsx:86
-#: src/components/vms/hostvmslist.tsx:294
+#: src/components/vms/hostvmslist.tsx:86 src/components/vms/hostvmslist.tsx:294
+#: src/components/common/needsShutdown.tsx:206
 msgid "CPU"
 msgstr "CPU"
 
@@ -346,8 +346,8 @@ msgid "CPU mode could not be saved"
 msgstr "CPU-läget kunde inte sparas"
 
 #: src/components/vm/disks/diskAdd.tsx:172
-#: src/components/vm/disks/vmDisksCard.tsx:257
 #: src/components/vm/disks/diskEdit.tsx:167
+#: src/components/vm/disks/vmDisksCard.tsx:257
 msgid "Cache"
 msgstr "Cache"
 
@@ -355,28 +355,28 @@ msgstr "Cache"
 msgid "Can not determine guest device name"
 msgstr "Kan inte fastställa gästenhetens namn"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1734
-#: src/components/common/deleteResource.tsx:116
-#: src/components/vm/disks/mediaEject.tsx:116
+#: src/components/vm/vmMigrateDialog.tsx:227
+#: src/components/vm/hostdevs/hostDevAdd.tsx:266
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/vm/overview/firmware.tsx:107
-#: src/components/vm/overview/bootOrder.tsx:356
-#: src/components/vm/overview/cpuModal.tsx:341
-#: src/components/vm/overview/memoryModal.tsx:195
+#: src/components/vm/confirmDialog.tsx:66
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/vmReplaceSpiceDialog.tsx:171
+#: src/components/vm/vmRenameDialog.tsx:96
 #: src/components/vm/overview/vsock.tsx:272
 #: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/overview/bootOrder.tsx:356
+#: src/components/vm/overview/memoryModal.tsx:195
+#: src/components/vm/overview/cpuModal.tsx:341
+#: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/disks/mediaEject.tsx:116
+#: src/components/vm/vmCloneDialog.tsx:111
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
-#: src/components/vm/confirmDialog.tsx:66
-#: src/components/vm/hostdevs/hostDevAdd.tsx:266
-#: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/vmCloneDialog.tsx:111
 #: src/components/vm/deleteDialog.tsx:216
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/storagePools/createStoragePoolDialog.tsx:512
 #: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/storagePools/createStoragePoolDialog.tsx:512
+#: src/components/common/deleteResource.tsx:116
+#: src/components/create-vm-dialog/createVmDialog.tsx:1734
 #: src/components/networks/networkOverviewTab.tsx:271
 #: src/components/networks/createNetworkDialog.tsx:548
 msgid "Cancel"
@@ -470,17 +470,17 @@ msgstr "Samtidigt skrivbar"
 msgid "Confirm this action"
 msgstr "Bekräfta den här åtgärden"
 
-#: src/components/vm/consoles/serial.tsx:86
 #: src/components/vm/consoles/vnc.tsx:539
+#: src/components/vm/consoles/serial.tsx:86
 msgid "Connect"
 msgstr "Anslut"
 
-#: src/components/common/machinesConnectionSelector.tsx:44
 #: src/components/vm/overview/vmOverviewCard.tsx:158
 #: src/components/storagePools/storagePoolList.tsx:63
 #: src/components/vms/hostvmslist.tsx:314
-#: src/components/networks/networkList.tsx:61
+#: src/components/common/machinesConnectionSelector.tsx:44
 #: src/components/networks/createNetworkDialog.tsx:34
+#: src/components/networks/networkList.tsx:61
 msgid "Connection"
 msgstr "Anslutning"
 
@@ -538,8 +538,8 @@ msgid "Crashed"
 msgstr "Kraschad"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
-#: src/components/storagePools/createStoragePoolDialog.tsx:509
 #: src/components/storagePools/storageVolumeCreate.tsx:95
+#: src/components/storagePools/createStoragePoolDialog.tsx:509
 #: src/components/networks/createNetworkDialog.tsx:545
 msgid "Create"
 msgstr "Skapa"
@@ -667,14 +667,14 @@ msgstr "DHCP Inställningar"
 msgid "Deactivate"
 msgstr "Avaktivera"
 
-#: src/components/common/deleteResource.tsx:104
-#: src/components/common/deleteResource.tsx:164
-#: src/components/common/deleteResource.tsx:175
 #: src/components/vm/vmActions.tsx:466 src/components/vm/vmActions.tsx:474
 #: src/components/vm/deleteDialog.tsx:213
 #: src/components/storagePools/storagePoolDelete.tsx:204
 #: src/components/storagePools/storagePoolDelete.tsx:234
 #: src/components/storagePools/storagePoolDelete.tsx:244
+#: src/components/common/deleteResource.tsx:104
+#: src/components/common/deleteResource.tsx:164
+#: src/components/common/deleteResource.tsx:175
 #: src/components/networks/network.tsx:126
 #: src/components/networks/network.tsx:129
 msgid "Delete"
@@ -718,9 +718,9 @@ msgstr ""
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "Att ta bort delade kataloger är endast möjligt när gästen är avstängd"
 
+#: src/components/vm/vmEditDescriptionDialog.tsx:66
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
-#: src/components/vm/vmEditDescriptionDialog.tsx:66
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -751,18 +751,18 @@ msgstr ""
 msgid "Details"
 msgstr "Detaljer"
 
-#: src/components/vm/disks/diskAdd.tsx:420
-#: src/components/vm/disks/vmDisksCard.tsx:238
-#: src/components/vm/overview/bootOrder.tsx:106
-#: src/components/vm/overview/bootOrder.tsx:113
-#: src/components/vm/overview/bootOrder.tsx:146
-#: src/components/vm/overview/bootOrder.tsx:149
 #: src/components/vm/hostdevs/hostDevAdd.tsx:99
 #: src/components/vm/hostdevs/hostDevAdd.tsx:144
 #: src/components/vm/hostdevs/hostDevCard.tsx:90
 #: src/components/vm/hostdevs/hostDevCard.tsx:249
-#: src/components/networks/networkList.tsx:60
+#: src/components/vm/overview/bootOrder.tsx:106
+#: src/components/vm/overview/bootOrder.tsx:113
+#: src/components/vm/overview/bootOrder.tsx:146
+#: src/components/vm/overview/bootOrder.tsx:149
+#: src/components/vm/disks/diskAdd.tsx:420
+#: src/components/vm/disks/vmDisksCard.tsx:238
 #: src/components/networks/createNetworkDialog.tsx:218
+#: src/components/networks/networkList.tsx:60
 msgid "Device"
 msgstr "Enhet"
 
@@ -774,8 +774,8 @@ msgstr "Enheter"
 msgid "Disconnect"
 msgstr "Koppla ifrån"
 
-#: src/components/vm/consoles/serial.tsx:83
 #: src/components/vm/consoles/vnc.tsx:533
+#: src/components/vm/consoles/serial.tsx:83
 msgid "Disconnected"
 msgstr "Frånkopplad"
 
@@ -880,8 +880,8 @@ msgstr "Varaktighet"
 msgid "Dying"
 msgstr "Döende"
 
-#: src/components/vm/disks/diskEdit.tsx:275
 #: src/components/vm/nics/vmNicsCard.tsx:634
+#: src/components/vm/disks/diskEdit.tsx:275
 msgid "Edit"
 msgstr "Redigera"
 
@@ -1055,8 +1055,8 @@ msgstr "Misslyckades med att spara en beskrivning för VM $0"
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "Färre än det maximala antalet virtuella CPU:er skall vara aktiverade."
 
-#: src/components/vm/disks/vmDiskColumns.tsx:39
 #: src/components/vm/overview/bootOrder.tsx:105
+#: src/components/vm/disks/vmDiskColumns.tsx:39
 msgid "File"
 msgstr "Fil"
 
@@ -1072,8 +1072,8 @@ msgstr "Filsystemskatalog"
 msgid "Filter by name"
 msgstr "Filtrera efter namn"
 
-#: src/components/vm/overview/firmware.tsx:90
 #: src/components/vm/overview/vmOverviewCard.tsx:244
+#: src/components/vm/overview/firmware.tsx:90
 msgid "Firmware"
 msgstr "Hårdvaruprogram"
 
@@ -1161,11 +1161,11 @@ msgstr "Skapa automatiskt"
 msgid "Get a new RHSM token."
 msgstr "Hämta ett nytt RHSM-bevis (token)."
 
+#: src/components/vm/overview/memorySelectRow.tsx:95
+#: src/components/vm/disks/vmDisksCard.tsx:39
+#: src/components/common/dialog.tsx:105
 #: src/components/create-vm-dialog/createVmDialog.tsx:1018
 #: src/components/create-vm-dialog/createVmDialog.tsx:1182
-#: src/components/common/dialog.tsx:105
-#: src/components/vm/disks/vmDisksCard.tsx:39
-#: src/components/vm/overview/memorySelectRow.tsx:95
 msgid "GiB"
 msgstr "GiB"
 
@@ -1201,15 +1201,15 @@ msgstr "Gäst port hjälp"
 msgid "Hardware virtualization is disabled"
 msgstr "Hårdvaruvirtualisering är inaktiverad"
 
-#: src/components/vm/disks/diskAdd.tsx:164
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:164
 msgid "Hide additional options"
 msgstr "Göm ytterligare inställningar"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:44
 #: src/components/vm/overview/bootOrder.tsx:110
-#: src/components/storagePools/createStoragePoolDialog.tsx:154
+#: src/components/vm/disks/vmDiskColumns.tsx:44
 #: src/components/storagePools/storagePoolOverviewTab.tsx:23
+#: src/components/storagePools/createStoragePoolDialog.tsx:154
 msgid "Host"
 msgstr "Värd"
 
@@ -1547,14 +1547,15 @@ msgstr "Plats"
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicEdit.tsx:45 src/components/vm/nics/nicAdd.tsx:84
+#: src/components/vm/nics/nicAdd.tsx:84
 #: src/components/vm/nics/vmNicsCard.tsx:569
 #: src/components/vm/nics/vmNicsCard.tsx:767
+#: src/components/vm/nics/nicEdit.tsx:45
 #: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "MAC-adress"
 
-#: src/components/vm/nics/nicEdit.tsx:99 src/components/vm/nics/nicAdd.tsx:182
+#: src/components/vm/nics/nicAdd.tsx:182 src/components/vm/nics/nicEdit.tsx:99
 msgid "MAC address already in use"
 msgstr "MAC-adress används redan"
 
@@ -1626,10 +1627,11 @@ msgstr "Media misslyckades att sättas in"
 msgid "Media will be ejected from $0:"
 msgstr "Media kommer att matas ut från $0:"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1003
+#: src/components/vm/vmUsageCard.tsx:44
 #: src/components/vm/overview/vmOverviewCard.tsx:173
-#: src/components/vm/vmUsageCard.tsx:44 src/components/vms/hostvmslist.tsx:104
+#: src/components/vms/hostvmslist.tsx:104
 #: src/components/vms/hostvmslist.tsx:295
+#: src/components/create-vm-dialog/createVmDialog.tsx:1003
 msgid "Memory"
 msgstr "Minne"
 
@@ -1658,15 +1660,15 @@ msgstr "Minnesögonblicksbild kommer att använda ungefär $0."
 msgid "Memory state path"
 msgstr "Minnesstatussökväg"
 
+#: src/components/vm/overview/memorySelectRow.tsx:93
+#: src/components/common/dialog.tsx:104
 #: src/components/create-vm-dialog/createVmDialog.tsx:1016
 #: src/components/create-vm-dialog/createVmDialog.tsx:1180
-#: src/components/common/dialog.tsx:104
-#: src/components/vm/overview/memorySelectRow.tsx:93
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.tsx:406
 #: src/components/vm/vmMigrateDialog.tsx:224
+#: src/components/vm/vmActions.tsx:406
 msgid "Migrate"
 msgstr "Migrera"
 
@@ -1689,8 +1691,8 @@ msgstr "Diverse"
 msgid "Mode"
 msgstr "Läge"
 
-#: src/components/vm/nics/nicBody.tsx:57
 #: src/components/vm/hostdevs/hostDevCard.tsx:197
+#: src/components/vm/nics/nicBody.tsx:57
 msgid "Model"
 msgstr "Modell"
 
@@ -1729,17 +1731,17 @@ msgstr "NAT till $0"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "NIC $0 på VM $1 kunde inte ändra läge"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:313
+#: src/components/vm/vmCloneDialog.tsx:92
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
-#: src/components/vm/vmCloneDialog.tsx:92
-#: src/components/storagePools/storageVolumeCreateBody.tsx:113
-#: src/components/storagePools/createStoragePoolDialog.tsx:58
-#: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/storagePools/storageVolumeCreateBody.tsx:113
+#: src/components/storagePools/storagePoolList.tsx:61
+#: src/components/storagePools/createStoragePoolDialog.tsx:58
 #: src/components/vms/hostvmslist.tsx:313
-#: src/components/networks/networkList.tsx:59
+#: src/components/create-vm-dialog/createVmDialog.tsx:313
 #: src/components/networks/createNetworkDialog.tsx:172
+#: src/components/networks/networkList.tsx:59
 msgid "Name"
 msgstr "Namn"
 
@@ -1755,8 +1757,8 @@ msgstr "Namnet får inte vara tomt"
 msgid "Name contains invalid characters"
 msgstr "Namnet innehåller ogiltiga tecken"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:231
 #: src/components/vm/vmCloneDialog.tsx:51
+#: src/components/create-vm-dialog/createVmDialog.tsx:231
 msgid "Name must not be empty"
 msgstr "Namnet kan inte vara tomt"
 
@@ -1817,7 +1819,7 @@ msgstr "Nätverksgränssnitt $0 kunde inte tas bort"
 msgid "Network interface $0 will be removed from $1"
 msgstr "Nätverksgränssnitt $0 kommer tas bort från $1"
 
-#: src/components/vm/nics/nicEdit.tsx:163 src/components/vm/nics/nicAdd.tsx:221
+#: src/components/vm/nics/nicAdd.tsx:221 src/components/vm/nics/nicEdit.tsx:163
 msgid "Network interface settings could not be saved"
 msgstr "Inställningar för nätverksgränssnitt kunde inte sparas"
 
@@ -2061,9 +2063,9 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "Lösenordet får vara högst 8 tecken långt."
 
-#: src/components/vm/disks/diskEdit.tsx:46
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
+#: src/components/vm/disks/diskEdit.tsx:46
 #: src/components/vm/deleteDialog.tsx:68
 msgid "Path"
 msgstr "Sökväg"
@@ -2092,7 +2094,7 @@ msgstr "Sökväg till katalog"
 msgid "Path to file on host's file system"
 msgstr "Sökväg till fil på värdens filsystem"
 
-#: src/components/vm/vmActions.tsx:191 src/helpers.ts:275
+#: src/helpers.ts:275 src/components/vm/vmActions.tsx:191
 msgid "Pause"
 msgstr "Pausa"
 
@@ -2108,8 +2110,8 @@ msgstr "Permanent (standard)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "Behörigheter nekades för diskavbildningar i hemkataloger"
 
-#: src/components/vm/disks/diskAdd.tsx:593
 #: src/components/vm/nics/nicAdd.tsx:137
+#: src/components/vm/disks/diskAdd.tsx:593
 msgid "Persistence"
 msgstr "Varaktighet"
 
@@ -2126,7 +2128,7 @@ msgstr "Fysisk diskenhet"
 msgid "Physical disk device on host"
 msgstr "Fysisk diskenhet på värd"
 
-#: src/components/vm/nics/nicEdit.tsx:100 src/components/vm/nics/nicAdd.tsx:182
+#: src/components/vm/nics/nicAdd.tsx:182 src/components/vm/nics/nicEdit.tsx:100
 msgid "Please choose a different MAC address"
 msgstr "Vänligen välj en annan MAC-adress"
 
@@ -2138,11 +2140,11 @@ msgstr "Ange ett nytt volymnamn"
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr "Se $0 hur du konfigurerar om din VM manuellt."
 
+#: src/components/vm/overview/bootOrder.tsx:108
+#: src/components/vm/disks/mediaEject.tsx:85
 #: src/components/vm/disks/diskAdd.tsx:248
 #: src/components/vm/disks/diskAdd.tsx:321
-#: src/components/vm/disks/mediaEject.tsx:85
 #: src/components/vm/disks/vmDiskColumns.tsx:42
-#: src/components/vm/overview/bootOrder.tsx:108
 #: src/components/vm/deleteDialog.tsx:81
 msgid "Pool"
 msgstr "Pool"
@@ -2159,11 +2161,11 @@ msgstr "Pooltyp stödjer inte att skapa volymer"
 msgid "Pool's volumes are used by VMs "
 msgstr "Poolens volymer används av VM:ar "
 
-#: src/components/vm/disks/vmDiskColumns.tsx:45
-#: src/components/vm/nics/vmNicsCard.tsx:191
 #: src/components/vm/consoles/vnc.tsx:154
+#: src/components/vm/nics/vmNicsCard.tsx:191
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
+#: src/components/vm/disks/vmDiskColumns.tsx:45
 msgid "Port"
 msgstr "Port"
 
@@ -2187,8 +2189,8 @@ msgstr ""
 "Port måste vara ett tal som är minst 5900. Lämna tomt för att automatiskt "
 "tilldela en ledig port när maskinen startar."
 
-#: src/components/vm/nics/nicBody.tsx:394
 #: src/components/vm/consoles/vnc.tsx:104
+#: src/components/vm/nics/nicBody.tsx:394
 msgid "Port must be a number."
 msgstr "Port måste vara ett nummer."
 
@@ -2228,11 +2230,11 @@ msgstr "Processaccelerator"
 msgid "Processor"
 msgstr "Processor"
 
-#: src/components/vm/overview/bootOrder.tsx:141
-#: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:240
 #: src/components/vm/hostdevs/hostDevCard.tsx:246
+#: src/components/vm/overview/bootOrder.tsx:141
+#: src/components/vm/overview/bootOrder.tsx:157
 msgid "Product"
 msgstr "Produkt"
 
@@ -2240,11 +2242,11 @@ msgstr "Produkt"
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:41
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
 #: src/components/vm/nics/nicBody.tsx:492
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
-#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/disks/vmDiskColumns.tsx:41
 msgid "Protocol"
 msgstr "Protokoll"
 
@@ -2264,8 +2266,8 @@ msgstr "Publik nyckel"
 msgid "Range"
 msgstr "Räckvidd"
 
-#: src/components/vm/disks/vmDisksCard.tsx:249
 #: src/components/vm/disks/diskEdit.tsx:110
+#: src/components/vm/disks/vmDisksCard.tsx:249
 msgid "Read-only"
 msgstr "Skrivskyddad"
 
@@ -2311,16 +2313,16 @@ msgstr "Fjärrvisare"
 msgid "Remote viewer applications can connect to the following address:"
 msgstr "Fjärrvisningsprogram kan ansluta till följande adress:"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:169
-#: src/components/vm/disks/vmDiskColumns.tsx:248
+#: src/components/vm/hostdevs/hostDevCard.tsx:256
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
 #: src/components/vm/nics/vmNicsCard.tsx:652
 #: src/components/vm/nics/vmNicsCard.tsx:667
 #: src/components/vm/overview/vsock.tsx:269
 #: src/components/vm/overview/watchdog.tsx:225
-#: src/components/vm/hostdevs/hostDevCard.tsx:256
-#: src/components/vm/hostdevs/hostDevCard.tsx:262
+#: src/components/vm/disks/vmDiskColumns.tsx:169
+#: src/components/vm/disks/vmDiskColumns.tsx:248
 #: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "Avlägsna"
@@ -2345,9 +2347,9 @@ msgstr "Ta bort filsysteme?"
 msgid "Remove host device from VM?"
 msgstr "Ta bort värdenhet från VM:en?"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:927
 #: src/components/vm/nics/nicBody.tsx:512
 #: src/components/vm/nics/nicBody.tsx:543
+#: src/components/create-vm-dialog/createVmDialog.tsx:927
 msgid "Remove item"
 msgstr "Ta bort objekt"
 
@@ -2420,8 +2422,8 @@ msgstr "Återuppta"
 msgid "Retry"
 msgstr "Försök igen"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
 msgid "Revert"
 msgstr "Återställ"
 
@@ -2494,15 +2496,15 @@ msgstr "SSH-nycklar"
 msgid "Satellite Communication Controller"
 msgstr "Satellitkommunikationskontroller"
 
-#: src/components/vm/disks/diskEdit.tsx:238
-#: src/components/vm/nics/nicEdit.tsx:230
 #: src/components/vm/consoles/vnc.tsx:167
-#: src/components/vm/overview/firmware.tsx:104
-#: src/components/vm/overview/bootOrder.tsx:353
-#: src/components/vm/overview/memoryModal.tsx:192
+#: src/components/vm/nics/nicEdit.tsx:230
+#: src/components/vm/vmEditDescriptionDialog.tsx:78
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/vmEditDescriptionDialog.tsx:78
+#: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/memoryModal.tsx:192
+#: src/components/vm/overview/firmware.tsx:104
+#: src/components/vm/disks/diskEdit.tsx:238
 msgid "Save"
 msgstr "Spara"
 
@@ -2526,9 +2528,9 @@ msgstr "Skicka ej maskerbart avbrott"
 msgid "Send non-maskable interrupt to $0?"
 msgstr "Skicka ej maskerbart avbrott till $0?"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:133
 #: src/components/vm/consoles/consoles.tsx:275
 #: src/components/vm/consoles/consoles.tsx:292
+#: src/components/vm/disks/vmDiskColumns.tsx:133
 msgid "Serial"
 msgstr "Seriell"
 
@@ -2585,8 +2587,8 @@ msgstr "Delade värdkataloger behöver monteras manuellt inuti VM:en"
 msgid "Shared storage"
 msgstr "Delad lagring"
 
-#: src/components/vm/disks/diskAdd.tsx:164
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:164
 msgid "Show additional options"
 msgstr "Visa ytterligare åtgärder"
 
@@ -2616,10 +2618,10 @@ msgid "Shut off the VM in order to edit firmware configuration"
 msgstr ""
 "Stäng av VM:en för att redigera konfigurationen av den fasta programvaran"
 
-#: src/components/common/needsShutdown.tsx:278
-#: src/components/vm/vmActions.tsx:521
-#: src/components/vm/consoles/serial.tsx:190
 #: src/components/vm/consoles/vnc.tsx:650
+#: src/components/vm/consoles/serial.tsx:190
+#: src/components/vm/vmActions.tsx:521
+#: src/components/common/needsShutdown.tsx:278
 msgid "Shutdown and restart"
 msgstr "Avstängning och omstart"
 
@@ -2627,7 +2629,7 @@ msgstr "Avstängning och omstart"
 msgid "Shutdown and restart $0?"
 msgstr "Avstängning och omstart $0?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:147 src/helpers.ts:219
+#: src/helpers.ts:219 src/components/vm/snapshots/vmSnapshotsCard.tsx:147
 msgid "Shutting down"
 msgstr "Stänger av"
 
@@ -2640,9 +2642,9 @@ msgid "Simple Communication Controller"
 msgstr "Simpel kommunikationskontroller"
 
 #: src/components/vm/disks/vmDisksCard.tsx:160
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
 #: src/components/storagePools/storageVolumeCreateBody.tsx:120
 #: src/components/storagePools/storagePoolList.tsx:62
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
 msgid "Size"
 msgstr "Storlek"
 
@@ -2650,11 +2652,11 @@ msgstr "Storlek"
 msgid "Size must be a number"
 msgstr "Storlek måste vara ett nummer"
 
-#: src/components/vm/overview/bootOrder.tsx:158
 #: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
+#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Slot"
 msgstr "Plats"
 
@@ -2694,11 +2696,11 @@ msgstr ""
 "Vissa konfigurationsändringar träder endast i kraft efter en fullständig "
 "avstängning och omstart:"
 
-#: src/components/vm/disks/diskAdd.tsx:574
-#: src/components/vm/disks/vmDisksCard.tsx:158
+#: src/components/vm/hostdevs/hostDevCard.tsx:217
 #: src/components/vm/nics/nicBody.tsx:269
 #: src/components/vm/nics/vmNicsCard.tsx:549
-#: src/components/vm/hostdevs/hostDevCard.tsx:217
+#: src/components/vm/disks/diskAdd.tsx:574
+#: src/components/vm/disks/vmDisksCard.tsx:158
 #: src/components/storagePools/storagePoolOverviewTab.tsx:40
 msgid "Source"
 msgstr "Källa"
@@ -2714,10 +2716,10 @@ msgstr "Källa kan inte vara tomt"
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
-#: src/components/storagePools/createStoragePoolDialog.tsx:218
-#: src/components/storagePools/createStoragePoolDialog.tsx:235
 #: src/components/storagePools/storagePoolOverviewTab.tsx:30
 #: src/components/storagePools/storagePoolOverviewTab.tsx:35
+#: src/components/storagePools/createStoragePoolDialog.tsx:218
+#: src/components/storagePools/createStoragePoolDialog.tsx:235
 msgid "Source path"
 msgstr "Källsökväg"
 
@@ -2734,8 +2736,8 @@ msgstr "Källan skall börja med ett av protokollen http, ftp eller nfs"
 msgid "Source volume group"
 msgstr "Källvolymgrupp"
 
-#: src/components/vm/consoles/serial.tsx:123
 #: src/components/vm/consoles/vnc.tsx:571
+#: src/components/vm/consoles/serial.tsx:123
 #: src/components/networks/createNetworkDialog.tsx:305
 msgid "Start"
 msgstr "Starta"
@@ -2749,8 +2751,8 @@ msgstr "Starta poolen när värden startar upp"
 msgid "Start should not be empty"
 msgstr "Start ska inte vara tomt"
 
-#: src/components/vm/consoles/serial.tsx:116
 #: src/components/vm/consoles/vnc.tsx:564
+#: src/components/vm/consoles/serial.tsx:116
 msgid "Start the virtual machine to access the console"
 msgstr "Starta den virtuella maskinen för att komma åt konsolen"
 
@@ -2783,8 +2785,8 @@ msgstr "Statiska värdposter"
 msgid "Static host from DHCP could not be removed"
 msgstr "Statiska värdposter från DHCP kunde inte tas bort"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1140
 #: src/components/vm/vmMigrateDialog.tsx:108
+#: src/components/create-vm-dialog/createVmDialog.tsx:1140
 msgid "Storage"
 msgstr "Lagring"
 
@@ -2812,10 +2814,10 @@ msgstr "Lagringspoolen kunde inte skapas"
 msgid "Storage pool name"
 msgstr "Lagringspoolsnamn"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 #: src/components/storagePools/storagePoolList.tsx:49
 #: src/components/storagePools/storagePoolList.tsx:56
 #: src/components/storagePools/storagePoolList.tsx:58
+#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 msgid "Storage pools"
 msgstr "Lagringspooler"
 
@@ -2877,16 +2879,16 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "Tabell över valbara värdenheter"
 
-#: src/components/vm/disks/vmDisksCard.tsx:159
-#: src/components/vm/disks/vmDiskColumns.tsx:173
+#: src/components/vm/hostdevs/hostDevCard.tsx:101
 #: src/components/vm/nics/vmNicsCard.tsx:557
 #: src/components/vm/overview/bootOrder.tsx:164
-#: src/components/vm/hostdevs/hostDevCard.tsx:101
+#: src/components/vm/disks/vmDiskColumns.tsx:173
+#: src/components/vm/disks/vmDisksCard.tsx:159
 msgid "Target"
 msgstr "Mål"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:130
 #: src/components/storagePools/storagePoolOverviewTab.tsx:50
+#: src/components/storagePools/createStoragePoolDialog.tsx:130
 msgid "Target path"
 msgstr "Målsökväg"
 
@@ -2910,9 +2912,9 @@ msgstr "Terminal är inte tillgänglig"
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "VM:en $0 kör och kommer tvingande stängas av före den tas bort."
 
-#: src/components/vm/disks/vmDiskColumns.tsx:256
 #: src/components/vm/nics/vmNicsCard.tsx:668
 #: src/components/vm/nics/vmNicsCard.tsx:676
+#: src/components/vm/disks/vmDiskColumns.tsx:256
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "VM:en behöver köra eller vara avstängd för att koppla ifrån denna enhet"
@@ -3043,6 +3045,8 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Felsök"
 
+#: src/components/vm/hostdevs/hostDevAdd.tsx:43
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
 #: src/components/vm/nics/vmNicsCard.tsx:780
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
@@ -3050,10 +3054,8 @@ msgstr "Felsök"
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/hostdevs/hostDevAdd.tsx:43
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
-#: src/components/storagePools/createStoragePoolDialog.tsx:102
 #: src/components/storagePools/storagePoolOverviewTab.tsx:65
+#: src/components/storagePools/createStoragePoolDialog.tsx:102
 msgid "Type"
 msgstr "Typ"
 
@@ -3101,10 +3103,10 @@ msgstr "Enhet"
 msgid "Unknown firmware"
 msgstr "Okänt firmware"
 
-#: src/components/vm/overview/bootOrder.tsx:145
-#: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/hostdevs/hostDevCard.tsx:84
 #: src/components/vm/hostdevs/hostDevCard.tsx:85
+#: src/components/vm/overview/bootOrder.tsx:145
+#: src/components/vm/overview/bootOrder.tsx:146
 msgid "Unspecified"
 msgstr "Ospecificerad"
 
@@ -3259,12 +3261,12 @@ msgstr "VNC med TLS stöds inte av visningsprogrammet på sidan"
 msgid "Valid token"
 msgstr "Giltig token"
 
-#: src/components/vm/overview/bootOrder.tsx:140
-#: src/components/vm/overview/bootOrder.tsx:156
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
+#: src/components/vm/overview/bootOrder.tsx:140
+#: src/components/vm/overview/bootOrder.tsx:156
 msgid "Vendor"
 msgstr "Leverantör"
 
@@ -3306,12 +3308,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Virtualiseringstjänsten (libvirt) är inte aktiv"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1152
-#: src/components/vm/disks/diskAdd.tsx:327
-#: src/components/vm/disks/mediaEject.tsx:89
-#: src/components/vm/disks/vmDiskColumns.tsx:43
 #: src/components/vm/overview/bootOrder.tsx:109
+#: src/components/vm/disks/mediaEject.tsx:89
+#: src/components/vm/disks/diskAdd.tsx:327
+#: src/components/vm/disks/vmDiskColumns.tsx:43
 #: src/components/vm/deleteDialog.tsx:78
+#: src/components/create-vm-dialog/createVmDialog.tsx:1152
 msgid "Volume"
 msgstr "Volym"
 
@@ -3331,13 +3333,13 @@ msgstr "Volymgruppens namn ska inte vara tomt"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/overview/bootOrder.tsx:171
 #: src/components/vm/hostdevs/hostDevCard.tsx:107
+#: src/components/vm/overview/bootOrder.tsx:171
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:210
 #: src/components/vm/overview/vmOverviewCard.tsx:196
+#: src/components/common/needsShutdown.tsx:210
 msgid "Watchdog"
 msgstr "Vakthund"
 
@@ -3355,8 +3357,8 @@ msgstr ""
 msgid "Wireless Controller"
 msgstr "Trådlös kontroller"
 
-#: src/components/vm/disks/vmDisksCard.tsx:249
 #: src/components/vm/disks/diskEdit.tsx:114
+#: src/components/vm/disks/vmDisksCard.tsx:249
 msgid "Writeable"
 msgstr "Skrivbar"
 
@@ -3394,7 +3396,7 @@ msgstr "brygga"
 msgid "cdrom"
 msgstr "cdrom"
 
-#: src/components/vm/overview/cpuModal.tsx:322 src/helpers.ts:236
+#: src/helpers.ts:236 src/components/vm/overview/cpuModal.tsx:322
 msgid "custom"
 msgstr "anpassad"
 
@@ -3418,11 +3420,11 @@ msgstr "disk"
 msgid "down"
 msgstr "nere"
 
-#: src/components/vm/overview/bootOrder.tsx:387
 #: src/components/vm/overview/vsock.tsx:315
+#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
-#: src/components/vm/overview/watchdog.tsx:265
+#: src/components/vm/overview/bootOrder.tsx:387
 msgid "edit"
 msgstr "redigera"
 
@@ -3501,9 +3503,9 @@ msgstr ""
 msgid "network"
 msgstr "nätverk"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:56
+#: src/helpers.ts:265 src/components/storagePools/storagePoolOverviewTab.tsx:56
 #: src/components/storagePools/storagePoolOverviewTab.tsx:61
-#: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:265
+#: src/components/networks/networkOverviewTab.tsx:113
 msgid "no"
 msgstr "nej"
 
@@ -3612,9 +3614,9 @@ msgstr "vsock kräver speciell programvara"
 msgid "waiting"
 msgstr "väntar"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:56
+#: src/helpers.ts:264 src/components/storagePools/storagePoolOverviewTab.tsx:56
 #: src/components/storagePools/storagePoolOverviewTab.tsx:61
-#: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:264
+#: src/components/networks/networkOverviewTab.tsx:113
 msgid "yes"
 msgstr "ja"
 
