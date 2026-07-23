@@ -385,7 +385,7 @@ function init_CustomPath(): CustomPathValue {
 
 function validate_CustomPath(field: DialogField<CustomPathValue>) {
     const { _fileInfoCache } = field.get();
-    field.sub("file").validate_async(0, async file => {
+    field.sub("file").validate_async(async file => {
         if (!file)
             return _("Path cannot be empty");
 
