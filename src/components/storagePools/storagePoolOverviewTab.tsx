@@ -3,16 +3,55 @@
  *
  * Copyright (C) 2018 Red Hat, Inc.
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import type { StoragePool } from '../../types';
 
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
+import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
 
 import { storagePoolId } from '../../helpers.js';
+import { getInstallMediaPools, setInstallMediaPool } from '../../libvirtApi/installMediaPools.js';
 import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
+
+// Pool types whose target is a plain host directory that can hold ISO images.
+const INSTALL_MEDIA_POOL_TYPES = ['dir', 'netfs'];
+
+const InstallMediaSwitch = ({ storagePool, idPrefix } : { storagePool: StoragePool, idPrefix: string }) => {
+    // null while the on-disk config is still loading, so the Switch stays disabled
+    const [enabled, setEnabled] = useState<boolean | null>(null);
+    const { connectionName, uuid } = storagePool;
+
+    useEffect(() => {
+        let active = true;
+        getInstallMediaPools(connectionName).then(pools => {
+            if (active)
+                setEnabled(!!uuid && pools.includes(uuid));
+        });
+        return () => { active = false };
+    }, [connectionName, uuid]);
+
+    const onChange = (_event: React.FormEvent, checked: boolean) => {
+        if (!uuid)
+            return;
+        // optimistic update; revert if the write fails
+        setEnabled(checked);
+        setInstallMediaPool(connectionName, uuid, checked).catch(ex => {
+            console.warn("Could not update installation-media pool config:", String(ex));
+            setEnabled(!checked);
+        });
+    };
+
+    return (
+        <Switch id={`${idPrefix}-install-media-switch`}
+                label={_("Use for installation media")}
+                isChecked={!!enabled}
+                isDisabled={enabled === null || !uuid}
+                onChange={onChange} />
+    );
+};
 
 export const StoragePoolOverviewTab = ({ storagePool } : { storagePool: StoragePool }) => {
     const idPrefix = `${storagePoolId(storagePool.name, storagePool.connectionName)}`;
@@ -65,6 +104,13 @@ export const StoragePoolOverviewTab = ({ storagePool } : { storagePool: StorageP
                 <DescriptionListTerm> {_("Type")} </DescriptionListTerm>
                 <DescriptionListDescription id={`${idPrefix}-type`}> {storagePool.type} </DescriptionListDescription>
             </DescriptionListGroup>
+
+            {INSTALL_MEDIA_POOL_TYPES.includes(storagePool.type) && storagePool.uuid && <DescriptionListGroup>
+                <DescriptionListTerm> {_("Installation media")} </DescriptionListTerm>
+                <DescriptionListDescription>
+                    <InstallMediaSwitch storagePool={storagePool} idPrefix={idPrefix} />
+                </DescriptionListDescription>
+            </DescriptionListGroup>}
         </DescriptionList>
     );
 };
