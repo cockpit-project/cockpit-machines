@@ -125,14 +125,18 @@ function init_AdditionalOptions(vm: VM, device: VMDiskDevice): AdditionalOptions
 }
 
 function update_AdditionalOptions(field: DialogField<AdditionalOptionsValue>, vm: VM, device: VMDiskDevice) {
-    const { _bus_types } = field.get();
-    const bus_type = getBusType(vm, device);
+    const { bus_type: current_bus_type } = field.get();
+    const new_bus_types = diskBusTypes[device].filter(bus => vm.capabilities.supportedDiskBusTypes.includes(bus));
+    const default_bus_type = getBusType(vm, device);
 
-    if (!_bus_types.includes(bus_type))
-        _bus_types.push(bus_type);
+    if (!new_bus_types.includes(default_bus_type))
+        new_bus_types.push(default_bus_type);
 
-    field.sub("_bus_types").set(_bus_types);
-    field.sub("bus_type").set(bus_type);
+    field.sub("_bus_types").set(new_bus_types);
+
+    // Only reset bus_type when the current selection is no longer valid for the new device
+    if (!new_bus_types.includes(current_bus_type))
+        field.sub("bus_type").set(default_bus_type);
 }
 
 function validate_AdditionalOptions(field: DialogField<AdditionalOptionsValue>) {
