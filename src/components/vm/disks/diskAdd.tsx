@@ -84,6 +84,7 @@ interface AdditionalOptionsValue {
     serial: string;
 
     _bus_types: string[];
+    _device: VMDiskDevice;
 }
 
 function getBusType(vm: VM, device: VMDiskDevice) {
@@ -121,18 +122,24 @@ function init_AdditionalOptions(vm: VM, device: VMDiskDevice): AdditionalOptions
         serial: "",
 
         _bus_types: bus_types,
+        _device: device,
     };
 }
 
 function update_AdditionalOptions(field: DialogField<AdditionalOptionsValue>, vm: VM, device: VMDiskDevice) {
-    const { _bus_types } = field.get();
+    const { _device } = field.get();
+    if (device === _device)
+        return;
+
+    const bus_types: string[] = diskBusTypes[device].filter(bus => vm.capabilities.supportedDiskBusTypes.includes(bus));
     const bus_type = getBusType(vm, device);
 
-    if (!_bus_types.includes(bus_type))
-        _bus_types.push(bus_type);
+    if (!bus_types.includes(bus_type))
+        bus_types.push(bus_type);
 
-    field.sub("_bus_types").set(_bus_types);
+    field.sub("_bus_types").set(bus_types);
     field.sub("bus_type").set(bus_type);
+    field.sub("_device").set(device);
 }
 
 function validate_AdditionalOptions(field: DialogField<AdditionalOptionsValue>) {
