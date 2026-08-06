@@ -434,10 +434,6 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
         if not hasMonolithicDaemon(m.image):
             self.addCleanup(m.execute, "systemctl stop virtstoraged.service virtnetworkd.service")
 
-        # HACK: https://issues.redhat.com/browse/RHEL-49567
-        for mach in self.machines.values():
-            mach.execute('if test "$(rpmquery selinux-policy)" = selinux-policy-40.13.6-1.el10.noarch; then setenforce 0; fi')  # noqa: E501
-
         def stop_all() -> None:
             # Domains.
             #
