@@ -23,7 +23,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         user = self.createUser(user_group='libvirt')
         self._testBasic(user, superuser=False, libvirt_group_member=True)
 
-    @testlib.skipImage("No SELinux", "debian-*", "ubuntu-*", "arch", "opensuse*")
+    @testlib.skipImage("No SELinux", "debian-*", "ubuntu-*", "arch")
     @testlib.skipImage("crashes C bridge", "rhel-8*")
     def testBasicSysadmU(self):
         user = self.createUser(user_group='libvirt')
