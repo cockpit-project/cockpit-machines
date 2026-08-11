@@ -171,8 +171,8 @@ def prepare_virt_install_params(args):
                 "--name", args['vmName']
             ]
 
-        if 'storagePool' in args and args['storagePool'] not in ['NewVolumeQCOW2', 'NewVolumeRAW']:
-            params += ["--check", "path_in_use=off"]
+        # if 'storagePool' in args and args['storagePool'] not in ['NewVolumeQCOW2', 'NewVolumeRAW']:
+        #     params += ["--check", "path_in_use=off"]
 
         if args['sourceType'] != 'disk_image':
             params += ["--wait", "-1"]
@@ -189,7 +189,9 @@ def prepare_virt_install_params(args):
             elif args['storagePool'] == 'NoStorage':
                 disk = "none"
             else:
-                if args['storagePool'] not in ['NewVolumeQCOW2', 'NewVolumeRAW']:
+                if args['storageDisk']:
+                    disk = args['storageDisk']
+                elif args['storagePool'] not in ['NewVolumeQCOW2', 'NewVolumeRAW']:
                     disk = f"vol={args['storagePool']}/{args['storageVolume']}"
                 else:
                     disk = f"size={args['storageSize']}"
