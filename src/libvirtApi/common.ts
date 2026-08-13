@@ -48,7 +48,7 @@ import {
     parseDumpxmlForCapabilities
 } from "../libvirt-xml-parse.js";
 
-import type { ConnectionName, VM, OSInfo, VirtInstallCapabilities, VirtXmlCapabilities } from '../types';
+import type { ConnectionName, VM, OSInfo, VirtInstallCapabilities } from '../types';
 
 /**
  * Calculates disk statistics.
@@ -379,18 +379,6 @@ export async function getVirtInstallCapabilities(): Promise<VirtInstallCapabilit
         unattendedSupported: !!unattended_out,
         unattendedUserLogin: !!unattended_out && unattended_out.includes('user-login'),
     };
-}
-
-export async function getVirtXmlCapabilities(): Promise<VirtXmlCapabilities | null> {
-    try {
-        const help_text = await cockpit.spawn(["virt-xml", "--help"]);
-        return {
-            convert_to_vnc: help_text.includes("--convert-to-vnc"),
-        };
-    } catch (exc) {
-        console.error("Failed to query virt-xml capabilities:", String(exc));
-        return null;
-    }
 }
 
 export function getApiData({

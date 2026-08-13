@@ -10,7 +10,7 @@ import { superuser } from "superuser.js";
 
 import type {
     ConnectionName, VM, VMState, UIVM, UIVMProps,
-    HypervisorCapabilities, VirtInstallCapabilities, VirtXmlCapabilities,
+    HypervisorCapabilities, VirtInstallCapabilities,
     NodeDevice, NodeInterface,
     StoragePool,
     Network,
@@ -20,7 +20,6 @@ import {
     getApiData,
     getLibvirtVersion,
     getVirtInstallCapabilities,
-    getVirtXmlCapabilities,
 } from "./libvirtApi/common.js";
 import { domainGetAll, domainGetByName } from './libvirtApi/domain';
 import {
@@ -104,7 +103,6 @@ export class AppState extends EventEmitter<AppStateEvents> {
     nodeMaxMemory: number = 0;
     hypervisorCapabilities: HypervisorCapabilities | null = null;
     virtInstallCapabilities: VirtInstallCapabilities | null = null;
-    virtXmlCapabilities: VirtXmlCapabilities | null = null;
 
     setNodeMaxMemory(memory: number) {
         this.nodeMaxMemory = memory;
@@ -302,7 +300,6 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
             // get these in the background, it takes quite long
             getVirtInstallCapabilities().then(caps => { this.virtInstallCapabilities = caps; this.#update() });
-            getVirtXmlCapabilities().then(caps => { this.virtXmlCapabilities = caps; this.#update() });
 
             await Promise.allSettled(
                 [
