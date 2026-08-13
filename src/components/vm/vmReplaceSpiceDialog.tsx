@@ -7,8 +7,6 @@
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
 
-import { appState } from "../../state";
-
 import type { VM } from '../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -32,10 +30,6 @@ import { virtXmlEdit } from '../../libvirtApi/domain.js';
 import './vmReplaceSpiceDialog.css';
 
 const _ = cockpit.gettext;
-
-export function canReplaceSpice(): boolean {
-    return !!appState.virtXmlCapabilities?.convert_to_vnc;
-}
 
 interface DialogError {
     dialogError: string;

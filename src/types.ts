@@ -46,10 +46,6 @@ export interface VirtInstallCapabilities {
     unattendedUserLogin?: boolean | undefined,
 }
 
-export interface VirtXmlCapabilities {
-    convert_to_vnc: boolean;
-}
-
 /** Virtual Machines **/
 
 export type VMDiskDevice = "floppy" | "disk" | "cdrom" | "lun";
