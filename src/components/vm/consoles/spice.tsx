@@ -15,7 +15,7 @@ import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/
 
 import { useDialogs } from 'dialogs';
 
-import { canReplaceSpice, ReplaceSpiceDialog } from '../vmReplaceSpiceDialog.jsx';
+import { ReplaceSpiceDialog } from '../vmReplaceSpiceDialog.jsx';
 import { LaunchViewerButton, connection_address } from './common';
 
 const _ = cockpit.gettext;
@@ -72,18 +72,16 @@ const Spice = ({
                         {_("Start the virtual machine to launch remote viewer.")}
                     </EmptyStateBody>
                 }
-                { canReplaceSpice() &&
-                    <EmptyStateFooter>
-                        <EmptyStateActions>
-                            <Button
-                                variant="link"
-                                onClick={replace_spice}
-                            >
-                                {_("Replace with VNC")}
-                            </Button>
-                        </EmptyStateActions>
-                    </EmptyStateFooter>
-                }
+                <EmptyStateFooter>
+                    <EmptyStateActions>
+                        <Button
+                            variant="link"
+                            onClick={replace_spice}
+                        >
+                            {_("Replace with VNC")}
+                        </Button>
+                    </EmptyStateActions>
+                </EmptyStateFooter>
             </EmptyState>
             { !isExpanded && <SpiceFooter vm={vm} spice={spice} /> }
         </>
