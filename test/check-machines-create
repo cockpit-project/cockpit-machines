@@ -2667,7 +2667,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             self.assertNotIn("qxl", dump)
 
         #
-        # c-machines standard VM (vnc + spice on non-RHEL), running
+        # c-machines standard VM (vnc only), running
         #
 
         dialog = TestMachinesCreate.VmDialog(self, sourceType='cloud',
@@ -2837,12 +2837,20 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         self.assertIn("spice", m.execute("virsh dumpxml --inactive SpiceTwo"))
 
     # we need this test to create a SPICE VM to simulate the host change to "no spice support"
-    @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*", "fedora-eln")
+    @testlib.skipImage("SPICE support can't be removed for test purposes", "rhel-8-*")
     def testNoSpiceAlert(self):
         b = self.browser
+        m = self.machine
 
         vmName = "subVmTest1"
-        self.createVm(vmName, graphics="spice", running=False)
+
+        if not m.image.startswith(("rhel-", "centos-")):
+            self.createVm(vmName, graphics="spice", running=False)
+        else:
+            self.createVm(vmName, graphics="vnc", running=False)
+            # Force the graphics type to be "spice".
+            m.execute(f"""sed -i -e "s/type='vnc'/type='spice'/" /etc/libvirt/qemu/{vmName}.xml""")
+            m.execute(f"systemctl restart {self.getLibvirtServiceName()}")
 
         with self.remove_spice_plugins():
             self.login_and_go("/machines")
