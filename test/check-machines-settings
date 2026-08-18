@@ -126,7 +126,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_not_present("#machines-cpu-modal-dialog")
 
         testlib.wait(lambda: m.execute(
-            "virsh dumpxml subVmTest1 | tee /tmp/subVmTest1.xml | xmllint --xpath '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]' -"))  # noqa: E501
+            "virsh dumpxml subVmTest1 | tee /tmp/subVmTest1.xml | xmllint --xpath '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]' -"))  # ruff: ignore[line-too-long]
 
         # Run VM - this ensures that the internal state is updated before we move on.
         # We need this here because we can't wait for UI updates after we open the modal dialog.

@@ -49,7 +49,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         m.execute("virsh detach-disk --domain subVmTest1 --target vda --persistent")
         m.execute(f"qemu-img create -f qcow2 {img_path} 1M")
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {img_path} --target vdb --persistent")
-        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB' --disk-only")  # noqa: E501
+        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB' --disk-only")  # ruff: ignore[line-too-long]
 
         b.reload()  # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
         b.enter_page('/machines')
@@ -409,7 +409,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         m = self.machine
 
         def get_snapshot_state(snap_name):
-            script = f"virsh snapshot-info --domain subVmTest1 --snapshotname {snap_name} | grep 'Current:' | awk '{{print $2}}'"  # noqa: E501
+            script = f"virsh snapshot-info --domain subVmTest1 --snapshotname {snap_name} | grep 'Current:' | awk '{{print $2}}'"  # ruff: ignore[line-too-long]
             return m.execute(script).strip()
 
         self.createVm("subVmTest1")

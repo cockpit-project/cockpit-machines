@@ -334,7 +334,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         cmds = [
             # Generate certificate for https server
             f"cd {self.vm_tmpdir}",
-            f"openssl req -x509 -newkey rsa:4096 -nodes -keyout server.key -new -out server.crt -config {self.vm_tmpdir}/min-openssl-config.cnf -sha256 -days 365 -extensions dn"  # noqa: E501
+            f"openssl req -x509 -newkey rsa:4096 -nodes -keyout server.key -new -out server.crt -config {self.vm_tmpdir}/min-openssl-config.cnf -sha256 -days 365 -extensions dn"  # ruff: ignore[line-too-long]
         ]
 
         if self.machine.image.startswith("ubuntu") or self.machine.image.startswith("debian"):
@@ -366,7 +366,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         #
         # and on certain distribution supports only https (not http)
         # see: block-drv-ro-whitelist option in qemu-kvm.spec for certain distribution
-        return self.machine.spawn(f"cd /var/lib/libvirt; exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key",  # noqa: E501
+        return self.machine.spawn(f"cd /var/lib/libvirt; exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key",  # ruff: ignore[line-too-long]
                                   "httpsserver")
 
     def waitLogFile(self, logfile: str, expected_text: str) -> None:
@@ -491,13 +491,13 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
             m.execute("systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
 
         # FIXME: report downstream; AppArmor noisily denies some operations, but they are not required for us
-        self.allow_journal_messages(r'.* type=1400 .* apparmor="DENIED" operation="capable" profile="\S*libvirtd.* capname="sys_rawio".*')  # noqa: E501
+        self.allow_journal_messages(r'.* type=1400 .* apparmor="DENIED" operation="capable" profile="\S*libvirtd.* capname="sys_rawio".*')  # ruff: ignore[line-too-long]
         # AppArmor doesn't like the non-standard path for our storage pools
-        self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".* profile="virt-aa-helper" name="{self.vm_tmpdir}.*')  # noqa: E501
+        self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".* profile="virt-aa-helper" name="{self.vm_tmpdir}.*')  # ruff: ignore[line-too-long]
 
         # FIXME: Testing on Arch Linux fails randomly with networkmanager time outs while the test passes.
         if m.image == 'arch':
-            self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")  # noqa: E501
+            self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")  # ruff: ignore[line-too-long]
 
         # avoid error noise about resources getting cleaned up
         def session_cleanup() -> None:

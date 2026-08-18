@@ -17,7 +17,7 @@ class TestMultiMachineVNC(VirtualMachinesCase):
     https://issues.redhat.com/browse/RHEL-3959
     """
 
-    provision = {  # noqa: RUF012
+    provision = {  # ruff: ignore[mutable-class-default]
         "machine1": {"address": "10.111.113.1/20", "memory_mb": 1024},
         "machine2": {"address": "10.111.113.2/20", "memory_mb": 660},
     }
