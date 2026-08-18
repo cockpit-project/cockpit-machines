@@ -917,7 +917,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 else:
                     # Check the content of inactive pool deletion dialog
                     b.wait_text(".pf-v6-c-modal-box__body div",
-                                "Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")  # noqa: E501
+                                "Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")  # ruff: ignore[line-too-long]
 
                 b.click('.pf-v6-c-modal-box__footer button:contains("Delete")')
 
@@ -1029,7 +1029,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         # iscsi pool deletion
         # TODO: Arch image has no iscsi yet
         if "debian" not in m.image and "arch" not in m.image:
-            xfail_error = "this function is not supported by the connection driver: storage pool does not support vol deletion"  # noqa: E501
+            xfail_error = "this function is not supported by the connection driver: storage pool does not support vol deletion"  # ruff: ignore[line-too-long]
             StoragePoolsCreationAndDeletion(self,
                                             name="iscsi-pool-1",
                                             pool_type="iscsi",

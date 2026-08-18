@@ -1296,7 +1296,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Ensure that the bus type autofilled value is according to the bus types of the existing disks of the guest,
         # even when these are not in the predefined value (see ide)
-        m.execute("virt-xml subVmTest1 --edit --disk target=vda,bus=ide,path=/var/lib/libvirt/images/subVmTest1-2.img,clearxml=yes")  # noqa: E501
+        m.execute("virt-xml subVmTest1 --edit --disk target=vda,bus=ide,path=/var/lib/libvirt/images/subVmTest1-2.img,clearxml=yes")  # ruff: ignore[line-too-long]
         self.expandDiskRow("vda")
         b.wait_text("#vm-subVmTest1-disks-vda-bus", "ide")
         b.click(prefix)
@@ -1704,7 +1704,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_text('#vm-subVmTest1-disks-vdb-source-dev', loop_dev)
 
         if "debian" in m.image or "ubuntu" in m.image:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".*profile="virt-aa-helper" name="{loop_dev}".*')  # noqa: E501
+            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".*profile="virt-aa-helper" name="{loop_dev}".*')  # ruff: ignore[line-too-long]
 
 
 if __name__ == '__main__':

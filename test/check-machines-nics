@@ -15,7 +15,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
     def setUp(self):
         super().setUp()
         # querying object manager often runs into that on network changes; irrelevant
-        self.allow_journal_messages("org.freedesktop.NetworkManager: couldn't get managed objects at /org/freedesktop: Timeout was reached")  # noqa: E501
+        self.allow_journal_messages("org.freedesktop.NetworkManager: couldn't get managed objects at /org/freedesktop: Timeout was reached")  # ruff: ignore[line-too-long]
 
     @testlib.no_retry_when_changed
     def testVmNICs(self):
@@ -567,7 +567,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         def verify(self):
             dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
             mac_string = f'"{self.mac}"'
-            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"  # noqa: E501
+            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"  # ruff: ignore[line-too-long]
 
             if self.source_type == "network":
                 self.assertEqual(
@@ -875,7 +875,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             # Verify libvirt XML
             dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
             mac_string = f'"{self.mac}"'
-            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"  # noqa: E501
+            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"  # ruff: ignore[line-too-long]
 
             if (self.source_type == "network"):
                 self.assertEqual("network", self.machine.execute(xmllint_element.format(prop='@type')).strip())
@@ -911,7 +911,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         def cleanup(self):
             if self.permanent:
-                self.machine.execute(f"virsh detach-interface --mac {self.mac} --domain subVmTest1 --type {self.source_type} --config")  # noqa: E501
+                self.machine.execute(f"virsh detach-interface --mac {self.mac} --domain subVmTest1 --type {self.source_type} --config")  # ruff: ignore[line-too-long]
 
                 # we don't get any signal for interface detaching right now
                 self.browser.reload()
