@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-06 05:35+0000\n"
+"POT-Creation-Date: 2026-08-25 03:31+0000\n"
 "PO-Revision-Date: 2026-05-06 12:00+0000\n"
 "Last-Translator: Bone NI <bounkirdni@gmail.com>\n"
 "Language-Team: Lao <https://translate.fedoraproject.org/projects/cockpit/"
@@ -101,10 +101,10 @@ msgid "Action"
 msgstr "ການດຳເນີນການ"
 
 #: src/components/vms/hostvmslist.tsx:317
-#: src/components/vm/nics/vmNicsCard.tsx:593
-#: src/components/vm/disks/vmDisksCard.tsx:162
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/storagePools/storagePoolList.tsx:65
+#: src/components/vm/disks/vmDisksCard.tsx:162
+#: src/components/vm/nics/vmNicsCard.tsx:593
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/networks/networkList.tsx:64
 msgid "Actions"
 msgstr "ການດຳເນີນການຕ່າງໆ"
@@ -118,11 +118,11 @@ msgstr "ເປີດໃຊ້ງານ"
 msgid "Activate the storage pool to administer volumes"
 msgstr "ເປີດໃຊ້ງານຄັງເກັບຂໍ້ມູນເພື່ອຈັດການວໍລຸ່ມ"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/disks/diskAdd.tsx:756
 #: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/hostdevs/hostDevAdd.tsx:261
 #: src/components/vm/nics/nicAdd.tsx:277 src/components/vm/nics/nicBody.tsx:577
-#: src/components/vm/disks/diskAdd.tsx:756
 #: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
 msgstr "ເພີ່ມ"
@@ -143,13 +143,13 @@ msgstr "ເພີ່ມ VNC"
 msgid "Add a DHCP static host entry"
 msgstr "ເພີ່ມລາຍການໂຮສແບບຄົງທີ່ຂອງ DHCP"
 
-#: src/components/vm/disks/diskAdd.tsx:744
 #: src/components/vm/disks/vmDisksCard.tsx:69
+#: src/components/vm/disks/diskAdd.tsx:744
 msgid "Add disk"
 msgstr "ເພີ່ມດິສກ໌"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:140
 #: src/components/vm/hostdevs/hostDevAdd.tsx:278
+#: src/components/vm/hostdevs/hostDevCard.tsx:140
 msgid "Add host device"
 msgstr "ເພີ່ມອຸປະກອນໂຮສ"
 
@@ -226,8 +226,8 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "ລຶບວໍລຸ່ມທັງໝົດທີ່ຢູ່ໃນຄັງນີ້ພ້ອມ:"
 
-#: src/components/vm/nics/nicAdd.tsx:138
 #: src/components/vm/disks/diskAdd.tsx:601
+#: src/components/vm/nics/nicAdd.tsx:138
 msgid "Always attach"
 msgstr "ເຊື່ອມຕໍ່ຕະຫຼອດ"
 
@@ -274,8 +274,8 @@ msgstr "ອັດຕະໂນມັດ"
 msgid "Automation"
 msgstr "ລະບົບອັດຕະໂນມັດ"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:190
 #: src/components/storagePools/storagePoolOverviewTab.tsx:60
+#: src/components/vm/overview/vmOverviewCard.tsx:190
 #: src/components/networks/networkOverviewTab.tsx:117
 msgid "Autostart"
 msgstr "ເລີ່ມອັດຕະໂນມັດ"
@@ -313,18 +313,18 @@ msgstr "ບໍ່ສາມາດບັນທຶກການຕັ້ງຄ່າ
 msgid "Bridge"
 msgstr "ບຣິດ (Bridge)"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:91
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/hostdevs/hostDevCard.tsx:250
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/disks/vmDisksCard.tsx:241
+#: src/components/vm/disks/diskEdit.tsx:93
+#: src/components/vm/disks/diskAdd.tsx:184
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
-#: src/components/vm/disks/diskAdd.tsx:184
-#: src/components/vm/disks/vmDisksCard.tsx:241
-#: src/components/vm/disks/diskEdit.tsx:93
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/hostdevs/hostDevCard.tsx:91
+#: src/components/vm/hostdevs/hostDevCard.tsx:99
+#: src/components/vm/hostdevs/hostDevCard.tsx:250
 msgid "Bus"
 msgstr "ບັດສ (Bus)"
 
@@ -332,8 +332,8 @@ msgstr "ບັດສ (Bus)"
 msgid "CD/DVD disc"
 msgstr "ແຜ່ນ CD/DVD"
 
-#: src/components/common/needsShutdown.tsx:206
 #: src/components/vms/hostvmslist.tsx:86 src/components/vms/hostvmslist.tsx:294
+#: src/components/common/needsShutdown.tsx:206
 #: src/components/vm/overview/vmOverviewCard.tsx:178
 #: src/components/vm/vmUsageCard.tsx:52
 msgid "CPU"
@@ -343,9 +343,9 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "ບໍ່ສາມາດບັນທຶກໂໝດ CPU ໄດ້"
 
-#: src/components/vm/disks/diskAdd.tsx:179
 #: src/components/vm/disks/vmDisksCard.tsx:257
 #: src/components/vm/disks/diskEdit.tsx:167
+#: src/components/vm/disks/diskAdd.tsx:179
 msgid "Cache"
 msgstr "ແຄສ (Cache)"
 
@@ -354,27 +354,27 @@ msgid "Can not determine guest device name"
 msgstr "ບໍ່ສາມາດລະບຸຊື່ອຸປະກອນຂອງເກສໄດ້"
 
 #: src/components/common/deleteResource.tsx:116
-#: src/components/vm/deleteDialog.tsx:216
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
-#: src/components/vm/hostdevs/hostDevAdd.tsx:266
-#: src/components/vm/overview/memoryModal.tsx:195
-#: src/components/vm/overview/watchdog.tsx:228
-#: src/components/vm/overview/firmware.tsx:107
-#: src/components/vm/overview/cpuModal.tsx:341
-#: src/components/vm/overview/bootOrder.tsx:356
-#: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/vmCloneDialog.tsx:111
-#: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/vm/confirmDialog.tsx:66
-#: src/components/create-vm-dialog/createVmDialog.tsx:1734
 #: src/components/storagePools/storagePoolDelete.tsx:207
 #: src/components/storagePools/createStoragePoolDialog.tsx:512
+#: src/components/vm/vmReplaceSpiceDialog.tsx:165
+#: src/components/vm/deleteDialog.tsx:216
+#: src/components/vm/disks/mediaEject.tsx:116
+#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/overview/cpuModal.tsx:341
+#: src/components/vm/overview/memoryModal.tsx:195
+#: src/components/vm/overview/bootOrder.tsx:356
+#: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/vmRenameDialog.tsx:96
+#: src/components/vm/confirmDialog.tsx:66
+#: src/components/vm/hostdevs/hostDevAdd.tsx:266
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
+#: src/components/vm/vmCloneDialog.tsx:111
+#: src/components/vm/vmMigrateDialog.tsx:227
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
+#: src/components/create-vm-dialog/createVmDialog.tsx:1734
 #: src/components/networks/networkOverviewTab.tsx:271
 #: src/components/networks/createNetworkDialog.tsx:548
 msgid "Cancel"
@@ -435,7 +435,7 @@ msgstr ""
 "ການຄລິກ \"ເປີດຕົວເບິ່ງ (Launch viewer)\" ຈະດາວໂຫຼດໄຟລ໌ $0 ແລະ ເປີດແອັບພລິເຄຊັນ Remote "
 "Viewer ໃນລະບົບຂອງທ່ານ."
 
-#: src/components/vm/vmCloneDialog.tsx:108 src/components/vm/vmActions.tsx:383
+#: src/components/vm/vmActions.tsx:383 src/components/vm/vmCloneDialog.tsx:108
 msgid "Clone"
 msgstr "ໂຄລນ (Clone)"
 
@@ -472,10 +472,10 @@ msgstr "ຢືນຢັນການດຳເນີນການນີ້"
 msgid "Connect"
 msgstr "ເຊື່ອມຕໍ່"
 
-#: src/components/common/machinesConnectionSelector.tsx:44
 #: src/components/vms/hostvmslist.tsx:314
-#: src/components/vm/overview/vmOverviewCard.tsx:158
+#: src/components/common/machinesConnectionSelector.tsx:44
 #: src/components/storagePools/storagePoolList.tsx:63
+#: src/components/vm/overview/vmOverviewCard.tsx:158
 #: src/components/networks/createNetworkDialog.tsx:34
 #: src/components/networks/networkList.tsx:61
 msgid "Connection"
@@ -491,11 +491,11 @@ msgstr "ຄອນໂຊລ"
 msgid "Console type"
 msgstr "ຄອນໂຊລ"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:148
+#: src/components/vm/vmReplaceSpiceDialog.tsx:142
 msgid "Convert QXL video card to VGA"
 msgstr "ປ່ຽນກາດວິດີໂອ QXL ເປັນ VGA"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:147
+#: src/components/vm/vmReplaceSpiceDialog.tsx:141
 msgid "Convert SPICE graphics console to VNC"
 msgstr "ປ່ຽນຄອນໂຊລກຣາຟິກ SPICE ເປັນ VNC"
 
@@ -536,9 +536,9 @@ msgstr "ບໍ່ສາມາດຍ້ອນກັບໄປໃຊ້ snapshot �
 msgid "Crashed"
 msgstr "ພັງ (Crashed)"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
 #: src/components/storagePools/storageVolumeCreate.tsx:95
 #: src/components/storagePools/createStoragePoolDialog.tsx:509
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
 #: src/components/networks/createNetworkDialog.tsx:545
 msgid "Create"
 msgstr "ສ້າງ"
@@ -583,8 +583,8 @@ msgstr "ສ້າງວໍລຸ່ມ raw ໃໝ່"
 msgid "Create new virtual machine"
 msgstr "ສ້າງເຄື່ອງສະເໝືອນໃໝ່"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:324
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
 msgid "Create snapshot"
 msgstr "ສ້າງ snapshot"
 
@@ -666,12 +666,11 @@ msgstr "ປິດການໃຊ້ງານ"
 #: src/components/common/deleteResource.tsx:104
 #: src/components/common/deleteResource.tsx:164
 #: src/components/common/deleteResource.tsx:175
-#: src/components/vm/deleteDialog.tsx:213 src/components/vm/vmActions.tsx:466
-#: src/components/vm/vmActions.tsx:474
 #: src/components/storagePools/storagePoolDelete.tsx:204
 #: src/components/storagePools/storagePoolDelete.tsx:234
 #: src/components/storagePools/storagePoolDelete.tsx:244
-#: src/components/networks/network.tsx:126
+#: src/components/vm/deleteDialog.tsx:213 src/components/vm/vmActions.tsx:466
+#: src/components/vm/vmActions.tsx:474 src/components/networks/network.tsx:126
 #: src/components/networks/network.tsx:129
 msgid "Delete"
 msgstr "ລຶບ"
@@ -713,12 +712,12 @@ msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "ການລຶບໂຟນເດີທີ່ໃຊ້ຮ່ວມກັນສາມາດເຮັດໄດ້ສະເພາະຕອນປິດເຄື່ອງເກສເທົ່ານັ້ນ"
 
 #: src/components/vm/vmEditDescriptionDialog.tsx:66
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
 msgid "Description"
 msgstr "ຄຳອະທິບາຍ"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:124
+#: src/components/vm/vmReplaceSpiceDialog.tsx:118
 msgid "Deselect others"
 msgstr "ຍົກເລີກການເລືອກອື່ນໆ"
 
@@ -743,16 +742,16 @@ msgstr "ຖອດດິສກ໌ທີ່ໃຊ້ຄັງນີ້ອອກຈ
 msgid "Details"
 msgstr "ລາຍລະອຽດ"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:90
-#: src/components/vm/hostdevs/hostDevCard.tsx:249
-#: src/components/vm/hostdevs/hostDevAdd.tsx:99
-#: src/components/vm/hostdevs/hostDevAdd.tsx:144
+#: src/components/vm/disks/vmDisksCard.tsx:238
+#: src/components/vm/disks/diskAdd.tsx:427
 #: src/components/vm/overview/bootOrder.tsx:106
 #: src/components/vm/overview/bootOrder.tsx:113
 #: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/overview/bootOrder.tsx:149
-#: src/components/vm/disks/diskAdd.tsx:427
-#: src/components/vm/disks/vmDisksCard.tsx:238
+#: src/components/vm/hostdevs/hostDevAdd.tsx:99
+#: src/components/vm/hostdevs/hostDevAdd.tsx:144
+#: src/components/vm/hostdevs/hostDevCard.tsx:90
+#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/networks/createNetworkDialog.tsx:218
 #: src/components/networks/networkList.tsx:60
 msgid "Device"
@@ -872,8 +871,8 @@ msgstr "ໄລຍະເວລາ"
 msgid "Dying"
 msgstr "ກຳລັງຢຸດເຮັດວຽກ"
 
-#: src/components/vm/nics/vmNicsCard.tsx:634
 #: src/components/vm/disks/diskEdit.tsx:275
+#: src/components/vm/nics/vmNicsCard.tsx:634
 msgid "Edit"
 msgstr "ແກ້ໄຂ"
 
@@ -910,8 +909,8 @@ msgstr "ບໍ່ອະນຸຍາດໃຫ້ແກ້ໄຂອິນເຕີ
 msgid "Editing transient network interfaces is not allowed"
 msgstr "ບໍ່ອະນຸຍາດໃຫ້ແກ້ໄຂອິນເຕີເຟດເຄືອຂ່າຍແບບຊົ່ວຄາວ"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:232
 #: src/components/vm/disks/mediaEject.tsx:109
+#: src/components/vm/disks/vmDiskColumns.tsx:232
 msgid "Eject"
 msgstr "ດັນອອກ (Eject)"
 
@@ -1012,7 +1011,7 @@ msgstr "ຖອດ vsock ຫຼົ້ມເຫຼວ"
 msgid "Failed to detach watchdog"
 msgstr "ຖອດ watchdog ຫຼົ້ມເຫຼວ"
 
-#: src/state.ts:265
+#: src/state.ts:263
 msgid "Failed to fetch some resources"
 msgstr "ດຶງຂໍ້ມູນບາງຊັບພະຍາກອນຫຼົ້ມເຫຼວ"
 
@@ -1024,7 +1023,7 @@ msgstr "ດຶງຂໍ້ມູນທີ່ຢູ່ IP ຂອງອິນເ�
 msgid "Failed to rename VM $0"
 msgstr "ປ່ຽນຊື່ VM $0 ຫຼົ້ມເຫຼວ"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:84
+#: src/components/vm/vmReplaceSpiceDialog.tsx:78
 msgid "Failed to replace SPICE devices"
 msgstr "ປ່ຽນແທນອຸປະກອນ SPICE ຫຼົ້ມເຫຼວ"
 
@@ -1044,8 +1043,8 @@ msgstr "ກຳນົດຄຳອະທິບາຍຂອງ VM $0 ຫຼົ້�
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "ຄວນເປີດໃຊ້ງານໜ້ອຍກວ່າຈຳນວນສູງສຸດຂອງ virtual CPUs."
 
-#: src/components/vm/overview/bootOrder.tsx:105
 #: src/components/vm/disks/vmDiskColumns.tsx:39
+#: src/components/vm/overview/bootOrder.tsx:105
 msgid "File"
 msgstr "ໄຟລ໌"
 
@@ -1061,8 +1060,8 @@ msgstr "ໂຟນເດີລະບົບໄຟລ໌"
 msgid "Filter by name"
 msgstr "ກັ່ນຕອງດ້ວຍຊື່"
 
-#: src/components/vm/overview/firmware.tsx:90
 #: src/components/vm/overview/vmOverviewCard.tsx:244
+#: src/components/vm/overview/firmware.tsx:90
 msgid "Firmware"
 msgstr "ເຟີມແວ"
 
@@ -1105,9 +1104,9 @@ msgstr "ບັງຄັບປິດເຄື່ອງ $0 ຫຼື ບໍ່?"
 msgid "Force shutdown and restart"
 msgstr "ບັງຄັບປິດເຄື່ອງ ແລະ ຣີສະຕາດ"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:134
 #: src/components/storagePools/storageVolumeCreateBody.tsx:103
 #: src/components/storagePools/createStoragePoolDialog.tsx:244
+#: src/components/vm/disks/vmDiskColumns.tsx:134
 msgid "Format"
 msgstr "ຟໍແມັດ"
 
@@ -1146,8 +1145,8 @@ msgid "Get a new RHSM token."
 msgstr "ຮັບໂທເຄັນ RHSM ໃໝ່."
 
 #: src/components/common/dialog.tsx:105
-#: src/components/vm/overview/memorySelectRow.tsx:95
 #: src/components/vm/disks/vmDisksCard.tsx:39
+#: src/components/vm/overview/memorySelectRow.tsx:95
 #: src/components/create-vm-dialog/createVmDialog.tsx:1018
 #: src/components/create-vm-dialog/createVmDialog.tsx:1182
 msgid "GiB"
@@ -1190,10 +1189,10 @@ msgstr "Hardware virtualization ຖືກປິດໃຊ້ງານ"
 msgid "Hide additional options"
 msgstr "ເຊື່ອງຕົວເລືອກເພີ່ມເຕີມ"
 
-#: src/components/vm/overview/bootOrder.tsx:110
-#: src/components/vm/disks/vmDiskColumns.tsx:44
 #: src/components/storagePools/storagePoolOverviewTab.tsx:23
 #: src/components/storagePools/createStoragePoolDialog.tsx:154
+#: src/components/vm/disks/vmDiskColumns.tsx:44
+#: src/components/vm/overview/bootOrder.tsx:110
 msgid "Host"
 msgstr "ໂຮສຕ໌ (Host)"
 
@@ -1245,8 +1244,8 @@ msgstr "ID"
 msgid "IP"
 msgstr "IP"
 
-#: src/components/vm/nics/vmNicsCard.tsx:574
 #: src/components/vm/nics/nicBody.tsx:440
+#: src/components/vm/nics/vmNicsCard.tsx:574
 #: src/components/networks/networkOverviewTab.tsx:255
 msgid "IP address"
 msgstr "ທີ່ຢູ່ IP"
@@ -1453,7 +1452,7 @@ msgstr "ຊື່ໄຟລ໌ບໍ່ຖືກຕ້ອງ"
 msgid "Isolated network"
 msgstr "ເຄືອຂ່າຍແບບແຍກຕົວ (Isolated network)"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:157
+#: src/components/vm/vmReplaceSpiceDialog.tsx:151
 msgid ""
 "It can also be used to enable the inline graphical console in the browser, "
 "which does not support SPICE."
@@ -1523,9 +1522,10 @@ msgstr "ສະຖານທີ່"
 msgid "MAC"
 msgstr "MAC"
 
+#: src/components/vm/nics/nicAdd.tsx:84
 #: src/components/vm/nics/vmNicsCard.tsx:569
 #: src/components/vm/nics/vmNicsCard.tsx:767
-#: src/components/vm/nics/nicAdd.tsx:84 src/components/vm/nics/nicEdit.tsx:45
+#: src/components/vm/nics/nicEdit.tsx:45
 #: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "ທີ່ຢູ່ MAC"
@@ -1640,8 +1640,8 @@ msgstr "ເສັ້ນທາງສະຖານະໜ່ວຍຄວາມຈຳ
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmMigrateDialog.tsx:224
 #: src/components/vm/vmActions.tsx:406
+#: src/components/vm/vmMigrateDialog.tsx:224
 msgid "Migrate"
 msgstr "ຍ້າຍ (Migrate)"
 
@@ -1659,8 +1659,8 @@ msgstr "ອື່ນໆ (Miscellaneous)"
 
 #: src/components/vm/overview/cpuModal.tsx:304
 #: src/components/vm/overview/cpuModal.tsx:306
-#: src/components/vm/nics/vmNicsCard.tsx:168
 #: src/components/vm/nics/nicBody.tsx:276
+#: src/components/vm/nics/vmNicsCard.tsx:168
 msgid "Mode"
 msgstr "ໂໝດ"
 
@@ -1704,14 +1704,14 @@ msgid "NIC $0 of VM $1 failed to change state"
 msgstr "NIC $0 ຂອງ VM $1 ປ່ຽນສະຖານະຫຼົ້ມເຫຼວ"
 
 #: src/components/vms/hostvmslist.tsx:313
-#: src/components/vm/vmCloneDialog.tsx:92
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
-#: src/components/create-vm-dialog/createVmDialog.tsx:313
 #: src/components/storagePools/storagePoolList.tsx:61
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
 #: src/components/storagePools/storageVolumeCreateBody.tsx:113
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
 #: src/components/storagePools/createStoragePoolDialog.tsx:58
+#: src/components/vm/vmCloneDialog.tsx:92
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
+#: src/components/create-vm-dialog/createVmDialog.tsx:313
 #: src/components/networks/createNetworkDialog.tsx:172
 #: src/components/networks/networkList.tsx:59
 msgid "Name"
@@ -1994,12 +1994,12 @@ msgstr "ລະບົບປະຕິບັດການ"
 msgid "Operation is in progress"
 msgstr "ກຳລັງດຳເນີນການ"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:108
+#: src/components/vm/vmReplaceSpiceDialog.tsx:102
 msgid "Other VMs using SPICE"
 msgstr "VM ອື່ນໆທີ່ໃຊ້ SPICE"
 
-#: src/components/vm/vmDetailsPage.tsx:140
 #: src/components/storagePools/storagePool.tsx:60
+#: src/components/vm/vmDetailsPage.tsx:140
 msgid "Overview"
 msgstr "ພາບລວມ"
 
@@ -2029,9 +2029,9 @@ msgid "Password must be at most 8 characters."
 msgstr "ລະຫັດຜ່ານຕ້ອງມີຄວາມຍາວສູງສຸດ 8 ຕົວອັກສອນ."
 
 #: src/components/vm/deleteDialog.tsx:68
+#: src/components/vm/disks/diskEdit.tsx:46
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
-#: src/components/vm/disks/diskEdit.tsx:46
 msgid "Path"
 msgstr "ເສັ້ນທາງ (Path)"
 
@@ -2075,8 +2075,8 @@ msgstr "ຖາວອນ (ຄ່າເລີ່ມຕົ້ນ)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "ຖືກປະຕິເສດສິດການເຂົ້າເຖິງໄຟລ໌ດິດໃນໄດເຣັກທໍຣີ Home"
 
-#: src/components/vm/nics/nicAdd.tsx:137
 #: src/components/vm/disks/diskAdd.tsx:600
+#: src/components/vm/nics/nicAdd.tsx:137
 msgid "Persistence"
 msgstr "ຄວາມຄົງຕົວ"
 
@@ -2101,16 +2101,16 @@ msgstr "ກະລຸນາເລືອກທີ່ຢູ່ MAC ອື່ນ"
 msgid "Please enter new volume name"
 msgstr "ກະລຸນາໃສ່ຊື່ໂວລຸມໃໝ່"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:86
+#: src/components/vm/vmReplaceSpiceDialog.tsx:80
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr "ກະລຸນາເບິ່ງ $0 ສຳລັບວິທີການຕັ້ງຄ່າ VM ດ້ວຍຕົນເອງ."
 
 #: src/components/vm/deleteDialog.tsx:81
-#: src/components/vm/overview/bootOrder.tsx:108
+#: src/components/vm/disks/mediaEject.tsx:85
 #: src/components/vm/disks/diskAdd.tsx:255
 #: src/components/vm/disks/diskAdd.tsx:328
 #: src/components/vm/disks/vmDiskColumns.tsx:42
-#: src/components/vm/disks/mediaEject.tsx:85
+#: src/components/vm/overview/bootOrder.tsx:108
 msgid "Pool"
 msgstr "ພູລ (Pool)"
 
@@ -2126,11 +2126,11 @@ msgstr "ປະເພດຂອງພູລບໍ່ຮອງຮັບການສ
 msgid "Pool's volumes are used by VMs "
 msgstr "ໂວລຸມຂອງພູລກຳລັງຖືກໃຊ້ໂດຍ VM "
 
-#: src/components/vm/consoles/vnc.tsx:154
+#: src/components/vm/disks/vmDiskColumns.tsx:45
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
+#: src/components/vm/consoles/vnc.tsx:154
 #: src/components/vm/nics/vmNicsCard.tsx:191
-#: src/components/vm/disks/vmDiskColumns.tsx:45
 msgid "Port"
 msgstr "ພອດ (Port)"
 
@@ -2195,11 +2195,11 @@ msgstr "ຕົວເລັ່ງການປະມວນຜົນ"
 msgid "Processor"
 msgstr "ໂປຣເຊສເຊີ"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:240
-#: src/components/vm/hostdevs/hostDevCard.tsx:246
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/overview/bootOrder.tsx:141
 #: src/components/vm/overview/bootOrder.tsx:157
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
+#: src/components/vm/hostdevs/hostDevCard.tsx:240
+#: src/components/vm/hostdevs/hostDevCard.tsx:246
 msgid "Product"
 msgstr "ຜະລິດຕະພັນ"
 
@@ -2207,11 +2207,11 @@ msgstr "ຜະລິດຕະພັນ"
 msgid "Profile"
 msgstr "ໂປຣໄຟລ໌"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/disks/vmDiskColumns.tsx:41
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
 #: src/components/vm/nics/nicBody.tsx:492
-#: src/components/vm/disks/vmDiskColumns.tsx:41
 msgid "Protocol"
 msgstr "ໂປຣໂຕຄອນ (Protocol)"
 
@@ -2277,21 +2277,21 @@ msgstr "Remote viewer"
 msgid "Remote viewer applications can connect to the following address:"
 msgstr "ແອັບພລິເຄຊັນ Remote viewer ສາມາດເຊື່ອມຕໍ່ໄປຫາທີ່ຢູ່ຕໍ່ໄປນີ້:"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:256
-#: src/components/vm/hostdevs/hostDevCard.tsx:262
-#: src/components/vm/overview/watchdog.tsx:225
-#: src/components/vm/overview/vsock.tsx:269
-#: src/components/vm/nics/vmNicsCard.tsx:652
-#: src/components/vm/nics/vmNicsCard.tsx:667
 #: src/components/vm/disks/vmDiskColumns.tsx:169
 #: src/components/vm/disks/vmDiskColumns.tsx:248
+#: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/overview/vsock.tsx:269
+#: src/components/vm/hostdevs/hostDevCard.tsx:256
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
+#: src/components/vm/nics/vmNicsCard.tsx:652
+#: src/components/vm/nics/vmNicsCard.tsx:667
 #: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "ລຶບອອກ"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:149
+#: src/components/vm/vmReplaceSpiceDialog.tsx:143
 msgid "Remove SPICE audio and host devices"
 msgstr "ລຶບອຸປະກອນສຽງ ແລະ ອຸປະກອນໂຮສຕ໌ຂອງ SPICE ອອກ"
 
@@ -2333,28 +2333,28 @@ msgstr "ປ່ຽນຊື່"
 msgid "Rename VM $0"
 msgstr "ປ່ຽນຊື່ VM $0"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:168
+#: src/components/vm/vmReplaceSpiceDialog.tsx:162
 msgid "Replace"
 msgstr "ແທນທີ່"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:133
+#: src/components/vm/vmReplaceSpiceDialog.tsx:127
 #: src/components/vm/usesSpice.tsx:42 src/components/vm/vmActions.tsx:417
 msgid "Replace SPICE devices"
 msgstr "ແທນທີ່ອຸປະກອນ SPICE"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:133
+#: src/components/vm/vmReplaceSpiceDialog.tsx:127
 msgid "Replace SPICE devices in VM $0"
 msgstr "ແທນທີ່ອຸປະກອນ SPICE ໃນ VM $0"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:140
+#: src/components/vm/vmReplaceSpiceDialog.tsx:134
 msgid "Replace SPICE on selected VMs."
 msgstr "ແທນທີ່ SPICE ໃນ VM ທີ່ເລືອກ."
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:141
+#: src/components/vm/vmReplaceSpiceDialog.tsx:135
 msgid "Replace SPICE on the virtual machine."
 msgstr "ແທນທີ່ SPICE ໃນເຄື່ອງສະເໝືອນ."
 
-#: src/components/vm/consoles/spice.tsx:82
+#: src/components/vm/consoles/spice.tsx:81
 msgid "Replace with VNC"
 msgstr "ແທນທີ່ດ້ວຍ VNC"
 
@@ -2383,8 +2383,8 @@ msgstr "ເຮັດວຽກຕໍ່"
 msgid "Retry"
 msgstr "ລອງໃໝ່"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 msgid "Revert"
 msgstr "ຄືນຄ່າ (Revert)"
 
@@ -2434,8 +2434,8 @@ msgstr "ກຳລັງເຮັດວຽກ"
 msgid "SPICE"
 msgstr "SPICE"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:142
-#: src/components/vm/vmReplaceSpiceDialog.tsx:144
+#: src/components/vm/vmReplaceSpiceDialog.tsx:136
+#: src/components/vm/vmReplaceSpiceDialog.tsx:138
 msgid "SPICE conversion"
 msgstr "ການປ່ຽນແປງ SPICE"
 
@@ -2453,15 +2453,15 @@ msgstr "ຄີ SSH"
 msgid "Satellite Communication Controller"
 msgstr "ຕົວຄວບຄຸມການສື່ສານຜ່ານດາວທຽມ"
 
-#: src/components/vm/consoles/vnc.tsx:167
-#: src/components/vm/overview/memoryModal.tsx:192
+#: src/components/vm/disks/diskEdit.tsx:238
 #: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/overview/firmware.tsx:104
+#: src/components/vm/overview/memoryModal.tsx:192
 #: src/components/vm/overview/bootOrder.tsx:353
 #: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/nics/nicEdit.tsx:230
-#: src/components/vm/disks/diskEdit.tsx:238
+#: src/components/vm/overview/firmware.tsx:104
 #: src/components/vm/vmEditDescriptionDialog.tsx:78
+#: src/components/vm/consoles/vnc.tsx:167
+#: src/components/vm/nics/nicEdit.tsx:230
 msgid "Save"
 msgstr "ບັນທຶກ"
 
@@ -2469,7 +2469,7 @@ msgstr "ບັນທຶກ"
 msgid "Security failure"
 msgstr "ຄວາມປອດໄພລົ້ມເຫຼວ"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:124
+#: src/components/vm/vmReplaceSpiceDialog.tsx:118
 msgid "Select all"
 msgstr "ເລືອກທັງໝົດ"
 
@@ -2485,9 +2485,9 @@ msgstr "ສົ່ງສັນຍານຂັດຈັງຫວະ (Non-maskable 
 msgid "Send non-maskable interrupt to $0?"
 msgstr "ສົ່ງສັນຍານຂັດຈັງຫວະໄປຫາ $0 ຫຼື ບໍ່?"
 
+#: src/components/vm/disks/vmDiskColumns.tsx:133
 #: src/components/vm/consoles/consoles.tsx:275
 #: src/components/vm/consoles/consoles.tsx:292
-#: src/components/vm/disks/vmDiskColumns.tsx:133
 msgid "Serial"
 msgstr "ຊີຣຽວ (Serial)"
 
@@ -2573,8 +2573,9 @@ msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "ປິດ VM ກ່ອນເພື່ອແກ້ໄຂການຕັ້ງຄ່າເຟີມແວຣ໌"
 
 #: src/components/common/needsShutdown.tsx:278
+#: src/components/vm/vmActions.tsx:521
 #: src/components/vm/consoles/serial.tsx:190
-#: src/components/vm/consoles/vnc.tsx:650 src/components/vm/vmActions.tsx:521
+#: src/components/vm/consoles/vnc.tsx:650
 msgid "Shutdown and restart"
 msgstr "ປິດ ແລະ ເລີ່ມໃໝ່"
 
@@ -2594,10 +2595,10 @@ msgstr "ຕົວຄວບຄຸມການປະມວນຜົນສັນຍ
 msgid "Simple Communication Controller"
 msgstr "ຕົວຄວບຄຸມການສື່ສານແບບງ່າຍດາຍ"
 
-#: src/components/vm/disks/vmDisksCard.tsx:160
 #: src/components/storagePools/storagePoolList.tsx:62
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
 #: src/components/storagePools/storageVolumeCreateBody.tsx:120
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/vm/disks/vmDisksCard.tsx:160
 msgid "Size"
 msgstr "ຂະໜາດ"
 
@@ -2605,11 +2606,11 @@ msgstr "ຂະໜາດ"
 msgid "Size must be a number"
 msgstr "ຂະໜາດຕ້ອງເປັນຕົວເລກ"
 
+#: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
-#: src/components/vm/hostdevs/hostDevAdd.tsx:112
-#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Slot"
 msgstr "ຊ່ອງ (Slot)"
 
@@ -2645,12 +2646,12 @@ msgid ""
 "restart:"
 msgstr "ການປ່ຽນແປງການຕັ້ງຄ່າບາງຢ່າງຈະມີຜົນຫຼັງຈາກການປິດ ແລະ ເລີ່ມເຄື່ອງໃໝ່ຢ່າງສົມບູນ:"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:217
-#: src/components/vm/nics/vmNicsCard.tsx:549
-#: src/components/vm/nics/nicBody.tsx:269
-#: src/components/vm/disks/diskAdd.tsx:581
-#: src/components/vm/disks/vmDisksCard.tsx:158
 #: src/components/storagePools/storagePoolOverviewTab.tsx:40
+#: src/components/vm/disks/vmDisksCard.tsx:158
+#: src/components/vm/disks/diskAdd.tsx:581
+#: src/components/vm/hostdevs/hostDevCard.tsx:217
+#: src/components/vm/nics/nicBody.tsx:269
+#: src/components/vm/nics/vmNicsCard.tsx:549
 msgid "Source"
 msgstr "ແຫຼ່ງທີ່ມາ (Source)"
 
@@ -2662,13 +2663,13 @@ msgstr "ຮູບແບບແຫຼ່ງທີ່ມາ"
 msgid "Source must not be empty"
 msgstr "ແຫຼ່ງທີ່ມາຕ້ອງບໍ່ວ່າງເປົ່າ"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 #: src/components/storagePools/storagePoolOverviewTab.tsx:30
 #: src/components/storagePools/storagePoolOverviewTab.tsx:35
 #: src/components/storagePools/createStoragePoolDialog.tsx:218
 #: src/components/storagePools/createStoragePoolDialog.tsx:235
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 msgid "Source path"
 msgstr "ເສັ້ນທາງແຫຼ່ງທີ່ມາ"
 
@@ -2719,9 +2720,9 @@ msgstr "ການເລີ່ມຕົ້ນ"
 
 #: src/components/vms/hostvmslist.tsx:259
 #: src/components/vms/hostvmslist.tsx:315
+#: src/components/storagePools/storagePoolList.tsx:64
 #: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/vm/nics/vmNicsCard.tsx:586
-#: src/components/storagePools/storagePoolList.tsx:64
 #: src/components/networks/networkList.tsx:63
 msgid "State"
 msgstr "ສະຖານະ"
@@ -2763,10 +2764,10 @@ msgstr "ການສ້າງພູລບ່ອນຈັດເກັບຂໍ້
 msgid "Storage pool name"
 msgstr "ຊື່ພູລບ່ອນຈັດເກັບຂໍ້ມູນ"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 #: src/components/storagePools/storagePoolList.tsx:49
 #: src/components/storagePools/storagePoolList.tsx:56
 #: src/components/storagePools/storagePoolList.tsx:58
+#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 msgid "Storage pools"
 msgstr "ພູລບ່ອນຈັດເກັບຂໍ້ມູນ"
 
@@ -2827,11 +2828,11 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "ຕາຕະລາງອຸປະກອນໂຮສຕ໌ທີ່ສາມາດເລືອກໄດ້"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:101
-#: src/components/vm/overview/bootOrder.tsx:164
-#: src/components/vm/nics/vmNicsCard.tsx:557
-#: src/components/vm/disks/vmDiskColumns.tsx:173
 #: src/components/vm/disks/vmDisksCard.tsx:159
+#: src/components/vm/disks/vmDiskColumns.tsx:173
+#: src/components/vm/overview/bootOrder.tsx:164
+#: src/components/vm/hostdevs/hostDevCard.tsx:101
+#: src/components/vm/nics/vmNicsCard.tsx:557
 msgid "Target"
 msgstr "ເປົ້າໝາຍ"
 
@@ -2860,9 +2861,9 @@ msgstr "ເທີມີນໍບໍ່ພ້ອມໃຊ້ງານ"
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "VM $0 ກຳລັງເຮັດວຽກຢູ່ ແລະ ຈະຖືກບັງຄັບໃຫ້ປິດກ່ອນທີ່ຈະລຶບ."
 
+#: src/components/vm/disks/vmDiskColumns.tsx:256
 #: src/components/vm/nics/vmNicsCard.tsx:668
 #: src/components/vm/nics/vmNicsCard.tsx:676
-#: src/components/vm/disks/vmDiskColumns.tsx:256
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "VM ຈຳເປັນຕ້ອງກຳລັງເຮັດວຽກ ຫຼື ປິດຢູ່ເພື່ອຖອດອຸປະກອນນີ້ອອກ"
 
@@ -2941,7 +2942,7 @@ msgstr "ດິດນີ້ຈະຖືກຖອດອອກຈາກ $0:"
 msgid "This filesystem will be removed from $0:"
 msgstr "ລະບົບໄຟລ໌ນີ້ຈະຖືກລຶບອອກຈາກ $0:"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:154
+#: src/components/vm/vmReplaceSpiceDialog.tsx:148
 msgid ""
 "This is intended for a host which does not support SPICE due to upgrades or "
 "live migration."
@@ -2985,17 +2986,17 @@ msgstr "VM ແບບຊົ່ວຄາວບໍ່ຮອງຮັບການແ
 msgid "Troubleshoot"
 msgstr "ແກ້ໄຂບັນຫາ"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
-#: src/components/vm/hostdevs/hostDevAdd.tsx:43
+#: src/components/storagePools/storagePoolOverviewTab.tsx:65
+#: src/components/storagePools/createStoragePoolDialog.tsx:102
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
 #: src/components/vm/overview/bootOrder.tsx:155
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
+#: src/components/vm/hostdevs/hostDevAdd.tsx:43
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
 #: src/components/vm/nics/vmNicsCard.tsx:780
-#: src/components/storagePools/storagePoolOverviewTab.tsx:65
-#: src/components/storagePools/createStoragePoolDialog.tsx:102
 msgid "Type"
 msgstr "ປະເພດ"
 
@@ -3043,10 +3044,10 @@ msgstr "Unit"
 msgid "Unknown firmware"
 msgstr "ບໍ່ຮູ້ຈັກເຟີມແວຣ໌"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:84
-#: src/components/vm/hostdevs/hostDevCard.tsx:85
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:146
+#: src/components/vm/hostdevs/hostDevCard.tsx:84
+#: src/components/vm/hostdevs/hostDevCard.tsx:85
 msgid "Unspecified"
 msgstr "ບໍ່ໄດ້ລະບຸ"
 
@@ -3197,12 +3198,12 @@ msgstr "ຕົວເບິ່ງໃນໜ້າເວັບບໍ່ຮອງຮ
 msgid "Valid token"
 msgstr "ໂທເຄັນຖືກຕ້ອງ"
 
+#: src/components/vm/overview/bootOrder.tsx:140
+#: src/components/vm/overview/bootOrder.tsx:156
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
-#: src/components/vm/overview/bootOrder.tsx:140
-#: src/components/vm/overview/bootOrder.tsx:156
 msgid "Vendor"
 msgstr "ຜູ້ຜະລິດ (Vendor)"
 
@@ -3212,8 +3213,8 @@ msgstr "ການສະໜັບສະໜູນຈາກຜູ້ຜະລິດ
 
 #: src/components/vms/hostvmslist.tsx:308
 #: src/components/vms/hostvmslist.tsx:310
-#: src/components/vm/vmDetailsPage.tsx:249
 #: src/components/storagePools/storagePoolList.tsx:46
+#: src/components/vm/vmDetailsPage.tsx:249
 #: src/components/networks/networkList.tsx:44 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "ເຄື່ອງສະເໝືອນ (Virtual machines)"
@@ -3244,10 +3245,10 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "ບໍລິການ Virtualization (libvirt) ບໍ່ໄດ້ເຮັດວຽກຢູ່"
 
 #: src/components/vm/deleteDialog.tsx:78
-#: src/components/vm/overview/bootOrder.tsx:109
+#: src/components/vm/disks/mediaEject.tsx:89
 #: src/components/vm/disks/diskAdd.tsx:334
 #: src/components/vm/disks/vmDiskColumns.tsx:43
-#: src/components/vm/disks/mediaEject.tsx:89
+#: src/components/vm/overview/bootOrder.tsx:109
 #: src/components/create-vm-dialog/createVmDialog.tsx:1152
 msgid "Volume"
 msgstr "ໂວລຸມ (Volume)"
@@ -3268,8 +3269,8 @@ msgstr "ຊື່ກຸ່ມໂວລຸມຕ້ອງບໍ່ວ່າງເ
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:171
+#: src/components/vm/hostdevs/hostDevCard.tsx:107
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3354,10 +3355,10 @@ msgstr "ດິດ"
 msgid "down"
 msgstr "ປິດ"
 
-#: src/components/vm/overview/watchdog.tsx:265
-#: src/components/vm/overview/bootOrder.tsx:387
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
+#: src/components/vm/overview/watchdog.tsx:265
+#: src/components/vm/overview/bootOrder.tsx:387
 #: src/components/vm/overview/vsock.tsx:315
 msgid "edit"
 msgstr "ແກ້ໄຂ"
