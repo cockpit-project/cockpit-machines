@@ -458,9 +458,7 @@ export function parseDumpxmlForCpu(cpuElem: Element | undefined): VMCpu {
     }
 
     cpu.mode = get_attr(cpuElem, 'mode') || "custom";
-    if (cpu.mode === 'custom') {
-        cpu.model = get_text(cpuElem, 'model');
-    }
+    cpu.model = get_text(cpuElem, 'model');
 
     const topologyElem = get_child(cpuElem, 'topology');
     if (topologyElem) {
