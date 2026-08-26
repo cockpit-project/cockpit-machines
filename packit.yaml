@@ -28,6 +28,7 @@ jobs:
     targets: &test_targets
       - fedora-43
       - fedora-44
+      - fedora-45
       - fedora-rawhide
       - fedora-eln-x86_64
       - centos-stream-9
@@ -62,6 +63,7 @@ jobs:
     dist_git_branches:
       - fedora-43
       - fedora-44
+      - fedora-45
       - fedora-development
 
   - job: koji_build
@@ -69,6 +71,7 @@ jobs:
     dist_git_branches:
       - fedora-43
       - fedora-44
+      - fedora-45
       - fedora-development
 
   - job: bodhi_update
