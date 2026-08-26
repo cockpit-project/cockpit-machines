@@ -4,14 +4,14 @@
  * Copyright (C) 2023 Red Hat, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import cockpit from 'cockpit';
 
 import type { optString, VM } from '../../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
 } from '@patternfly/react-core/dist/esm/components/Modal';
@@ -57,6 +57,15 @@ export const CPUModal = ({
     models: string[],
 }) => {
     const Dialogs = useDialogs();
+    const [cpuArch, setCpuArch] = useState<string | null>(null);
+
+    useEffect(() => {
+        cockpit.spawn(["uname", "-m"])
+                .then((output) => {
+                    setCpuArch(output);
+                })
+                .catch((error) => console.log(error));
+    }, []);
 
     function getInt(val: optString, def: number) {
         return val ? parseInt(val) : def;
@@ -302,26 +311,30 @@ export const CPUModal = ({
             </FormGroup>
 
             <FormGroup id="cpu-model-select-group" label={_("Mode")}>
-                <FormSelect value={cpuModel || cpuMode}
-                            aria-label={_("Mode")}
-                            onChange={(_event, value) => {
-                                if ((value == "host-model" || value == "host-passthrough")) {
-                                    setCpuMode(value);
-                                    setCpuModel(undefined);
-                                } else {
-                                    setCpuModel(value);
-                                    setCpuMode("custom");
-                                }
-                            }}>
+                <FormSelect value={cpuMode}
+                        aria-label={_("Mode")}
+                        onChange={(_event, value) => {
+                            setCpuMode(value);
+                        }}>
                     <FormSelectOption key="host-model"
-                                      value="host-model"
-                                      label="host-model" />
+                                value="host-model"
+                                label="host-model" />
                     <FormSelectOption key="host-passthrough"
-                                      value="host-passthrough"
-                                      label="host-passthrough" />
-                    <FormSelectOptionGroup key="custom" label={_("custom")}>
-                        {models.map(model => <FormSelectOption key={model} value={model} label={model} />)}
-                    </FormSelectOptionGroup>
+                                value="host-passthrough"
+                                label="host-passthrough" />
+                    <FormSelectOption key="custom"
+                                value="custom"
+                                label="custom" />
+                </FormSelect>
+            </FormGroup>
+            <FormGroup id="cpu-model-select-group" label={_("Model")}>
+                <FormSelect value={cpuModel}
+                        aria-label={_("Model")}
+                        onChange={(_event, value) => {
+                            setCpuModel(value);
+                        }}>
+                    <FormSelectOption key="none" value="none" label="none" />
+                    {models.map(model => <FormSelectOption key={model} value={cpuArch && cpuArch.startsWith("ppc") ? model.toLowerCase() : model} label={model} />)}
                 </FormSelect>
             </FormGroup>
         </Form>
