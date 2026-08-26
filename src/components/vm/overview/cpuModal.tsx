@@ -4,7 +4,7 @@
  * Copyright (C) 2023 Red Hat, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import cockpit from 'cockpit';
 
 import type { optString, VM } from '../../../types';
@@ -16,6 +16,7 @@ import {
     Modal, ModalBody, ModalFooter, ModalHeader
 } from '@patternfly/react-core/dist/esm/components/Modal';
 import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberInput";
+import { Flex, FlexItem } from '@patternfly/react-core/dist/esm/layouts/Flex';
 
 import { useDialogs } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -57,6 +58,15 @@ export const CPUModal = ({
     models: string[],
 }) => {
     const Dialogs = useDialogs();
+    const [cpuArch, setCpuArch] = useState<string | null>(null);
+
+    useEffect(() => {
+        cockpit.spawn(["uname", "-m"])
+                .then((output) => {
+                    setCpuArch(output);
+                })
+                .catch((error) => console.log(error));
+    }, []);
 
     function getInt(val: optString, def: number) {
         return val ? parseInt(val) : def;
@@ -301,8 +311,45 @@ export const CPUModal = ({
                 </FormSelect>
             </FormGroup>
 
-            <FormGroup id="cpu-model-select-group" label={_("Mode")}>
-                <FormSelect value={cpuModel || cpuMode}
+            {cpuArch && cpuArch.startsWith("ppc")
+                // Running vm's of ppc can be a little weird.
+                // Since it has a special mode for emulating previous versions of
+                // the Power models. This accounts for this by allowing cpu mode
+                // to be selectable on it's own since this is often set to host-model
+                // as opposed to the usual custom mode when emulating other cpu's
+                ? <FormGroup id="cpu-model-select-group" label={_("Mode/Model")}>
+                    <Flex>
+                        <FlexItem>
+                            <FormSelect value={cpuMode}
+                                    aria-label={_("Mode")}
+                                    onChange={(_event, value) => {
+                                        setCpuMode(value);
+                                    }}>
+                                <FormSelectOption key="host-model"
+                                            value="host-model"
+                                            label="host-model" />
+                                <FormSelectOption key="host-passthrough"
+                                            value="host-passthrough"
+                                            label="host-passthrough" />
+                                <FormSelectOption key="custom"
+                                            value="custom"
+                                            label="custom" />
+                            </FormSelect>
+                        </FlexItem>
+                        <FlexItem>
+                            <FormSelect value={cpuModel}
+                                    aria-label={_("Model")}
+                                    onChange={(_event, value) => {
+                                        setCpuModel(value);
+                                    }}>
+                                <FormSelectOption key="none" value="none" label="none" />
+                                {models.map(model => <FormSelectOption key={model} value={model.toLowerCase()} label={model} />)}
+                            </FormSelect>
+                        </FlexItem>
+                    </Flex>
+                </FormGroup>
+                : <FormGroup id="cpu-model-select-group" label={_("Mode")}>
+                    <FormSelect value={cpuModel || cpuMode}
                             aria-label={_("Mode")}
                             onChange={(_event, value) => {
                                 if ((value == "host-model" || value == "host-passthrough")) {
@@ -313,17 +360,18 @@ export const CPUModal = ({
                                     setCpuMode("custom");
                                 }
                             }}>
-                    <FormSelectOption key="host-model"
+                        <FormSelectOption key="host-model"
                                       value="host-model"
                                       label="host-model" />
-                    <FormSelectOption key="host-passthrough"
+                        <FormSelectOption key="host-passthrough"
                                       value="host-passthrough"
                                       label="host-passthrough" />
-                    <FormSelectOptionGroup key="custom" label={_("custom")}>
-                        {models.map(model => <FormSelectOption key={model} value={model} label={model} />)}
-                    </FormSelectOptionGroup>
-                </FormSelect>
-            </FormGroup>
+                        <FormSelectOptionGroup key="custom" label={_("custom")}>
+                            {models.map(model => <FormSelectOption key={model} value={model} label={model} />)}
+                        </FormSelectOptionGroup>
+                    </FormSelect>
+                </FormGroup>
+            }
         </Form>
     );
 
