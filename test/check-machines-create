@@ -1523,17 +1523,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 if self.ssh_keys is not None:
                     for idx, key in enumerate(self.ssh_keys):
                         b.click("button:contains(Add SSH keys)")
-                        # set_val does not emit the expected "change"
-                        # event with React input and textarea
-                        # components, and we would need to use
-                        # set_input_text instead for that reason. But
-                        # we want to simulate a paste operation here,
-                        # not typing individual characters. So we have
-                        # use set_val and follow it up with
-                        # set_input_text for the event.
-                        b.set_val(f"#create-vm-dialog-ssh-key-{idx} textarea", key)
-                        b.set_input_text(f"#create-vm-dialog-ssh-key-{idx} textarea", " ",
-                                         append=True, value_check=False)
+                        b.set_input_text(f"#create-vm-dialog-ssh-key-{idx} textarea",
+                                         key, paste=True, value_check=False)
                         # Check that ssh key was validated
                         if self.ssh_key_invalid:
                             self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v6-c-form__group",
