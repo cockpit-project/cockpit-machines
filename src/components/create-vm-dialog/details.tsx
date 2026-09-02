@@ -755,7 +755,7 @@ function init_Storage(connectionName: ConnectionName): StorageValue {
     };
 }
 
-function update_Storage(field: DialogField<StorageValue>, minimum: number) {
+function update_Storage_minimum(field: DialogField<StorageValue>, minimum: number) {
     if (minimum) {
         let bestUnit = getBestUnit(minimum, units.B);
         if (bestUnit.base1024Exponent >= 4) bestUnit = units.GiB;
@@ -775,6 +775,18 @@ function update_Storage(field: DialogField<StorageValue>, minimum: number) {
                 unit: units.GiB.name,
             }
         );
+    }
+}
+
+function update_Storage_connectionName(field: DialogField<StorageValue>, connectionName: ConnectionName) {
+    const { storagePoolName } = field.get();
+
+    field.sub("connectionName").set(connectionName);
+    field.sub("storagePools").set(appState.storagePools.filter(pool => pool.connectionName === connectionName));
+
+    if (storagePoolName !== "NewVolumeQCOW2" && storagePoolName !== "NewVolumeRAW" && storagePoolName !== "NoStorage") {
+        field.sub("storagePoolName").set("NewVolumeQCOW2");
+        field.sub("storageVolume").set("");
     }
 }
 
@@ -933,7 +945,7 @@ export const Details = ({
         if (os) {
             field.sub("suggestedName").set(getVmName(sub_connectionName.get(), appState.vms, os));
             field.sub("memory").set(init_Memory(os.minimumResources.ram));
-            update_Storage(field.sub("storage"), os.minimumResources.storage || 0);
+            update_Storage_minimum(field.sub("storage"), os.minimumResources.storage || 0);
         } else {
             field.sub("suggestedName").set("");
             field.sub("memory").set(init_Memory());
@@ -950,12 +962,8 @@ export const Details = ({
                 connectionName={sub_connectionName.get()}
                 onValueChanged={(_, val) => {
                     sub_connectionName.set(val);
-                    const { storagePoolName } = field.sub("storage").get();
-                    if (storagePoolName !== "NewVolumeQCOW2" && storagePoolName !== "NewVolumeRAW" && storagePoolName !== "NoStorage") {
-                        // storage pools are different for each connection, so we set storagePool value to default (newVolume)
-                        field.sub("storage").sub("storagePoolName")
-                                .set("NewVolumeQCOW2");
-                    }
+
+                    update_Storage_connectionName(field.sub("storage"), val);
 
                     // For different connections the generated VM names might differ
                     // try to regenerate it
