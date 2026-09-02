@@ -143,6 +143,7 @@ function getVmName(connectionName: ConnectionName, vms: VM[], os: OSInfo) {
 }
 
 interface SourceValue {
+    types: string[];
     type: string;
     os: OSInfo | null;
     mediaId: string;
@@ -151,12 +152,41 @@ interface SourceValue {
     accessToken: string,
 }
 
-function init_Source(initialSourceType: string, initialSource: string, initialOS: string, osInfoList: OSInfo[]): SourceValue {
+function compute_source_types(connectionName: ConnectionName): string[] {
+    const types = [];
+
+    if (appState.virtInstallCapabilities?.downloadOSSupported)
+        types.push(DOWNLOAD_AN_OS);
+    if (appState.virtInstallCapabilities?.cloudInitSupported)
+        types.push(CLOUD_IMAGE);
+    types.push(LOCAL_INSTALL_MEDIA_SOURCE);
+    types.push(URL_SOURCE);
+    if (connectionName == "system")
+        types.push(PXE_SOURCE);
+
+    return types;
+}
+
+function init_Source(
+    connectionName: ConnectionName,
+    initialSourceType: string,
+    initialSource: string,
+    initialOS: string,
+    osInfoList: OSInfo[]
+): SourceValue {
     let os = null;
     if (initialOS)
         os = osInfoList.find(os => os.shortId === initialOS) || null;
 
+    const types = compute_source_types(connectionName);
+
+    if (initialSourceType != EXISTING_DISK_IMAGE_SOURCE && !types.includes(initialSourceType)) {
+        initialSourceType = types[0];
+        initialSource = "";
+    }
+
     return {
+        types,
         type: initialSourceType,
         os,
         mediaId: "",
@@ -164,6 +194,17 @@ function init_Source(initialSourceType: string, initialSource: string, initialOS
         offlineToken: "",
         accessToken: ""
     };
+}
+
+function update_Source_connectionName(field: DialogField<SourceValue>, connectionName: ConnectionName) {
+    const { type } = field.get();
+    const types = compute_source_types(connectionName);
+
+    field.sub("types").set(types);
+    if (type != EXISTING_DISK_IMAGE_SOURCE && !types.includes(type)) {
+        field.sub("type").set(types[0]);
+        field.sub("source").set("");
+    }
 }
 
 function validate_Source(field: DialogField<SourceValue>) {
@@ -216,6 +257,14 @@ function validate_Source(field: DialogField<SourceValue>) {
     });
 }
 
+const source_type_label: Record<string, string> = {
+    [DOWNLOAD_AN_OS]: _("Download an OS"),
+    [CLOUD_IMAGE]: _("Cloud base image"),
+    [LOCAL_INSTALL_MEDIA_SOURCE]: _("Local install media (ISO image or distro install tree)"),
+    [URL_SOURCE]: _("URL (ISO image or distro install tree)"),
+    [PXE_SOURCE]: _("Network boot (PXE)"),
+};
+
 const Source = ({
     field,
     connectionName,
@@ -228,7 +277,7 @@ const Source = ({
     osChanged: (os: OSInfo | null) => void,
 }) => {
     const [autodetectOSInProgress, setAutodetectOSInProgress] = useState(false);
-    const { type, os, source } = field.get();
+    const { types, type, os, source } = field.get();
 
     const os_field = field.sub("os", osChanged);
 
@@ -358,28 +407,9 @@ const Source = ({
                 <DialogDropdownSelect
                     label={_("Installation type")}
                     field={field.sub("type", type_changed)}
-                    options={[
-                        {
-                            value: DOWNLOAD_AN_OS,
-                            label: _("Download an OS"),
-                        },
-                        {
-                            value: CLOUD_IMAGE,
-                            label: _("Cloud base image")
-                        },
-                        {
-                            value: LOCAL_INSTALL_MEDIA_SOURCE,
-                            label: _("Local install media (ISO image or distro install tree)"),
-                        },
-                        {
-                            value: URL_SOURCE,
-                            label: _("URL (ISO image or distro install tree)"),
-                        },
-                        {
-                            value: PXE_SOURCE,
-                            label: _("Network boot (PXE)")
-                        },
-                    ]}
+                    options={
+                        types.map(t => ({ value: t, label: source_type_label[t] }))
+                    }
                 />
             }
 
@@ -920,7 +950,7 @@ export function init_Details(
     return {
         connectionName,
         suggestedName: "",
-        source: init_Source(initialSourceType, initialSource, initialOS, osInfoList),
+        source: init_Source(connectionName, initialSourceType, initialSource, initialOS, osInfoList),
         memory: init_Memory(),
         storage: init_Storage(connectionName),
     };
@@ -963,6 +993,7 @@ export const Details = ({
                 onValueChanged={(_, val) => {
                     sub_connectionName.set(val);
 
+                    update_Source_connectionName(field.sub("source"), val);
                     update_Storage_connectionName(field.sub("storage"), val);
 
                     // For different connections the generated VM names might differ
