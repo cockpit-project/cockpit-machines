@@ -184,6 +184,8 @@ const SshKeysRow = ({
 };
 
 export interface AutomationValue {
+    os: OSInfo | null;
+    profiles: string[];
     profile: string;
     users: UsersConfigurationValue,
     sshKeys: SshKeyValue[];
@@ -192,10 +194,8 @@ export interface AutomationValue {
 
 const UnattendedRow = ({
     field,
-    os,
 } : {
     field: DialogField<AutomationValue>,
-    os: OSInfo,
 }) => {
     function makeProfileOption(profile: string) {
         let profileName;
@@ -211,18 +211,15 @@ const UnattendedRow = ({
         };
     }
 
+    const { profiles } = field.get();
+
     return (
         <>
-            {os.profiles.length > 0 &&
+            {profiles.length > 0 &&
                 <DialogDropdownSelect
                     label={_("Profile")}
                     field={field.sub("profile")}
-                    options={
-                        // Let jeos (Server) appear always first on the list since in osinfo-db
-                        // it's not consistent
-                        os.profiles.sort().reverse()
-                                .map(makeProfileOption)
-                    }
+                    options={profiles.map(makeProfileOption)}
                 />
             }
             <UsersConfigurationRow
@@ -347,6 +344,8 @@ export function compute_AutomationState(source: DetailsValue["source"]): Automat
 
 export function init_Automation(): AutomationValue {
     return {
+        os: null,
+        profiles: [],
         profile: "",
         users: {
             rootPassword: "",
@@ -358,6 +357,19 @@ export function init_Automation(): AutomationValue {
     };
 }
 
+export function update_Automation_os(field: DialogField<AutomationValue>, os: OSInfo | null) {
+    const profiles = os ? os.profiles.sort().reverse() : [];
+    let { profile } = field.get();
+
+    if (!profiles.includes(profile)) {
+        profile = profiles.length > 0 ? profiles[0] : "";
+    }
+
+    field.sub("os").set(os);
+    field.sub("profiles").set(profiles);
+    field.sub("profile").set(profile);
+}
+
 export function validate_Automation(field: DialogField<AutomationValue>, details: DetailsValue) {
     if (details.source.type === CLOUD_IMAGE && appState.virtInstallCapabilities?.cloudInitSupported) {
         validate_CloudInit(field);
@@ -366,20 +378,19 @@ export function validate_Automation(field: DialogField<AutomationValue>, details
 
 export const Automation = ({
     field,
-    details,
     state,
 } : {
     field: DialogField<AutomationValue>,
-    details: DetailsValue,
     state: AutomationState,
 }) => {
+    const { os } = field.get();
+
     return (
         <>
             {(state.showUnattendedRow || state.showCloudInitRow) && state.unattendedInstructionsMessage}
-            {state.showUnattendedRow && details.source.os &&
+            {state.showUnattendedRow &&
                 <UnattendedRow
                     field={field}
-                    os={details.source.os}
                 />
             }
             {state.showCloudInitRow &&
@@ -387,10 +398,10 @@ export const Automation = ({
                     field={field}
                 />
             }
-            {state.showExtraArgsRow && details.source.os &&
+            {state.showExtraArgsRow && os &&
                 <ExtraArgumentsRow
                     field={field.sub("extraArgs")}
-                    os={details.source.os}
+                    os={os}
                 />
             }
         </>
