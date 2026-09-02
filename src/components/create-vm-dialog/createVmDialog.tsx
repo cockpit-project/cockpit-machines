@@ -47,7 +47,11 @@ import {
 } from 'cockpit/dialog';
 
 import { DetailsValue, init_Details, validate_Details, Details } from "./details";
-import { compute_AutomationState, AutomationValue, init_Automation, validate_Automation, Automation } from "./automation";
+import {
+    compute_AutomationState,
+    AutomationValue, init_Automation, update_Automation_os, validate_Automation,
+    Automation
+} from "./automation";
 
 import './createVmDialog.css';
 
@@ -249,8 +253,13 @@ export const CreateVmModal = ({
                         >
                             <FormSection>
                                 <Details
-                                      field={dlg.field("details")}
-                                      osInfoList={dlg.values.osInfoList}
+                                    field={
+                                        dlg.field(
+                                            "details",
+                                            val => update_Automation_os(dlg.field("automation"), val.source.os)
+                                        )
+                                    }
+                                    osInfoList={dlg.values.osInfoList}
                                 />
                             </FormSection>
                         </Tab>
@@ -264,7 +273,6 @@ export const CreateVmModal = ({
                             <FormSection>
                                 <Automation
                                       field={dlg.field("automation")}
-                                      details={dlg.values.details}
                                       state={autoState}
                                 />
                             </FormSection>
