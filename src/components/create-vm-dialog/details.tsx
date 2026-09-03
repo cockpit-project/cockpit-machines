@@ -312,7 +312,8 @@ const Source = ({
                 } catch (ex) {
                     console.log("osinfo-detect command failed: ", String(ex));
                 }
-                setAutodetectOSInProgress(false);
+                if (!signal.aborted)
+                    setAutodetectOSInProgress(false);
             });
         }
     }
