@@ -172,7 +172,7 @@ export const CreateVmModal = ({
             os: source.os ? source.os.shortId : 'auto',
             osVersion: source.os ? source.os.version : '',
             profile: automation.profile,
-            memorySize: convertToUnit(details.memory.size, details.memory.unit, units.MiB),
+            memorySize: Math.ceil(convertToUnit(details.memory.size, details.memory.unit, units.MiB)),
             storageSize: convertToUnit(details.storage.newSize.size, details.storage.newSize.unit, units.GiB),
             storagePool: details.storage.storagePoolName,
             storageVolume: details.storage.storageVolume,
