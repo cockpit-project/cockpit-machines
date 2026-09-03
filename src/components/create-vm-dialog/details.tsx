@@ -714,10 +714,14 @@ function init_Memory(minimum: number = 0): SizeValue {
 
 function validate_Memory(field: DialogField<SizeValue>) {
     field.validate(v => {
-        if (Number(v.size) === 0) {
+        const size = Number(v.size);
+        if (isNaN(size)) {
+            return _("Memory must be a number");
+        }
+        if (size === 0) {
             return _("Memory must not be 0");
         }
-        if (appState.nodeMaxMemory && Number(v.size) > convertToUnit(appState.nodeMaxMemory, units.KiB, v.unit)) {
+        if (appState.nodeMaxMemory && size > convertToUnit(appState.nodeMaxMemory, units.KiB, v.unit)) {
             return cockpit.format(
                 _("$0 $1 available on host"),
                 toReadableNumber(convertToUnit(appState.nodeMaxMemory, units.KiB, v.unit)),
@@ -827,7 +831,10 @@ function validate_Storage(field: DialogField<StorageValue>) {
 
     if (storagePoolName == 'NewVolumeQCOW2' || storagePoolName == 'NewVolumeRAW')
         field.sub("newSize").validate(v => {
-            if (Number(v.size) === 0)
+            const size = Number(v.size);
+            if (isNaN(size))
+                return _("Storage must be a number");
+            if (size === 0)
                 return _("Storage size must not be 0");
         });
 }
