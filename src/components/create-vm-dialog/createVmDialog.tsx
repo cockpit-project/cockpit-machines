@@ -77,7 +77,13 @@ function downloadingDisabled(values: CreateVmModalValues): boolean {
     // failed to obtain one.
 
     const source = values.details.source;
-    return source.type == DOWNLOAD_AN_OS && !!source.os && needsRHToken(source.os.shortId) && isEmpty(source.accessToken);
+    return (
+        source.type == DOWNLOAD_AN_OS &&
+            !!source.os &&
+            needsRHToken(source.os.shortId) &&
+            !isEmpty(source.offlineToken) &&
+            isEmpty(source.accessToken)
+    );
 }
 
 export const CreateVmModal = ({
