@@ -701,7 +701,7 @@ function init_Memory(minimum: number = 0): SizeValue {
         // Use available memory on host as initial default value in
         // modal, but not more than one GiB.
         let unit = units.MiB.name;
-        let size = appState.nodeMaxMemory && Math.floor(convertToUnit(appState.nodeMaxMemory, units.KiB, units.MiB));
+        let size = appState.nodeMaxMemory ? Math.floor(convertToUnit(appState.nodeMaxMemory, units.KiB, units.MiB)) : 0;
         if (size && size > 1024) {
             unit = units.GiB.name;
             size = 1;
