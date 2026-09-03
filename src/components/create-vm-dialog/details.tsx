@@ -293,26 +293,28 @@ const Source = ({
     }
 
     function source_changed() {
-        field.sub("source").get_async(async (installMedia, signal) => {
-            if (!installMedia || installMedia.endsWith("/"))
-                return;
+        if (type == LOCAL_INSTALL_MEDIA_SOURCE || type == URL_SOURCE) {
+            field.sub("source").get_async(async (installMedia, signal) => {
+                if (!installMedia || installMedia.endsWith("/"))
+                    return;
 
-            setAutodetectOSInProgress(true);
-            try {
-                const resJSON = await autodetectOS(installMedia, signal);
-                const res = JSON.parse(resJSON);
-                const osEntry = osInfoList.filter(osEntry => osEntry.id == res.os);
+                setAutodetectOSInProgress(true);
+                try {
+                    const resJSON = await autodetectOS(installMedia, signal);
+                    const res = JSON.parse(resJSON);
+                    const osEntry = osInfoList.filter(osEntry => osEntry.id == res.os);
 
-                if (!signal.aborted && osEntry && osEntry[0]) {
-                    os_field.set(osEntry[0]);
-                    if (typeof res.media == "string")
-                        field.sub("mediaId").set(res.media);
+                    if (!signal.aborted && osEntry && osEntry[0]) {
+                        os_field.set(osEntry[0]);
+                        if (typeof res.media == "string")
+                            field.sub("mediaId").set(res.media);
+                    }
+                } catch (ex) {
+                    console.log("osinfo-detect command failed: ", String(ex));
                 }
-            } catch (ex) {
-                console.log("osinfo-detect command failed: ", String(ex));
-            }
-            setAutodetectOSInProgress(false);
-        });
+                setAutodetectOSInProgress(false);
+            });
+        }
     }
 
     const source_field = field.sub("source", source_changed);
