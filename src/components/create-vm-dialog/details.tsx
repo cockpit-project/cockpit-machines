@@ -612,8 +612,10 @@ const OfflineTokenRow = ({
                     }
                 } catch (ex) {
                     console.error(`Offline token validation failed: "${JSON.stringify(ex)}"`);
-                    accessField.set("");
-                    setValidationState(validationStates.FAILED);
+                    if (!signal.aborted) {
+                        accessField.set("");
+                        setValidationState(validationStates.FAILED);
+                    }
                 }
             });
         }
