@@ -358,7 +358,7 @@ export function init_Automation(): AutomationValue {
 }
 
 export function update_Automation_os(field: DialogField<AutomationValue>, os: OSInfo | null) {
-    const profiles = os ? os.profiles.sort().reverse() : [];
+    const profiles = os ? [...os.profiles].sort().reverse() : [];
     let { profile } = field.get();
 
     if (!profiles.includes(profile)) {
