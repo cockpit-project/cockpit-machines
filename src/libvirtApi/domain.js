@@ -347,7 +347,7 @@ export async function domainCreate({
         }
 
         await hashPasswords(args);
-        await python.spawn(installVmScript, [JSON.stringify(args)], opts);
+        await python.spawn(installVmScript, [], opts).input(JSON.stringify(args));
     } catch (ex) {
         clearVmUiState(vmName, connectionName);
         throw ex;
@@ -763,7 +763,8 @@ export function domainInstall({ vm }) {
         vmName: vm.name,
     });
 
-    return python.spawn(installVmScript, [args], opts)
+    return python.spawn(installVmScript, [], opts)
+            .input(args)
             .catch(ex => {
                 console.error(JSON.stringify(ex));
                 return Promise.reject(ex);

@@ -351,9 +351,8 @@ def inject_metadata(xml):
 
 
 logging.basicConfig(level=logging.ERROR, format='%(message)s')
-logging.debug(sys.argv[1])
 
-args = json.loads(sys.argv[1], strict=False)
+args = json.loads(sys.stdin.read(), strict=False)
 
 logging.debug(args)
 
