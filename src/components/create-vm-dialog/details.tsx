@@ -146,7 +146,6 @@ interface SourceValue {
     types: string[];
     type: string;
     os: OSInfo | null;
-    mediaId: string;
     source: string;
     offlineToken: string,
     accessToken: string,
@@ -189,7 +188,6 @@ function init_Source(
         types,
         type: initialSourceType,
         os,
-        mediaId: "",
         source: initialSource,
         offlineToken: "",
         accessToken: ""
@@ -304,11 +302,8 @@ const Source = ({
                     const res = JSON.parse(resJSON);
                     const osEntry = osInfoList.filter(osEntry => osEntry.id == res.os);
 
-                    if (!signal.aborted && osEntry && osEntry[0]) {
+                    if (!signal.aborted && osEntry && osEntry[0])
                         os_field.set(osEntry[0]);
-                        if (typeof res.media == "string")
-                            field.sub("mediaId").set(res.media);
-                    }
                 } catch (ex) {
                     console.log("osinfo-detect command failed: ", String(ex));
                 }
