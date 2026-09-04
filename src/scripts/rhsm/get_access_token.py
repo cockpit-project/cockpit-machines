@@ -3,12 +3,12 @@ import sys
 import urllib.error
 import urllib.request
 
-args = json.loads(sys.argv[1], strict=False)
+offlineToken = sys.stdin.read()
 
 data = {
     "grant_type": "refresh_token",
     "client_id": "rhsm-api",
-    "refresh_token": args["offlineToken"]
+    "refresh_token": offlineToken,
 }
 try:
     req = urllib.request.Request("https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token",

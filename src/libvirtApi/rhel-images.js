@@ -48,8 +48,9 @@ export function downloadRhelImage(accessToken, url, fileName, downloadDir, isSys
 export function getAccessToken(offlineToken) {
     logDebug(`Get access token`);
 
-    const args = JSON.stringify({ offlineToken });
-    return python.spawn(getAccessTokenScript, args, { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+    return python
+            .spawn(getAccessTokenScript, [], { err: "message", environ: ['LC_ALL=C.UTF-8'] })
+            .input(offlineToken);
 }
 
 export function getRhelImageUrl(accessToken, rhelVersion, arch) {
