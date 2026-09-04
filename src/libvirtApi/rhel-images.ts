@@ -49,8 +49,9 @@ export function downloadRhelImage(
 export function getAccessToken(offlineToken: string): cockpit.Spawn<string> {
     logDebug(`Get access token`);
 
-    const arg = JSON.stringify({ offlineToken });
-    return python.spawn(getAccessTokenScript, [arg], { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+    return python
+            .spawn(getAccessTokenScript, [], { err: "message", environ: ['LC_ALL=C.UTF-8'] })
+            .input(offlineToken);
 }
 
 export function getRhelImageUrl(
