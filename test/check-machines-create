@@ -1258,7 +1258,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             self.set_TextInput("automation.users.rootPassword", "foobarroot")
 
             b.click("#pf-tab-0-details-tab")
-            self.set_TextInput("details.source.type", "cloud")
+            self.set_DropdownSelect("details.source.type", "cloud")
 
             b.click("#pf-tab-1-automation")
 
