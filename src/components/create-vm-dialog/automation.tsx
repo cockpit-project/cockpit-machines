@@ -124,6 +124,7 @@ const SshKeysRow = ({
             }
             if (!signal.aborted) {
                 // First is for us
+                field.sub("text").set(lines[0]);
                 field.sub("parsedKey").set(keys[0]);
                 // Rest will be added as new items
                 for (let i = 1; i < lines.length; i++) {
