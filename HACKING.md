@@ -7,7 +7,7 @@ repository checkout.
 
 For development, you usually want to run your module straight out of the git
 tree. To do that, run `make devel-install`, which links your checkout to the
-location were `cockpit-bridge` looks for packages. If you prefer to do this
+location where `cockpit-bridge` looks for packages. If you prefer to do this
 manually:
 
 ```
@@ -58,7 +58,7 @@ Rules configuration can be found in the `.eslintrc.json` file.
 Cockpit uses [Stylelint](https://stylelint.io/) to automatically check CSS code
 style in `.css` and `scss` files.
 
-styleint is executed as part of `test/static-code`, aka. `make codecheck`.
+stylelint is executed as part of `test/static-code`, aka. `make codecheck`.
 
 For developer convenience, the Stylelint can be started explicitly by:
 
