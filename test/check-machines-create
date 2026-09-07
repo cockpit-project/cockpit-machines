@@ -1286,6 +1286,12 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             else:
                 b.wait_in_text(".pf-v6-c-menu ul li button", "No results found")
 
+            # Wait a bit for the TypeaheadSelect to settle
+            # down. Otherwise it might focus itself again while we
+            # take a pixel test.
+            #
+            time.sleep(1.0)
+
             return self
 
         def checkRhelIsDownloadable(self):
