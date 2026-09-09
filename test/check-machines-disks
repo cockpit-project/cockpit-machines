@@ -781,6 +781,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         used_targets = ['vda']
 
+        args = self.createVm("subVmTest1")
+
         # Preparations for testing ISCSI pools
         target_iqn = "iqn.2019-09.cockpit.lan"
         self.prepareStorageDeviceOnISCSI(target_iqn)
@@ -794,8 +796,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         testlib.wait(lambda: "unit:0:0:0" in self.machine.execute(cmd), delay=3)
 
         self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
-
-        args = self.createVm("subVmTest1")
 
         # Remove images pool so that we get the iscsi-pool pool first on the list
         m.execute("virsh pool-destroy images; virsh pool-undefine images")
@@ -842,6 +842,9 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         used_targets = ['vda']
 
+        # Start the virtual machine as creating a nfs volume is quite expensive
+        args = self.createVm("subVmTest1")
+
         m.execute("if selinuxenabled 2>/dev/null; then setsebool -P virt_use_nfs 1; fi")
 
         # HACK: NFS produces dozens of permissive=1 SELinux issues; setroubleshoot runs massively parallel
@@ -866,8 +869,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         """)
         # And create a volume on it in order to test use existing volume dialog
         m.execute("virsh vol-create-as --pool nfs-pool --name nfs-volume-0 --capacity 1M --format qcow2")
-
-        args = self.createVm("subVmTest1")
 
         # Wait for the system to completely start
         self.waitGuestBooted(args['logfile'])
@@ -1000,6 +1001,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         used_targets = ['vda']
         transient_targets = []
 
+        self.createVm("subVmTest1")
+
         # prepare libvirt storage pools
         v1 = os.path.join(self.vm_tmpdir, "vm_one")
         v2 = os.path.join(self.vm_tmpdir, "vm_two")
@@ -1016,8 +1019,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_permanent --capacity 50M --format qcow2")
 
         testlib.wait(lambda: "mydiskofpooltwo_permanent" in m.execute("virsh vol-list myPoolTwo"))
-
-        self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -1492,6 +1493,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
+        args = self.createVm("subVmTest1")
+
         # prepare libvirt storage pools
         p1 = os.path.join(self.vm_tmpdir, "vm_one")
         m.execute(f"mkdir --mode 777 {p1}")
@@ -1502,8 +1505,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         testlib.wait(lambda: "mydiskofpoolone_1" in m.execute("virsh vol-list myPoolOne"))
         testlib.wait(lambda: "mydiskofpoolone_2" in m.execute("virsh vol-list myPoolOne"))
         testlib.wait(lambda: "mydiskofpoolone_3" in m.execute("virsh vol-list myPoolOne"))
-
-        args = self.createVm("subVmTest1")
 
         vdc_path = f"{p1}/mydiskofpoolone_1"
         vdd_path = f"{p1}/mydiskofpoolone_2"
