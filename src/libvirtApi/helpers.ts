@@ -198,9 +198,10 @@ export function call<R = void>(
 /**
  * Get Libvirt D-Bus client
  */
-export function dbusClient(connectionName: ConnectionName): cockpit.DBusClient {
-    const clientLibvirt: Record<string, cockpit.DBusClient> = {};
 
+const clientLibvirt: Record<string, cockpit.DBusClient> = {};
+
+export function dbusClient(connectionName: ConnectionName): cockpit.DBusClient {
     if (!(connectionName in clientLibvirt) || clientLibvirt[connectionName] === null) {
         clientLibvirt[connectionName] = cockpit.dbus("org.libvirt",
                                                      {
