@@ -126,7 +126,7 @@ const _ = cockpit.gettext;
  * - source: disk image path (import) or installation source URL/path (create)
  * - type: source type - 'os', 'url', 'file', 'cloud', 'pxe' (create only)
  */
-const CreateVmDialogOpener = ({ vms }: { vms: VM[] }) => {
+const CreateVmDialogOpener = () => {
     // Subscribe to appState changes (for virtInstallCapabilities)
     useOn(appState, "changed");
 
@@ -164,12 +164,6 @@ const CreateVmDialogOpener = ({ vms }: { vms: VM[] }) => {
             key={dialogKey}
             mode={mode}
             onClose={handleClose}
-            nodeMaxMemory={appState.nodeMaxMemory}
-            vms={vms}
-            cloudInitSupported={vi_caps.cloudInitSupported}
-            downloadOSSupported={vi_caps.downloadOSSupported}
-            unattendedSupported={vi_caps.unattendedSupported}
-            unattendedUserLogin={vi_caps.unattendedUserLogin}
             initialSource={initialSource}
             initialOS={initialOS}
             initialName={initialName}
@@ -298,7 +292,7 @@ export const HostVmsList = ({
 
     return (
         <WithDialogs key="vms-list">
-            <CreateVmDialogOpener vms={vms} />
+            <CreateVmDialogOpener />
             <Page className="pf-m-no-sidebar">
                 <PageSection hasBodyWrapper={false}>
                     <Gallery className="ct-cards-grid" hasGutter>
