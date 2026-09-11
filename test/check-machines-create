@@ -1642,11 +1642,13 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         def assert_pixels(self, subtag=None):
             if self.pixel_test_tag:
                 tag = self.pixel_test_tag + ("-" + subtag if subtag else "")
-                ignore = ["#memory-size-helper"]
+                ignore = [self.helper_text("details.memory")]
                 if self.storage_pool == NO_STORAGE:
                     self.browser.wait_text(self.field("details.storage"), "No storage")
                 else:
-                    ignore += [self.helper_text("details.storage")]
+                    ignore += [self.helper_text("details.storage.newSize")]
+                # XXX - selectors for "ignore" should be relative, so we adjust them...
+                ignore = [sel.removeprefix("#create-vm-dialog ") for sel in ignore]
                 self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore, skip_layouts=["rtl"])
             return self
 
