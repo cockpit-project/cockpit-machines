@@ -31,7 +31,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.addCleanup(self.machine.execute, f"semanage login -d -s sysadm_u {user}")
         self._testBasic(user, superuser=False, libvirt_group_member=True)
 
-    def testBasicAdminUser(self):
+    def testBasicAdminUserUnprivileged(self):
         # The group in debian based distro should be sudo
         if "ubuntu" in self.machine.image or "debian" in self.machine.image:
             user_group = "sudo"
@@ -41,7 +41,15 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
         # Check NON-PRIVILEGED user won't see any VMs even though they are in wheel group
         self._testBasic(user, superuser=False, expect_empty_list=True)
-        self.machine.execute("virsh destroy subVmTest1; virsh undefine subVmTest1")
+
+    def testBasicAdminUser(self):
+        # The group in debian based distro should be sudo
+        if "ubuntu" in self.machine.image or "debian" in self.machine.image:
+            user_group = "sudo"
+        else:
+            user_group = "wheel"
+        user = self.createUser(user_group=user_group)
+
         # Check wheel group PRIVILEGED user will see VMs and can do operations on them
         self._testBasic(user)
 
