@@ -770,6 +770,25 @@ export function getNetworkDevices(): string[] {
     return uniq;
 }
 
+/**
+ * Returns the names of the host's bridge devices, i.e. the candidates for
+ * a virtual network with forward mode "bridge".
+ */
+export function getNetworkBridges(): string[] {
+    return appState.nodeInterfaces
+            .filter(iface => iface.kind === "bridge")
+            .map(iface => iface.name)
+            .sort();
+}
+
+/**
+ * Whether the host bridge filters VLANs on its ports. libvirt only applies a
+ * network's <vlan> to a Linux bridge with vlan_filtering enabled.
+ */
+export function bridgeHasVlanFiltering(name: string): boolean {
+    return appState.nodeInterfaces.some(iface => iface.name === name && !!iface.vlanFiltering);
+}
+
 export function getDefaultVolumeFormat(pool: StoragePool): optString {
     // For the valid volume format types for different pool types see https://libvirt.org/storage.html
     if (['disk'].indexOf(pool.type) > -1)
