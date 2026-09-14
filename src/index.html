@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="index.css">
     <link href="../../static/branding.css" rel="stylesheet" />
 
-    <script type="text/javascript" src="index.js"></script>
-    <script type="text/javascript" src="po.js"></script>
-    <script type="text/javascript" src="../manifests.js"></script>
+    <!-- defer: noVNC probes the DOM at load time and needs <body> to exist; execution order is kept -->
+    <script type="text/javascript" src="index.js" defer></script>
+    <script type="text/javascript" src="po.js" defer></script>
+    <script type="text/javascript" src="../manifests.js" defer></script>
   </head>
 
   <body class="pf-v6-m-tabular-nums">
