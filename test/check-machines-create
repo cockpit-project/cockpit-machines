@@ -207,7 +207,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         runner.checkPasswordsAreNotResetTest(TestMachinesCreate.VmDialog(self))
 
         # Check user login has to be filled when SSH keys are provided
-        self.machine.execute("ssh-keygen -t rsa -N '' -f /tmp/rsakey")
+        self.machine.execute("ssh-keygen -t rsa -N '' -f /tmp/rsakey -C 'comment with  spaces'")
         rsakey = self.machine.execute("cat /tmp/rsakey.pub").strip()
         self.addCleanup(self.machine.execute, "rm -f /tmp/rsakey*")
 
@@ -244,6 +244,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
         # initially we have the single rsakey
         b.wait_in_text(key(0) + " #validated", "ssh-rsa")
+        b.wait_in_text(key(0) + " #validated", "comment with  spaces")
         self.assertFalse(b.is_present(key(1)))
 
         # add two more empty ones

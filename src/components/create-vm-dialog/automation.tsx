@@ -95,7 +95,7 @@ async function parseKey(key: string): Promise<SshKey | null> {
             return {
                 type: parts[0],
                 data: parts[1],
-                comment: parts[2], // comment is optional in SSH-format
+                comment: parts.slice(2).join(" "), // comment is optional in SSH-format
             };
         } catch (ex) {
             console.debug("failed to parse key", String(ex));
