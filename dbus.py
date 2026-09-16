@@ -233,9 +233,11 @@ class DBusChannel(Channel):
                 else:
                     raise ChannelError('protocol-error', message=f'invalid bus "{bus}"')
         except OSError as exc:
+            sys.stderr.write(f"GET ON THE BUS ERROR {exc}\n")
             raise ChannelError('protocol-error', message=f'failed to connect to {bus} bus: {exc}') from exc
 
         try:
+            sys.stderr.write(f"ATTACHING {bus} {self.name} {self.bus.value}\n")
             self.bus.attach_event(None, 0)
             sys.stderr.write(f"ATTACH {bus} {self.name} {self.bus.value} success\n")
         except OSError as err:
