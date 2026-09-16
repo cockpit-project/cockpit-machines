@@ -183,7 +183,7 @@ endif
 
 # build a VM with locally built distro pkgs installed
 $(VM_IMAGE): $(TARFILE) $(NODE_CACHE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots
-	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) $(VM_NO_REBUILD) $(VM_INSTALL) $(TEST_OS)
+	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) $(VM_NO_REBUILD) $(VM_INSTALL) $(TEST_OS) -u dbus.py:/usr/lib/python3/dist-packages/cockpit/channels/
 
 # convenience target for the above
 vm: $(VM_IMAGE)
