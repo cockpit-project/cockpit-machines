@@ -237,8 +237,9 @@ class DBusChannel(Channel):
 
         try:
             self.bus.attach_event(None, 0)
+            sys.stderr.write(f"ATTACH {bus} {self.name} {self.bus.value} success\n")
         except OSError as err:
-            sys.stderr.write(f"ATTACH {err.errno}\n")
+            sys.stderr.write(f"ATTACH {bus} {self.name} {self.bus.value} {err.errno}\n")
             if err.errno != errno.EBUSY:
                 raise
 
