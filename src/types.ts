@@ -522,6 +522,12 @@ export interface NetworkIp {
     };
 }
 
+export interface NetworkVlanTag {
+    id: number;
+    // untagged frames on the port belong to this VLAN
+    native: boolean;
+}
+
 export interface NetworkXML {
     uuid: optString;
     bridge?: {
@@ -532,6 +538,10 @@ export interface NetworkXML {
     forward?: {
         mode: string;
         dev: optString;
+    };
+    vlan?: {
+        trunk: boolean;
+        tags: NetworkVlanTag[];
     };
 }
 
@@ -639,6 +649,10 @@ export interface NodeInterface {
     name: string;
     MAC: string;
     Active: boolean;
+    // link kind as reported by "ip -details" (e.g. "bridge", "bond", "vlan"); unset for physical devices
+    kind?: string | undefined;
+    // bridges only: whether the kernel filters VLANs on its ports (needed for <vlan> in bridge mode networks)
+    vlanFiltering?: boolean | undefined;
 }
 
 /** OSInfo **/
