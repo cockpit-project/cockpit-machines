@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-14 08:07+0000\n"
+"POT-Creation-Date: 2026-09-27 08:34+0000\n"
 "PO-Revision-Date: 2026-08-06 19:18+0000\n"
 "Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/cockpit/"
@@ -24,12 +24,12 @@ msgstr ""
 msgid " excluding "
 msgstr " pois lukien "
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1091
+#: src/components/create-vm-dialog/details.tsx:855
 msgid "$0 $1 available at default location"
 msgstr "$0 $1 käytettävissä oletussijainnissa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:281
-#: src/components/create-vm-dialog/createVmDialog.tsx:985
+#: src/components/create-vm-dialog/details.tsx:724
+#: src/components/create-vm-dialog/details.tsx:743
 msgid "$0 $1 available on host"
 msgstr "$0 $1 käytettävissä isännässä"
 
@@ -53,7 +53,7 @@ msgstr[1] "$0 tallennustilavarantoa"
 msgid "$0 console"
 msgstr "$0-konsoli"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1530
+#: src/components/create-vm-dialog/automation.tsx:313
 msgid "$0 does not support unattended installation."
 msgstr "$0 ei tue valvomatonta asennusta."
 
@@ -88,6 +88,12 @@ msgstr ""
 "Kopio virtuaalikoneesta suoritetaan kohteessa ja katoaa, kun se sammutetaan. "
 "Samaan aikaan isäntäkone säilyttää kopion virtuaalikoneen kokoonpanosta."
 
+#: src/components/create-vm-dialog/passwordInput.tsx:94
+#, fuzzy
+#| msgid "Excellent password"
+msgid "Acceptable password"
+msgstr "Erinomainen salasana"
+
 #: src/components/vm/disks/vmDisksCard.tsx:246
 #: src/components/vm/disks/diskEdit.tsx:130
 msgid "Access"
@@ -97,17 +103,17 @@ msgstr "Pääsy"
 msgid "Action"
 msgstr "Toiminto"
 
-#: src/components/storagePools/storagePoolList.tsx:65
-#: src/components/vm/disks/vmDisksCard.tsx:162
+#: src/components/vms/hostvmslist.tsx:311
 #: src/components/vm/nics/vmNicsCard.tsx:593
+#: src/components/vm/disks/vmDisksCard.tsx:162
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/networks/networkList.tsx:64
-#: src/components/vms/hostvmslist.tsx:317
+#: src/components/storagePools/storagePoolList.tsx:65
 msgid "Actions"
 msgstr "Toimet"
 
-#: src/components/storagePools/storagePool.tsx:155
 #: src/components/networks/network.tsx:149
+#: src/components/storagePools/storagePool.tsx:155
 msgid "Activate"
 msgstr "Aktivoi"
 
@@ -115,16 +121,16 @@ msgstr "Aktivoi"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Aktivoi varastointivaranto taltioiden hallitsemiseksi"
 
-#: src/components/vm/disks/diskAdd.tsx:756
 #: src/components/vm/nics/nicBody.tsx:577 src/components/vm/nics/nicAdd.tsx:277
-#: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/disks/diskAdd.tsx:756
+#: src/components/vm/overview/watchdog.tsx:167
+#: src/components/vm/overview/vsock.tsx:223
 #: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
 msgstr "Lisää"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:959
+#: src/components/create-vm-dialog/automation.tsx:270
 msgid "Add SSH keys"
 msgstr "Lisää SSH-avaimet"
 
@@ -204,8 +210,8 @@ msgstr ""
 "Edistynyt käyttöliittymätyyppi korkeaa suorituskykyä tai parannettua "
 "tietoturvaa varten."
 
-#: src/components/vms/hostvmslist.tsx:214
-#: src/components/vms/hostvmslist.tsx:232
+#: src/components/vms/hostvmslist.tsx:208
+#: src/components/vms/hostvmslist.tsx:226
 msgid "All"
 msgstr "Kaikki"
 
@@ -229,8 +235,8 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "Poista myös tämän varannon sisäiset taltiot:"
 
-#: src/components/vm/disks/diskAdd.tsx:601
 #: src/components/vm/nics/nicAdd.tsx:138
+#: src/components/vm/disks/diskAdd.tsx:601
 msgid "Always attach"
 msgstr "Kiinnitä aina"
 
@@ -246,7 +252,7 @@ msgstr "Toteuta"
 msgid "Apply on next boot"
 msgstr "Käytä seuraavassa käynnistyksessä"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1050
+#: src/components/create-vm-dialog/automation.tsx:297
 msgid ""
 "Arguments passed to the booted kernel can often be used to control the "
 "installer. Refer to the documentation of the installer of $0."
@@ -262,7 +268,7 @@ msgstr "Määritä automaattisesti"
 msgid "Associated storage files"
 msgstr "Liittyvät tallennustilatiedostot"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1529
+#: src/components/create-vm-dialog/automation.tsx:312
 msgid ""
 "Automated installs are only available when downloading an image, an install "
 "tree or using cloud-init."
@@ -274,13 +280,13 @@ msgstr ""
 msgid "Automatic"
 msgstr "Automaattinen"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1668
+#: src/components/create-vm-dialog/createVmDialog.tsx:274
 msgid "Automation"
 msgstr "Automatisointi"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:60
 #: src/components/vm/overview/vmOverviewCard.tsx:190
 #: src/components/networks/networkOverviewTab.tsx:117
+#: src/components/storagePools/storagePoolOverviewTab.tsx:60
 msgid "Autostart"
 msgstr "Automaattikäynnistys"
 
@@ -292,8 +298,8 @@ msgstr "Taustaosa"
 msgid "Base System Peripheral"
 msgstr "Perusjärjestelmän oheislaitteet"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:40
 #: src/components/vm/deleteDialog.tsx:73
+#: src/components/vm/disks/vmDiskColumns.tsx:40
 msgid "Block device"
 msgstr "lohkolaite"
 
@@ -301,7 +307,7 @@ msgstr "lohkolaite"
 msgid "Blocked"
 msgstr "Estetty"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1039
+#: src/components/create-vm-dialog/automation.tsx:295
 msgid "Boot arguments"
 msgstr "Käynnistysargumentit"
 
@@ -317,6 +323,10 @@ msgstr "Käynnistysjärjestysasetuksia ei voitu tallentaa"
 msgid "Bridge"
 msgstr "Silta"
 
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/hostdevs/hostDevCard.tsx:91
+#: src/components/vm/hostdevs/hostDevCard.tsx:99
+#: src/components/vm/hostdevs/hostDevCard.tsx:250
 #: src/components/vm/disks/vmDisksCard.tsx:241
 #: src/components/vm/disks/diskEdit.tsx:93
 #: src/components/vm/disks/diskAdd.tsx:184
@@ -325,10 +335,6 @@ msgstr "Silta"
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
-#: src/components/vm/hostdevs/hostDevCard.tsx:91
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/hostdevs/hostDevCard.tsx:250
 msgid "Bus"
 msgstr "Väylä"
 
@@ -336,9 +342,9 @@ msgstr "Väylä"
 msgid "CD/DVD disc"
 msgstr "CD/DVD-levy"
 
+#: src/components/vms/hostvmslist.tsx:86 src/components/vms/hostvmslist.tsx:288
 #: src/components/vm/vmUsageCard.tsx:52
 #: src/components/vm/overview/vmOverviewCard.tsx:178
-#: src/components/vms/hostvmslist.tsx:86 src/components/vms/hostvmslist.tsx:294
 #: src/components/common/needsShutdown.tsx:206
 msgid "CPU"
 msgstr "Suoritin"
@@ -357,30 +363,30 @@ msgstr "Välimuisti"
 msgid "Can not determine guest device name"
 msgstr "Vieraslaitteen nimeä ei voida määrittää"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:512
-#: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
 #: src/components/vm/confirmDialog.tsx:66
+#: src/components/vm/hostdevs/hostDevAdd.tsx:266
+#: src/components/vm/vmCloneDialog.tsx:111
 #: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/vmReplaceSpiceDialog.tsx:165
+#: src/components/vm/deleteDialog.tsx:216
 #: src/components/vm/vmRenameDialog.tsx:96
 #: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
 #: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/overview/firmware.tsx:107
-#: src/components/vm/overview/memoryModal.tsx:195
 #: src/components/vm/overview/watchdog.tsx:228
 #: src/components/vm/overview/bootOrder.tsx:356
+#: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/memoryModal.tsx:195
+#: src/components/vm/overview/firmware.tsx:107
 #: src/components/vm/overview/cpuModal.tsx:341
-#: src/components/vm/vmReplaceSpiceDialog.tsx:165
-#: src/components/vm/vmCloneDialog.tsx:111
-#: src/components/vm/hostdevs/hostDevAdd.tsx:266
-#: src/components/vm/deleteDialog.tsx:216
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
 #: src/components/networks/createNetworkDialog.tsx:548
 #: src/components/networks/networkOverviewTab.tsx:271
 #: src/components/common/deleteResource.tsx:116
-#: src/components/create-vm-dialog/createVmDialog.tsx:1734
+#: src/components/storagePools/createStoragePoolDialog.tsx:512
+#: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/create-vm-dialog/createVmDialog.tsx:347
 msgid "Cancel"
 msgstr "Peru"
 
@@ -420,11 +426,11 @@ msgstr ""
 "käyttöön asetus nimeltä \"virtualisointi\", \"VM\", \"VMX\", \"SVM\", "
 "\"VTX\", \"VTD\". Katso lisätietoja tietokoneesi käyttöoppaasta."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:638
+#: src/components/create-vm-dialog/details.tsx:542
 msgid "Checking token validity..."
 msgstr "Tarkistetaan tokenin kelpoisuutta..."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:563
+#: src/components/create-vm-dialog/details.tsx:495
 msgid "Choose an operating system"
 msgstr "Valitse käyttöjärjestelmä"
 
@@ -440,11 +446,11 @@ msgstr ""
 "Napsauttamalla \"Käynnistä katseluohjelma\" saa aikaan $0-tiedoston "
 "lataamisen ja käynnistää Remote Viewer -sovelluksen järjestelmässäsi."
 
-#: src/components/vm/vmCloneDialog.tsx:108 src/components/vm/vmActions.tsx:383
+#: src/components/vm/vmActions.tsx:383 src/components/vm/vmCloneDialog.tsx:108
 msgid "Clone"
 msgstr "Kloonaa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:446
+#: src/components/create-vm-dialog/details.tsx:260
 msgid "Cloud base image"
 msgstr "Pilvipohjainen levykuva"
 
@@ -477,12 +483,12 @@ msgstr "Vahvista tämä toimi"
 msgid "Connect"
 msgstr "Yhdistä"
 
-#: src/components/storagePools/storagePoolList.tsx:63
+#: src/components/vms/hostvmslist.tsx:308
 #: src/components/vm/overview/vmOverviewCard.tsx:158
 #: src/components/networks/createNetworkDialog.tsx:34
 #: src/components/networks/networkList.tsx:61
-#: src/components/vms/hostvmslist.tsx:314
-#: src/components/common/machinesConnectionSelector.tsx:44
+#: src/components/common/machinesConnectionSelector.tsx:46
+#: src/components/storagePools/storagePoolList.tsx:63
 msgid "Connection"
 msgstr "Yhteys"
 
@@ -539,22 +545,22 @@ msgstr "Tilannevedoksen palauttaminen epäonnistui"
 msgid "Crashed"
 msgstr "Kaatui"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:509
-#: src/components/storagePools/storageVolumeCreate.tsx:95
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
 #: src/components/networks/createNetworkDialog.tsx:545
+#: src/components/storagePools/createStoragePoolDialog.tsx:509
+#: src/components/storagePools/storageVolumeCreate.tsx:95
 msgid "Create"
 msgstr "Luo"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1766
+#: src/components/create-vm-dialog/createVmDialog.tsx:378
 msgid "Create VM"
 msgstr "Luo VM"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1786
+#: src/components/create-vm-dialog/createVmDialog.tsx:398
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr "Luo VM tuomalla levykuva olemassa olevasta VM-asennuksesta"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1785
+#: src/components/create-vm-dialog/createVmDialog.tsx:397
 msgid "Create VM from local or network installation medium"
 msgstr "Luo VM paikalliselta tai verkon asennusvälineeltä"
 
@@ -562,11 +568,11 @@ msgstr "Luo VM paikalliselta tai verkon asennusvälineeltä"
 msgid "Create a clone VM based on $0"
 msgstr "Luo $0:een perustuva klooninen virtuaalikone"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1696
+#: src/components/create-vm-dialog/createVmDialog.tsx:314
 msgid "Create and edit"
 msgstr "Luo ja muokkaa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1728
+#: src/components/create-vm-dialog/createVmDialog.tsx:340
 msgid "Create and run"
 msgstr "Luo ja suorita"
 
@@ -574,20 +580,20 @@ msgstr "Luo ja suorita"
 msgid "Create new"
 msgstr "Luo uusi"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1125
+#: src/components/create-vm-dialog/details.tsx:885
 msgid "Create new qcow2 volume"
 msgstr "Luo uusi qcow2-taltio"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1126
+#: src/components/create-vm-dialog/details.tsx:886
 msgid "Create new raw volume"
 msgstr "Luo uusi raaka-taltio"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1713
+#: src/components/create-vm-dialog/createVmDialog.tsx:327
 msgid "Create new virtual machine"
 msgstr "Luo uusi virtuaalikone"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:324
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:324
 msgid "Create snapshot"
 msgstr "Luo tilannevedos"
 
@@ -626,7 +632,7 @@ msgstr ""
 "Tilannekuvien luomista virtuaalikoneista VFIO-laitteilla ei tueta niiden "
 "ollessa käynnissä."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1504
+#: src/components/create-vm-dialog/createVmDialog.tsx:204
 msgid "Creation of VM $0 failed"
 msgstr "Virtuaalikoneen $0 luominen epäonnistui"
 
@@ -663,20 +669,21 @@ msgstr "Mukautettu polku"
 msgid "DHCP Settings"
 msgstr "DHCP-asetukset"
 
-#: src/components/storagePools/storagePool.tsx:146
 #: src/components/networks/network.tsx:145
+#: src/components/storagePools/storagePool.tsx:146
 msgid "Deactivate"
 msgstr "Deaktivoi"
 
-#: src/components/storagePools/storagePoolDelete.tsx:204
-#: src/components/storagePools/storagePoolDelete.tsx:234
-#: src/components/storagePools/storagePoolDelete.tsx:244
-#: src/components/vm/deleteDialog.tsx:213 src/components/vm/vmActions.tsx:466
-#: src/components/vm/vmActions.tsx:474 src/components/networks/network.tsx:126
+#: src/components/vm/vmActions.tsx:466 src/components/vm/vmActions.tsx:474
+#: src/components/vm/deleteDialog.tsx:213
+#: src/components/networks/network.tsx:126
 #: src/components/networks/network.tsx:129
 #: src/components/common/deleteResource.tsx:104
 #: src/components/common/deleteResource.tsx:164
 #: src/components/common/deleteResource.tsx:175
+#: src/components/storagePools/storagePoolDelete.tsx:204
+#: src/components/storagePools/storagePoolDelete.tsx:234
+#: src/components/storagePools/storagePoolDelete.tsx:244
 msgid "Delete"
 msgstr "Poista"
 
@@ -721,8 +728,8 @@ msgstr ""
 "sammutettuna"
 
 #: src/components/vm/vmEditDescriptionDialog.tsx:66
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
 msgid "Description"
 msgstr "Kuvaus"
 
@@ -749,20 +756,20 @@ msgstr ""
 "Irrota tätä varantoa käyttävät levyt kaikista virtuaalikoneista ennen "
 "poistoyritystä."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1662
+#: src/components/create-vm-dialog/createVmDialog.tsx:257
 msgid "Details"
 msgstr "Yksityiskohdat"
 
+#: src/components/vm/hostdevs/hostDevAdd.tsx:99
+#: src/components/vm/hostdevs/hostDevAdd.tsx:144
+#: src/components/vm/hostdevs/hostDevCard.tsx:90
+#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/vm/disks/vmDisksCard.tsx:238
 #: src/components/vm/disks/diskAdd.tsx:427
 #: src/components/vm/overview/bootOrder.tsx:106
 #: src/components/vm/overview/bootOrder.tsx:113
 #: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/overview/bootOrder.tsx:149
-#: src/components/vm/hostdevs/hostDevAdd.tsx:99
-#: src/components/vm/hostdevs/hostDevAdd.tsx:144
-#: src/components/vm/hostdevs/hostDevCard.tsx:90
-#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/networks/createNetworkDialog.tsx:218
 #: src/components/networks/networkList.tsx:60
 msgid "Device"
@@ -797,7 +804,7 @@ msgstr "Levyn liittäminen epäonnistui"
 msgid "Disk identifier"
 msgstr "Levyn tunniste"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:459
+#: src/components/create-vm-dialog/details.tsx:363
 msgid "Disk image"
 msgstr "Levykuva"
 
@@ -805,11 +812,11 @@ msgstr "Levykuva"
 msgid "Disk image file"
 msgstr "Levykuvatiedosto"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:263
+#: src/components/create-vm-dialog/details.tsx:239
 msgid "Disk image path must not be empty"
 msgstr "Levykuvan polku ei voi olla tyhjä"
 
-#: src/components/common/machinesConnectionSelector.tsx:83
+#: src/components/common/machinesConnectionSelector.tsx:86
 msgid "Disk images can be stored in user home directory"
 msgstr "Levykuvat voidaan tallentaa käyttäjän kotihakemistoon"
 
@@ -852,7 +859,7 @@ msgstr "Toimialue on kaatunut"
 msgid "Domain is blocked on resource"
 msgstr "Toimialue on estetty resurssilla"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:442
+#: src/components/create-vm-dialog/details.tsx:259
 msgid "Download an OS"
 msgstr "Lataa käyttöjärjestelmä"
 
@@ -884,8 +891,8 @@ msgstr "Kesto"
 msgid "Dying"
 msgstr "Kuolemassa"
 
-#: src/components/vm/disks/diskEdit.tsx:275
 #: src/components/vm/nics/vmNicsCard.tsx:634
+#: src/components/vm/disks/diskEdit.tsx:275
 msgid "Edit"
 msgstr "Muokkaa"
 
@@ -953,13 +960,13 @@ msgstr "Loppu"
 msgid "End should not be empty"
 msgstr "Loppu ei saa olla tyhjä"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1528
+#: src/components/create-vm-dialog/automation.tsx:311
 msgid "Enter root and/or user information to enable unattended installation."
 msgstr ""
 "Anna pääkäyttäjän ja/tai käyttäjän tiedot salliaksesi valvomattoman "
 "asennuksen."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:642
+#: src/components/create-vm-dialog/details.tsx:546
 msgid "Error checking token"
 msgstr "Virhe tokenin tarkistuksessa"
 
@@ -967,7 +974,11 @@ msgstr "Virhe tokenin tarkistuksessa"
 msgid "Example, $0"
 msgstr "Esimerkki, $0"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:383
+#: src/components/create-vm-dialog/passwordInput.tsx:90
+msgid "Excellent password"
+msgstr "Erinomainen salasana"
+
+#: src/components/create-vm-dialog/details.tsx:365
 msgid "Existing disk image on host's file system"
 msgstr "Poistutaan levykuvasta isännän tiedostojärjestelmässä"
 
@@ -1072,7 +1083,7 @@ msgstr "Tiedostojärjestelmää $0 ei voitu poistaa"
 msgid "Filesystem directory"
 msgstr "Tiedostojärjestelmän hakemisto"
 
-#: src/components/vms/hostvmslist.tsx:255
+#: src/components/vms/hostvmslist.tsx:249
 msgid "Filter by name"
 msgstr "Suodata nimen mukaan"
 
@@ -1124,9 +1135,9 @@ msgstr "Pakota $0 sammutus?"
 msgid "Force shutdown and restart"
 msgstr "Pakota sammutus ja käynnistä uudelleen"
 
+#: src/components/vm/disks/vmDiskColumns.tsx:134
 #: src/components/storagePools/createStoragePoolDialog.tsx:244
 #: src/components/storagePools/storageVolumeCreateBody.tsx:103
-#: src/components/vm/disks/vmDiskColumns.tsx:134
 msgid "Format"
 msgstr "Alusta"
 
@@ -1161,15 +1172,14 @@ msgstr "Yleinen"
 msgid "Generate automatically"
 msgstr "Luo automaattisesti"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:616
+#: src/components/create-vm-dialog/details.tsx:520
 msgid "Get a new RHSM token."
 msgstr "Hanki uusi RHSM-tokeni."
 
 #: src/components/vm/disks/vmDisksCard.tsx:39
 #: src/components/vm/overview/memorySelectRow.tsx:95
 #: src/components/common/dialog.tsx:105
-#: src/components/create-vm-dialog/createVmDialog.tsx:1018
-#: src/components/create-vm-dialog/createVmDialog.tsx:1182
+#: src/components/create-vm-dialog/details.tsx:683
 msgid "GiB"
 msgstr "Git"
 
@@ -1177,7 +1187,7 @@ msgstr "Git"
 msgid "Go to VMs list"
 msgstr "Siirry virtuaalikoneiden luetteloon"
 
-#: src/components/common/machinesConnectionSelector.tsx:74
+#: src/components/common/machinesConnectionSelector.tsx:77
 msgid "Good choice for desktop virtualization"
 msgstr "Hyvä valinta työpöydän virtualisointiin"
 
@@ -1205,19 +1215,25 @@ msgstr "Tietoa vierasportista"
 msgid "Hardware virtualization is disabled"
 msgstr "Laitteistovirtualisointi on pois käytöstä"
 
-#: src/components/vm/disks/diskAdd.tsx:171
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:171
 msgid "Hide additional options"
 msgstr "Piilota lisävaihtoehdot"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:154
-#: src/components/storagePools/storagePoolOverviewTab.tsx:23
+#: src/components/create-vm-dialog/passwordInput.tsx:161
+#, fuzzy
+#| msgid "User password"
+msgid "Hide password"
+msgstr "Käyttäjäsalasana"
+
 #: src/components/vm/disks/vmDiskColumns.tsx:44
 #: src/components/vm/overview/bootOrder.tsx:110
+#: src/components/storagePools/createStoragePoolDialog.tsx:154
+#: src/components/storagePools/storagePoolOverviewTab.tsx:23
 msgid "Host"
 msgstr "Kone"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:149
+#: src/components/create-vm-dialog/pxe-helpers.tsx:152
 msgid "Host device"
 msgstr "Isäntälaite"
 
@@ -1325,11 +1341,11 @@ msgstr "IPv6-verkko ei tulisi olla tyhjä"
 msgid "IPv6 only"
 msgstr "IPv6 vain"
 
-#: src/components/common/machinesConnectionSelector.tsx:57
+#: src/components/common/machinesConnectionSelector.tsx:60
 msgid "Ideal for server VMs"
 msgstr "Ihanteellinen palvelin-VM:ille"
 
-#: src/components/common/machinesConnectionSelector.tsx:63
+#: src/components/common/machinesConnectionSelector.tsx:66
 msgid "Ideal networking support"
 msgstr "Erinomainen verkkotuki"
 
@@ -1361,19 +1377,19 @@ msgstr ""
 msgid "Ignore"
 msgstr "Ohita"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1766
+#: src/components/create-vm-dialog/createVmDialog.tsx:378
 msgid "Import VM"
 msgstr "Tuo virtuaalikone"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1713
+#: src/components/create-vm-dialog/createVmDialog.tsx:327
 msgid "Import a virtual machine"
 msgstr "Tuo virtuaalikone"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1696
+#: src/components/create-vm-dialog/createVmDialog.tsx:314
 msgid "Import and edit"
 msgstr "Tuo ja muokkaa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1728
+#: src/components/create-vm-dialog/createVmDialog.tsx:340
 msgid "Import and run"
 msgstr "Tuo ja suorita"
 
@@ -1381,7 +1397,7 @@ msgstr "Tuo ja suorita"
 msgid "Importing an image with a backing file is unsupported"
 msgstr "Levykuvan tuontia varmistustiedoston kanssa ei tueta"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:392
+#: src/components/create-vm-dialog/details.tsx:372
 msgid ""
 "In most configurations, macvtap does not work for host to guest network "
 "communication."
@@ -1404,8 +1420,8 @@ msgstr "Lisää ei-maskattava keskeytys"
 msgid "Input Device Controller"
 msgstr "Syöttölaiteohjain"
 
-#: src/components/vm/disks/diskAdd.tsx:753
 #: src/components/vm/disks/vmDiskColumns.tsx:224
+#: src/components/vm/disks/diskAdd.tsx:753
 msgid "Insert"
 msgstr "Insert"
 
@@ -1421,15 +1437,18 @@ msgstr "VM:n sisällä"
 msgid "Install"
 msgstr "Asennus"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:459
+#: src/components/create-vm-dialog/details.tsx:343
+#: src/components/create-vm-dialog/details.tsx:353
+#: src/components/create-vm-dialog/details.tsx:382
+#: src/components/create-vm-dialog/details.tsx:393
 msgid "Installation source"
 msgstr "Asennuslähde"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:265
+#: src/components/create-vm-dialog/details.tsx:241
 msgid "Installation source must not be empty"
 msgstr "Asennuslähteen ei tulisi olla tyhjä"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:434
+#: src/components/create-vm-dialog/details.tsx:406
 msgid "Installation type"
 msgstr "Asennustyyppi"
 
@@ -1469,7 +1488,7 @@ msgstr "Ei kelvollinen IPv6-osoite"
 msgid "Invalid IPv6 prefix"
 msgstr "Virheellinen IPv6-etuliite"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:249
+#: src/components/create-vm-dialog/details.tsx:226
 msgid "Invalid filename"
 msgstr "Virheellinen tiedostonimi"
 
@@ -1485,7 +1504,7 @@ msgstr ""
 "Sitä voidaan käyttää myös selaimen sisäisen graafisen konsolin "
 "käyttöönottoon, joka ei tue SPICEttä."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:918
+#: src/components/create-vm-dialog/automation.tsx:163
 msgid "Keys are located in ~/.ssh/ and have a \".pub\" extension."
 msgstr ""
 "Avaimet sijaitsevat hakemistossa ~/.ssh/ ja ne tunnistetaan niiden \".pub\"-"
@@ -1499,17 +1518,17 @@ msgstr "LVM-taltioryhmä"
 msgid "Launch viewer"
 msgstr "Käynnistä katselin"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:772
+#: src/components/create-vm-dialog/automation.tsx:229
 msgid ""
 "Leave the password blank if you do not wish to have a root account created"
 msgstr "Jätä salasana tyhjäksi, jos et halua root:n tilin luomista"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:820
+#: src/components/create-vm-dialog/automation.tsx:71
 msgid ""
 "Leave the password blank if you do not wish to have a user account created"
 msgstr "Jätä salasana tyhjäksi, jos et halua käyttäjätilin luomista"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:950
+#: src/components/create-vm-dialog/automation.tsx:265
 msgid "Leave the password blank if you do not wish to set a root password"
 msgstr "Jätä salasana tyhjäksi, jos et halua root:n tilin luomista"
 
@@ -1527,7 +1546,7 @@ msgstr "Libvirt tai hypervisori ei tue UEFI:a"
 msgid "Loading available network devices"
 msgstr "Ladataan käytettävissä olevat verkkolaitteet"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1649
+#: src/components/create-vm-dialog/createVmDialog.tsx:235
 msgid "Loading operating system information..."
 msgstr "Ladataan käyttöjärjestelmän tietoja..."
 
@@ -1535,7 +1554,7 @@ msgstr "Ladataan käyttöjärjestelmän tietoja..."
 msgid "Loading resources"
 msgstr "Ladataan resursseja"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:449
+#: src/components/create-vm-dialog/details.tsx:261
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "Paikallinen asennusmedia (ISO-kuvan tai jakelun asennuspuu)"
 
@@ -1552,10 +1571,9 @@ msgstr "Sijainti"
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicAdd.tsx:84
+#: src/components/vm/nics/nicAdd.tsx:84 src/components/vm/nics/nicEdit.tsx:45
 #: src/components/vm/nics/vmNicsCard.tsx:569
 #: src/components/vm/nics/vmNicsCard.tsx:767
-#: src/components/vm/nics/nicEdit.tsx:45
 #: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "MAC-osoite"
@@ -1633,11 +1651,10 @@ msgstr "Median asettaminen sisään epäonnistui"
 msgid "Media will be ejected from $0:"
 msgstr "Media poistetaan $0:sta:"
 
-#: src/components/vm/vmUsageCard.tsx:44
-#: src/components/vm/overview/vmOverviewCard.tsx:173
 #: src/components/vms/hostvmslist.tsx:104
-#: src/components/vms/hostvmslist.tsx:295
-#: src/components/create-vm-dialog/createVmDialog.tsx:1003
+#: src/components/vms/hostvmslist.tsx:289 src/components/vm/vmUsageCard.tsx:44
+#: src/components/vm/overview/vmOverviewCard.tsx:173
+#: src/components/create-vm-dialog/details.tsx:761
 msgid "Memory"
 msgstr "Muisti"
 
@@ -1650,7 +1667,13 @@ msgstr "Muistiohjain"
 msgid "Memory could not be saved"
 msgstr "Muistia ei voitu tallentaa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:272
+#: src/components/create-vm-dialog/details.tsx:717
+#, fuzzy
+#| msgid "Port must be a number."
+msgid "Memory must be a number"
+msgstr "Portin on oltava numero."
+
+#: src/components/create-vm-dialog/details.tsx:720
 msgid "Memory must not be 0"
 msgstr "Muisti ei saa olla 0"
 
@@ -1668,13 +1691,12 @@ msgstr "Muistin tilan polku"
 
 #: src/components/vm/overview/memorySelectRow.tsx:93
 #: src/components/common/dialog.tsx:104
-#: src/components/create-vm-dialog/createVmDialog.tsx:1016
-#: src/components/create-vm-dialog/createVmDialog.tsx:1180
+#: src/components/create-vm-dialog/details.tsx:682
 msgid "MiB"
 msgstr "Mit"
 
-#: src/components/vm/vmMigrateDialog.tsx:224
 #: src/components/vm/vmActions.tsx:406
+#: src/components/vm/vmMigrateDialog.tsx:224
 msgid "Migrate"
 msgstr "Migratoi"
 
@@ -1736,17 +1758,17 @@ msgstr "NAT $0:een"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "Virtuaalikoneen $1 verkkokortti $0 ei muuttanut tilaa"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:58
-#: src/components/storagePools/storagePoolList.tsx:61
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/storageVolumeCreateBody.tsx:113
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
+#: src/components/vms/hostvmslist.tsx:307
 #: src/components/vm/vmCloneDialog.tsx:92
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
 #: src/components/networks/createNetworkDialog.tsx:172
 #: src/components/networks/networkList.tsx:59
-#: src/components/vms/hostvmslist.tsx:313
-#: src/components/create-vm-dialog/createVmDialog.tsx:313
+#: src/components/storagePools/createStoragePoolDialog.tsx:58
+#: src/components/storagePools/storageVolumeCreateBody.tsx:113
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/storagePools/storagePoolList.tsx:61
+#: src/components/create-vm-dialog/createVmDialog.tsx:245
 msgid "Name"
 msgstr "Nimi"
 
@@ -1763,12 +1785,12 @@ msgid "Name contains invalid characters"
 msgstr "Nimi sisältää laittomia merkkejä"
 
 #: src/components/vm/vmCloneDialog.tsx:51
-#: src/components/create-vm-dialog/createVmDialog.tsx:231
+#: src/components/create-vm-dialog/createVmDialog.tsx:156
 msgid "Name must not be empty"
 msgstr "Nimi ei saa olla tyhjä"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:64
 #: src/components/networks/createNetworkDialog.tsx:77
+#: src/components/storagePools/createStoragePoolDialog.tsx:64
 msgid "Name should not be empty"
 msgstr "Nime ei tulisi olla tyhjä"
 
@@ -1804,7 +1826,7 @@ msgstr "Verkko-ohjain"
 msgid "Network MAC can not be empty."
 msgstr "Verkon MAC-osoite ei voi olla tyhjä."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:454
+#: src/components/create-vm-dialog/details.tsx:263
 msgid "Network boot (PXE)"
 msgstr "Verkkokäynnistys (PXE)"
 
@@ -1836,7 +1858,7 @@ msgstr "Verkkoliitännät"
 msgid "Network interfaces of type \"$0\" can not be edited here."
 msgstr "Tyypin \"$0\" verkkoliitäntöjä ei voi muokata tässä."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:400
+#: src/components/create-vm-dialog/details.tsx:377
 msgid "Network selection does not support PXE."
 msgstr "Verkon valinta ei tue PXE:ta."
 
@@ -1858,11 +1880,11 @@ msgstr "Uusi nimi ei saa olla tyhjä"
 msgid "New volume name"
 msgstr "Uusi taltion nimi"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:957
+#: src/components/create-vm-dialog/automation.tsx:268
 msgid "No SSH keys specified"
 msgstr "SSH-avaimia ei määritetty"
 
-#: src/components/vms/hostvmslist.tsx:319
+#: src/components/vms/hostvmslist.tsx:313
 msgid "No VM is running or defined on this host"
 msgstr "Mikään virtuaalikone ei ole käynnissä tai määritelty tässä isännässä"
 
@@ -1906,7 +1928,7 @@ msgstr "Ei verkkoliitäntöjä"
 msgid "No network is defined on this host"
 msgstr "Tälle isännälle ei ole määritetty verkkoa"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:155
+#: src/components/create-vm-dialog/pxe-helpers.tsx:158
 msgid "No networks available"
 msgstr "Verkkoja ei ole käytettävissä"
 
@@ -1938,7 +1960,7 @@ msgstr "Ei tilannevedoksia"
 msgid "No state"
 msgstr "Ei tilaa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1130
+#: src/components/create-vm-dialog/details.tsx:890
 msgid "No storage"
 msgstr "Ei tallennustilaa"
 
@@ -1990,15 +2012,15 @@ msgstr "Ei yhtään"
 msgid "None (isolated network)"
 msgstr "Ei-eristetty verkko"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:711
+#: src/components/create-vm-dialog/details.tsx:624
 msgid "Offline token"
 msgstr "Ei-verkkotilassa oleva poletti"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:269
+#: src/components/create-vm-dialog/details.tsx:247
 msgid "Offline token must not be empty"
 msgstr "Ei-verkkotilassa oleva poletti ei saa olla tyhjä"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:646
+#: src/components/create-vm-dialog/details.tsx:550
 msgid "Old token expired"
 msgstr "Token on vanhentunut"
 
@@ -2015,8 +2037,8 @@ msgstr ""
 "ensin, jotta taltio voidaan poistaa."
 
 #: src/components/vm/nics/nicEdit.tsx:47
-#: src/components/vm/overview/memoryModal.tsx:173
 #: src/components/vm/overview/bootOrder.tsx:394
+#: src/components/vm/overview/memoryModal.tsx:173
 msgid "Only editable when the guest is shut off"
 msgstr "Muokattavissa vain, kun vieras on sammutettuna"
 
@@ -2024,7 +2046,7 @@ msgstr "Muokattavissa vain, kun vieras on sammutettuna"
 msgid "Open"
 msgstr "Avaa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:558
+#: src/components/create-vm-dialog/details.tsx:489
 msgid "Operating system"
 msgstr "Käyttöjärjestelmä"
 
@@ -2037,8 +2059,8 @@ msgstr "Toiminto käynnissä"
 msgid "Other VMs using SPICE"
 msgstr "Muut SPICEa käyttävät virtuaalikoneet"
 
-#: src/components/storagePools/storagePool.tsx:60
 #: src/components/vm/vmDetailsPage.tsx:140
+#: src/components/storagePools/storagePool.tsx:60
 msgid "Overview"
 msgstr "Esittely"
 
@@ -2068,10 +2090,10 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "Salasanan on oltava enintään kahdeksan merkkiä pitkä."
 
-#: src/components/vm/disks/diskEdit.tsx:46
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/deleteDialog.tsx:68
+#: src/components/vm/disks/diskEdit.tsx:46
 msgid "Path"
 msgstr "Polku"
 
@@ -2083,11 +2105,11 @@ msgstr "Polku ei voi olla tyhjä"
 msgid "Path on host's filesystem"
 msgstr "Polku isännän tiedostojärjestelmässä"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:363
+#: src/components/create-vm-dialog/details.tsx:345
 msgid "Path to ISO file on host's file system"
 msgstr "Polku ISO-tiedostoon isännän tiedostojärjestelmässä"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:373
+#: src/components/create-vm-dialog/details.tsx:355
 msgid "Path to cloud image file on host's file system"
 msgstr "Polku pilvipohjaiseen tiedostoon isännän tiedostojärjestelmässä"
 
@@ -2099,7 +2121,7 @@ msgstr "Polku hakemistoon"
 msgid "Path to file on host's file system"
 msgstr "Polku tiedostoon isännän tiedostojärjestelmässä"
 
-#: src/helpers.ts:275 src/components/vm/vmActions.tsx:191
+#: src/components/vm/vmActions.tsx:191 src/helpers.ts:275
 msgid "Pause"
 msgstr "Keskeytä"
 
@@ -2111,17 +2133,17 @@ msgstr "Keskeytetty"
 msgid "Permanent (default)"
 msgstr "Pysyvä (oletus)"
 
-#: src/components/common/machinesConnectionSelector.tsx:66
+#: src/components/common/machinesConnectionSelector.tsx:69
 msgid "Permissions denied for disk images in home directories"
 msgstr "Kotihakemistojen levykuvien käyttöoikeudet estetty"
 
-#: src/components/vm/disks/diskAdd.tsx:600
 #: src/components/vm/nics/nicAdd.tsx:137
+#: src/components/vm/disks/diskAdd.tsx:600
 msgid "Persistence"
 msgstr "Pysyvyys"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:55
 #: src/components/networks/networkOverviewTab.tsx:112
+#: src/components/storagePools/storagePoolOverviewTab.tsx:55
 msgid "Persistent"
 msgstr "Pysyvä"
 
@@ -2146,12 +2168,12 @@ msgid "Please see $0 how to reconfigure your VM manually."
 msgstr ""
 "Katso $0 kuinka voit määrittää virtuaalikoneen uudelleen manuaalisesti."
 
+#: src/components/vm/deleteDialog.tsx:81
 #: src/components/vm/disks/mediaEject.tsx:85
+#: src/components/vm/disks/vmDiskColumns.tsx:42
 #: src/components/vm/disks/diskAdd.tsx:255
 #: src/components/vm/disks/diskAdd.tsx:328
-#: src/components/vm/disks/vmDiskColumns.tsx:42
 #: src/components/vm/overview/bootOrder.tsx:108
-#: src/components/vm/deleteDialog.tsx:81
 msgid "Pool"
 msgstr "Varanto"
 
@@ -2167,11 +2189,11 @@ msgstr "Varannon tyyppi ei tue taltion luomista"
 msgid "Pool's volumes are used by VMs "
 msgstr "Varannon taltioita käyttävät virtuaalikoneet "
 
-#: src/components/vm/disks/vmDiskColumns.tsx:45
 #: src/components/vm/nics/vmNicsCard.tsx:191
+#: src/components/vm/consoles/vnc.tsx:154
+#: src/components/vm/disks/vmDiskColumns.tsx:45
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
-#: src/components/vm/consoles/vnc.tsx:154
 msgid "Port"
 msgstr "Portti"
 
@@ -2236,23 +2258,23 @@ msgstr "Käsittelykiihdytin"
 msgid "Processor"
 msgstr "Suoritin"
 
-#: src/components/vm/overview/bootOrder.tsx:141
-#: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:240
 #: src/components/vm/hostdevs/hostDevCard.tsx:246
+#: src/components/vm/overview/bootOrder.tsx:141
+#: src/components/vm/overview/bootOrder.tsx:157
 msgid "Product"
 msgstr "Tuote"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:749
+#: src/components/create-vm-dialog/automation.tsx:221
 msgid "Profile"
 msgstr "Profiili"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:41
 #: src/components/vm/nics/nicBody.tsx:492
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/disks/vmDiskColumns.tsx:41
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
-#: src/components/vm/hostdevs/hostDevCard.tsx:106
 msgid "Protocol"
 msgstr "Protokolla"
 
@@ -2260,11 +2282,11 @@ msgstr "Protokolla"
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "Tarjoaa virtuaalisen lähiverkon NATin kanssa ulkomaailmaan."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:915
+#: src/components/create-vm-dialog/automation.tsx:157
 msgid "Public SSH key"
 msgstr "Julkinen SSH-avain"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:911
+#: src/components/create-vm-dialog/automation.tsx:153
 msgid "Public key"
 msgstr "Julkinen avain"
 
@@ -2286,15 +2308,15 @@ msgstr "Käynnistä uudelleen"
 msgid "Reboot $0?"
 msgstr "Käynnistä $0 uudelleen?"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:536
+#: src/components/create-vm-dialog/details.tsx:466
 msgid "Recommended operating systems"
 msgstr "Suositellut käyttöjärjestelmät"
 
-#: src/components/create-vm-dialog/createVmDialogUtils.tsx:76
+#: src/components/create-vm-dialog/createVmDialogUtils.tsx:78
 msgid "Released $0"
 msgstr "Julkaistu $0"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:421
+#: src/components/create-vm-dialog/details.tsx:396
 msgid "Remote URL"
 msgstr "Etä-URL"
 
@@ -2319,16 +2341,16 @@ msgstr "Etäkatselin"
 msgid "Remote viewer applications can connect to the following address:"
 msgstr "Etäkatselimet voivat muodostaa yhteyden seuraavaan osoitteeseen:"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:169
-#: src/components/vm/disks/vmDiskColumns.tsx:248
-#: src/components/vm/nics/vmNicsCard.tsx:652
-#: src/components/vm/nics/vmNicsCard.tsx:667
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
-#: src/components/vm/overview/vsock.tsx:269
-#: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/nics/vmNicsCard.tsx:652
+#: src/components/vm/nics/vmNicsCard.tsx:667
 #: src/components/vm/hostdevs/hostDevCard.tsx:256
 #: src/components/vm/hostdevs/hostDevCard.tsx:262
+#: src/components/vm/disks/vmDiskColumns.tsx:169
+#: src/components/vm/disks/vmDiskColumns.tsx:248
+#: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/overview/vsock.tsx:269
 #: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "Poista"
@@ -2355,7 +2377,7 @@ msgstr "Poista isäntälaite VM:stä?"
 
 #: src/components/vm/nics/nicBody.tsx:512
 #: src/components/vm/nics/nicBody.tsx:543
-#: src/components/create-vm-dialog/createVmDialog.tsx:927
+#: src/components/create-vm-dialog/automation.tsx:178
 msgid "Remove item"
 msgstr "Poista kohde"
 
@@ -2367,7 +2389,7 @@ msgstr "Poista verkkoliitäntä?"
 msgid "Remove static host from DHCP"
 msgstr "Poista staattinen isäntä DHCP:stä"
 
-#: src/components/vm/vmRenameDialog.tsx:93 src/components/vm/vmActions.tsx:430
+#: src/components/vm/vmActions.tsx:430 src/components/vm/vmRenameDialog.tsx:93
 msgid "Rename"
 msgstr "Nimeä uudelleen"
 
@@ -2379,9 +2401,8 @@ msgstr "Nimeä uudelleen VM $0"
 msgid "Replace"
 msgstr "Vaihda"
 
-#: src/components/vm/usesSpice.tsx:42
+#: src/components/vm/vmActions.tsx:417 src/components/vm/usesSpice.tsx:42
 #: src/components/vm/vmReplaceSpiceDialog.tsx:127
-#: src/components/vm/vmActions.tsx:417
 msgid "Replace SPICE devices"
 msgstr "Vaihda SPICE-laitteet"
 
@@ -2414,7 +2435,7 @@ msgstr ""
 msgid "Restart this virtual machine to access its serial console"
 msgstr "Käynnistä tämä virtuaalikone uudelleen käyttääksesi sen sarjakonsolia"
 
-#: src/components/common/machinesConnectionSelector.tsx:80
+#: src/components/common/machinesConnectionSelector.tsx:83
 msgid ""
 "Restrictions in networking (SLIRP-based emulation) and PCI device assignment"
 msgstr ""
@@ -2448,7 +2469,7 @@ msgstr ""
 "aikaan ja nykyinen tila häviää, samoin kuin kaikki tiedot, joita ei ole "
 "siepattu tilannevedoksessa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:802
+#: src/components/create-vm-dialog/automation.tsx:59
 msgid "Root password"
 msgstr "Root:n salasana"
 
@@ -2494,7 +2515,7 @@ msgstr ""
 "SPICEa ei tueta tällä isännällä, ja se aiheuttaa sen, että tämä "
 "virtuaalikone ei käynnisty."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:958
+#: src/components/create-vm-dialog/automation.tsx:269
 msgid "SSH keys"
 msgstr "SSH-avaimet"
 
@@ -2502,15 +2523,15 @@ msgstr "SSH-avaimet"
 msgid "Satellite Communication Controller"
 msgstr "Satelliittiviestintäohjain"
 
+#: src/components/vm/nics/nicEdit.tsx:230
+#: src/components/vm/consoles/vnc.tsx:167
 #: src/components/vm/vmEditDescriptionDialog.tsx:78
 #: src/components/vm/disks/diskEdit.tsx:238
-#: src/components/vm/nics/nicEdit.tsx:230
-#: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/overview/firmware.tsx:104
-#: src/components/vm/overview/memoryModal.tsx:192
 #: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/overview/bootOrder.tsx:353
-#: src/components/vm/consoles/vnc.tsx:167
+#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/overview/memoryModal.tsx:192
+#: src/components/vm/overview/firmware.tsx:104
 msgid "Save"
 msgstr "Tallenna"
 
@@ -2534,9 +2555,9 @@ msgstr "Lähetä ei-peitettävä keskeytys"
 msgid "Send non-maskable interrupt to $0?"
 msgstr "Lähetä kohteeseen $0 ei-peitettävä keskeytys?"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:133
 #: src/components/vm/consoles/consoles.tsx:275
 #: src/components/vm/consoles/consoles.tsx:292
+#: src/components/vm/disks/vmDiskColumns.tsx:133
 msgid "Serial"
 msgstr "Sarjanumero"
 
@@ -2564,7 +2585,7 @@ msgstr "Määritä DHCP-alue"
 msgid "Set manually"
 msgstr "Aseta käsin"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1703
+#: src/components/create-vm-dialog/createVmDialog.tsx:309
 msgid ""
 "Setting the user passwords for unattended installation requires starting the "
 "VM when creating it"
@@ -2593,8 +2614,8 @@ msgstr "Jaetut isäntähakemistot on liitettävä manuaalisesti virtuaalikoneess
 msgid "Shared storage"
 msgstr "Jaettu tallennustila"
 
-#: src/components/vm/disks/diskAdd.tsx:171
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:171
 msgid "Show additional options"
 msgstr "Näytä lisävaihtoehdot"
 
@@ -2605,6 +2626,12 @@ msgstr "Näytä vähemmän"
 #: src/components/vm/overview/watchdog.tsx:53
 msgid "Show more"
 msgstr "Näytä lisää"
+
+#: src/components/create-vm-dialog/passwordInput.tsx:161
+#, fuzzy
+#| msgid "Root password"
+msgid "Show password"
+msgstr "Root:n salasana"
 
 #: src/components/vm/vmActions.tsx:225 src/components/vm/vmActions.tsx:236
 #: src/components/vm/vmActions.tsx:251 src/components/vm/vmActions.tsx:256
@@ -2623,9 +2650,8 @@ msgstr "Sammuta"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Sammuta virtuaalikone, jotta voit muokata laiteohjelmiston kokoonpanoa"
 
-#: src/components/vm/consoles/vnc.tsx:650
+#: src/components/vm/vmActions.tsx:521 src/components/vm/consoles/vnc.tsx:650
 #: src/components/vm/consoles/serial.tsx:190
-#: src/components/vm/vmActions.tsx:521
 #: src/components/common/needsShutdown.tsx:278
 msgid "Shutdown and restart"
 msgstr "Sammuta ja käynnistä uudelleen"
@@ -2634,7 +2660,7 @@ msgstr "Sammuta ja käynnistä uudelleen"
 msgid "Shutdown and restart $0?"
 msgstr "Sammuta ja käynnistä uudelleen $0?"
 
-#: src/helpers.ts:219 src/components/vm/snapshots/vmSnapshotsCard.tsx:147
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:147 src/helpers.ts:219
 msgid "Shutting down"
 msgstr "Sammutetaan"
 
@@ -2646,10 +2672,10 @@ msgstr "Signaalinkäsittelyohjain"
 msgid "Simple Communication Controller"
 msgstr "Yksinkertainen viestintä -ohjain"
 
-#: src/components/storagePools/storagePoolList.tsx:62
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/storageVolumeCreateBody.tsx:120
 #: src/components/vm/disks/vmDisksCard.tsx:160
+#: src/components/storagePools/storageVolumeCreateBody.tsx:120
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/storagePools/storagePoolList.tsx:62
 msgid "Size"
 msgstr "Koko"
 
@@ -2657,11 +2683,11 @@ msgstr "Koko"
 msgid "Size must be a number"
 msgstr "Koon on oltava numero"
 
-#: src/components/vm/overview/bootOrder.tsx:158
 #: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
+#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Slot"
 msgstr "Aukko"
 
@@ -2701,12 +2727,12 @@ msgstr ""
 "Jotkut asetusmuutokset tulevat voimaan vasta koneen sammutuksen ja "
 "käynnistyksen jälkeen:"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:40
-#: src/components/vm/disks/vmDisksCard.tsx:158
-#: src/components/vm/disks/diskAdd.tsx:581
 #: src/components/vm/nics/nicBody.tsx:269
 #: src/components/vm/nics/vmNicsCard.tsx:549
 #: src/components/vm/hostdevs/hostDevCard.tsx:217
+#: src/components/vm/disks/vmDisksCard.tsx:158
+#: src/components/vm/disks/diskAdd.tsx:581
+#: src/components/storagePools/storagePoolOverviewTab.tsx:40
 msgid "Source"
 msgstr "Lähde"
 
@@ -2718,13 +2744,13 @@ msgstr "Lähteen muoto"
 msgid "Source must not be empty"
 msgstr "Lähde ei saa olla tyhjä"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 #: src/components/storagePools/createStoragePoolDialog.tsx:218
 #: src/components/storagePools/createStoragePoolDialog.tsx:235
 #: src/components/storagePools/storagePoolOverviewTab.tsx:30
 #: src/components/storagePools/storagePoolOverviewTab.tsx:35
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 msgid "Source path"
 msgstr "Lähteen polku"
 
@@ -2733,7 +2759,7 @@ msgstr "Lähteen polku"
 msgid "Source path should not be empty"
 msgstr "Lähdepolku ei saa olla tyhjä"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:257
+#: src/components/create-vm-dialog/details.tsx:233
 msgid "Source should start with http, ftp or nfs protocol"
 msgstr "Lähteen tulisi alkaa http-, ftp- tai nfs-protokollalla"
 
@@ -2773,12 +2799,12 @@ msgstr "Käynnistetty"
 msgid "Startup"
 msgstr "Aloittaa"
 
-#: src/components/storagePools/storagePoolList.tsx:64
+#: src/components/vms/hostvmslist.tsx:253
+#: src/components/vms/hostvmslist.tsx:309
 #: src/components/vm/nics/vmNicsCard.tsx:586
 #: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/networks/networkList.tsx:63
-#: src/components/vms/hostvmslist.tsx:259
-#: src/components/vms/hostvmslist.tsx:315
+#: src/components/storagePools/storagePoolList.tsx:64
 msgid "State"
 msgstr "Tila"
 
@@ -2791,7 +2817,7 @@ msgid "Static host from DHCP could not be removed"
 msgstr "Staattista isäntää ei voitu poistaa DHCP:stä"
 
 #: src/components/vm/vmMigrateDialog.tsx:108
-#: src/components/create-vm-dialog/createVmDialog.tsx:1140
+#: src/components/create-vm-dialog/details.tsx:902
 msgid "Storage"
 msgstr "Tallennustila"
 
@@ -2799,9 +2825,15 @@ msgstr "Tallennustila"
 msgid "Storage is at a shared location"
 msgstr "Tallennustila on jaetussa paikassa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1167
+#: src/components/create-vm-dialog/details.tsx:931
 msgid "Storage limit"
 msgstr "Tallennustilan raja"
+
+#: src/components/create-vm-dialog/details.tsx:834
+#, fuzzy
+#| msgid "Size must be a number"
+msgid "Storage must be a number"
+msgstr "Koon on oltava numero"
 
 #: src/components/storagePools/storagePool.tsx:113
 msgid "Storage pool $0 failed to get activated"
@@ -2822,11 +2854,11 @@ msgstr "Varastointivarannon nimi"
 #: src/components/storagePools/storagePoolList.tsx:49
 #: src/components/storagePools/storagePoolList.tsx:56
 #: src/components/storagePools/storagePoolList.tsx:58
-#: src/components/create-vm-dialog/createVmDialog.tsx:1135
+#: src/components/create-vm-dialog/details.tsx:895
 msgid "Storage pools"
 msgstr "Tallennustilavarannot"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:276
+#: src/components/create-vm-dialog/details.tsx:836
 msgid "Storage size must not be 0"
 msgstr "Tallennuskoko ei saa olla 0"
 
@@ -2851,6 +2883,12 @@ msgstr "Varastointitaltioita ei voitu poistaa"
 msgid ""
 "Storage volumes must be shared between this host and the destination host."
 msgstr "Tallennustilat on pakko jakaa tämän isännän ja kohdepalvelimen kesken."
+
+#: src/components/create-vm-dialog/passwordInput.tsx:90
+#, fuzzy
+#| msgid "Root password"
+msgid "Strong password"
+msgstr "Root:n salasana"
 
 #: src/components/vm/consoles/common.tsx:111
 msgid "Successfully copied to clipboard!"
@@ -2884,11 +2922,11 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "Taulukko valittavista olevista isäntälaitteista"
 
+#: src/components/vm/nics/vmNicsCard.tsx:557
+#: src/components/vm/hostdevs/hostDevCard.tsx:101
 #: src/components/vm/disks/vmDisksCard.tsx:159
 #: src/components/vm/disks/vmDiskColumns.tsx:173
-#: src/components/vm/nics/vmNicsCard.tsx:557
 #: src/components/vm/overview/bootOrder.tsx:164
-#: src/components/vm/hostdevs/hostDevCard.tsx:101
 msgid "Target"
 msgstr "Kohde"
 
@@ -2918,9 +2956,9 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "Virtuaalikone $0 on käynnissä ja se pakotetaan pois päältä ennen poistamista."
 
-#: src/components/vm/disks/vmDiskColumns.tsx:256
 #: src/components/vm/nics/vmNicsCard.tsx:668
 #: src/components/vm/nics/vmNicsCard.tsx:676
+#: src/components/vm/disks/vmDiskColumns.tsx:256
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "Virtuaalikoneen on oltava käynnissä tai sammutettuna laitteen irrottamiseksi"
@@ -2956,11 +2994,11 @@ msgstr ""
 "Isännän portti, joka välitetään vieraspalvelimelle. Voit myös määrittää "
 "porttivälin, kuten 4000–4050."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:996
+#: src/components/create-vm-dialog/details.tsx:753
 msgid "The selected operating system has minimum memory requirement of $0 $1"
 msgstr "Valitulla käyttöjärjestelmällä on vähimmäismäärä muistia $0 $1"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1102
+#: src/components/create-vm-dialog/details.tsx:865
 msgid ""
 "The selected operating system has minimum storage size requirement of $0 $1"
 msgstr "Valitun käyttöjärjestelmän tallennustilan vähimmäisvaatimus on $0 $1"
@@ -2978,7 +3016,7 @@ msgstr "Tallennusvarantoa ei voitu poistaa"
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr "Tunnisteen nimi, jota vieras käyttää tämän vientipisteen liittämiseen."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:625
+#: src/components/create-vm-dialog/details.tsx:529
 msgid "Then copy and paste it above."
 msgstr "Kopioi ja liitä se sitten yläpuolelle."
 
@@ -3031,7 +3069,7 @@ msgstr ""
 msgid "This volume is already used by $0."
 msgstr "Tätä taltiota käyttää jo $0."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1163
+#: src/components/create-vm-dialog/details.tsx:925
 msgid "This volume is already used by another VM."
 msgstr "Tätä taltiota käyttää jo toinen virtuaalikone."
 
@@ -3053,17 +3091,17 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Vianetsintä"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:102
-#: src/components/storagePools/storagePoolOverviewTab.tsx:65
 #: src/components/vm/nics/vmNicsCard.tsx:780
+#: src/components/vm/hostdevs/hostDevAdd.tsx:43
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
 #: src/components/vm/overview/bootOrder.tsx:155
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/hostdevs/hostDevAdd.tsx:43
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
+#: src/components/storagePools/createStoragePoolDialog.tsx:102
+#: src/components/storagePools/storagePoolOverviewTab.tsx:65
 msgid "Type"
 msgstr "Tyyppi"
 
@@ -3071,7 +3109,7 @@ msgstr "Tyyppi"
 msgid "UDP"
 msgstr "UDP"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:451
+#: src/components/create-vm-dialog/details.tsx:262
 msgid "URL (ISO image or distro install tree)"
 msgstr "URL (ISO-kuvan tai jakelun asennuspuu)"
 
@@ -3091,11 +3129,11 @@ msgstr "Luokittelematon"
 msgid "Undefined"
 msgstr "Määrittämätön"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:319
+#: src/components/create-vm-dialog/createVmDialog.tsx:249
 msgid "Unique name"
 msgstr "Ainutlaatuinen nimi"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:319
+#: src/components/create-vm-dialog/createVmDialog.tsx:250
 msgid "Unique name, default: $0"
 msgstr "Ainutlaatuinen nimi, oletusarvo: $0"
 
@@ -3111,14 +3149,14 @@ msgstr "Yksikkö"
 msgid "Unknown firmware"
 msgstr "Tuntematon laiteohjelmisto"
 
-#: src/components/vm/overview/bootOrder.tsx:145
-#: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/hostdevs/hostDevCard.tsx:84
 #: src/components/vm/hostdevs/hostDevCard.tsx:85
+#: src/components/vm/overview/bootOrder.tsx:145
+#: src/components/vm/overview/bootOrder.tsx:146
 msgid "Unspecified"
 msgstr "Määrittämätön"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:539
+#: src/components/create-vm-dialog/details.tsx:469
 msgid "Unsupported and older operating systems"
 msgstr "Ei tuetut ja vanhemmat käyttöjärjestelmät"
 
@@ -3156,27 +3194,27 @@ msgstr "Käyttävä"
 msgid "Used on host"
 msgstr "Käytössä isännässä"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:810
+#: src/components/create-vm-dialog/automation.tsx:66
 msgid "User login"
 msgstr "Käyttäjän sisäänkirjautuminen"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:293
+#: src/components/create-vm-dialog/automation.tsx:244
 msgid "User login must not be empty when SSH keys are set"
 msgstr ""
 "Käyttäjän sisäänkirjautumistunnus ei saa olla tyhjä, kun SSH-avaimet on "
 "asetettu"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:291
+#: src/components/create-vm-dialog/automation.tsx:242
 msgid "User login must not be empty when user password is set"
 msgstr ""
 "Käyttäjän sisäänkirjautuminen ei saa olla tyhjä, kun käyttäjän salasana on "
 "asetettu"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:818
+#: src/components/create-vm-dialog/automation.tsx:70
 msgid "User password"
 msgstr "Käyttäjäsalasana"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:288
+#: src/components/create-vm-dialog/automation.tsx:240
 msgid "User password must not be empty when user login is set"
 msgstr ""
 "Käyttäjän salasana ei saa olla tyhjä, kun käyttäjän sisäänkirjautuminen on "
@@ -3194,7 +3232,7 @@ msgstr "Käyttää SPICEä"
 msgid "VM $0 Host Devices"
 msgstr "VM $0 isäntälaitteet"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:233
+#: src/components/create-vm-dialog/createVmDialog.tsx:158
 msgid "VM $0 already exists"
 msgstr "Virtuaalikone $0 on jo olemassa"
 
@@ -3238,7 +3276,7 @@ msgstr "Virtuaalikone $0 epäonnistui sammuttamaan"
 msgid "VM $0 failed to start"
 msgstr "Virtuaalikone $0 epäonnistui käynnistymään"
 
-#: src/components/common/machinesConnectionSelector.tsx:77
+#: src/components/common/machinesConnectionSelector.tsx:80
 msgid ""
 "VM launched with unprivileged limited access, with the process and PTY owned "
 "by your user account"
@@ -3254,7 +3292,7 @@ msgstr "Virtuaalikone vaatii sammutuksen"
 msgid "VM state"
 msgstr "Virtuaalikoneen tila"
 
-#: src/components/common/machinesConnectionSelector.tsx:60
+#: src/components/common/machinesConnectionSelector.tsx:63
 msgid "VM will launch with root permissions"
 msgstr "VM käynnistyy pääkäyttäjän oikeuksin"
 
@@ -3270,28 +3308,28 @@ msgstr "VNC-asetuksia ei voitu tallentaa"
 msgid "VNC with TLS is not supported by the in-page viewer"
 msgstr "Sivun sisäinen katseluohjelma ei tue VNC:ta TLS:n kanssa"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:650
+#: src/components/create-vm-dialog/details.tsx:554
 msgid "Valid token"
 msgstr "Kelvollinen tokeni"
 
-#: src/components/vm/overview/bootOrder.tsx:140
-#: src/components/vm/overview/bootOrder.tsx:156
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
+#: src/components/vm/overview/bootOrder.tsx:140
+#: src/components/vm/overview/bootOrder.tsx:156
 msgid "Vendor"
 msgstr "Toimittaja"
 
-#: src/components/create-vm-dialog/createVmDialogUtils.tsx:74
+#: src/components/create-vm-dialog/createVmDialogUtils.tsx:76
 msgid "Vendor support ended $0"
 msgstr "Toimittajatuki päättyi $0"
 
-#: src/components/storagePools/storagePoolList.tsx:46
+#: src/components/vms/hostvmslist.tsx:302
+#: src/components/vms/hostvmslist.tsx:304
 #: src/components/vm/vmDetailsPage.tsx:249
 #: src/components/networks/networkList.tsx:44
-#: src/components/vms/hostvmslist.tsx:308
-#: src/components/vms/hostvmslist.tsx:310 src/manifest.json:0
+#: src/components/storagePools/storagePoolList.tsx:46 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Virtuaalikoneet"
 
@@ -3299,7 +3337,7 @@ msgstr "Virtuaalikoneet"
 msgid "Virtual machines management"
 msgstr "Virtuaalikoneiden hallinta"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:140
+#: src/components/create-vm-dialog/pxe-helpers.tsx:143
 msgid "Virtual network"
 msgstr "Virtuaaliverkko"
 
@@ -3321,12 +3359,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Virtualisointipalvelu (libvirt) ei ole aktiivinen"
 
-#: src/components/vm/disks/mediaEject.tsx:89
-#: src/components/vm/disks/diskAdd.tsx:334
-#: src/components/vm/disks/vmDiskColumns.tsx:43
-#: src/components/vm/overview/bootOrder.tsx:109
 #: src/components/vm/deleteDialog.tsx:78
-#: src/components/create-vm-dialog/createVmDialog.tsx:1152
+#: src/components/vm/disks/mediaEject.tsx:89
+#: src/components/vm/disks/vmDiskColumns.tsx:43
+#: src/components/vm/disks/diskAdd.tsx:334
+#: src/components/vm/overview/bootOrder.tsx:109
+#: src/components/create-vm-dialog/details.tsx:922
 msgid "Volume"
 msgstr "Taltio"
 
@@ -3346,8 +3384,8 @@ msgstr "Taltioryhmän nimi ei tulisi olla tyhjä"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/overview/bootOrder.tsx:171
 #: src/components/vm/hostdevs/hostDevCard.tsx:107
+#: src/components/vm/overview/bootOrder.tsx:171
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3366,6 +3404,12 @@ msgstr ""
 "virtuaalisen vahtikoiralaitteen käyttämiseksi vierasjärjestelmässä on oltava "
 "myös ylimääräinen ajuri ja käynnissä oleva vahtikoirapalvelu."
 
+#: src/components/create-vm-dialog/passwordInput.tsx:98
+#, fuzzy
+#| msgid "User password"
+msgid "Weak password"
+msgstr "Käyttäjäsalasana"
+
 #: src/libvirtApi/nodeDevice.ts:42
 msgid "Wireless Controller"
 msgstr "Langaton ohjain"
@@ -3379,17 +3423,17 @@ msgstr "Kirjoitettava"
 msgid "You can mount the shared folder using:"
 msgstr "Voit liittää jaetun kansion seuraavasti:"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:236
+#: src/components/create-vm-dialog/details.tsx:214
 msgid "You need to select the most closely matching operating system"
 msgstr "Sinun on valittava parhaiten vastaava käyttöjärjestelmä"
 
-#: src/components/storagePools/storagePool.tsx:53
 #: src/components/networks/network.tsx:54
+#: src/components/storagePools/storagePool.tsx:53
 msgid "active"
 msgstr "aktiivinen"
 
-#: src/components/vm/overview/vsock.tsx:315
 #: src/components/vm/overview/watchdog.tsx:265
+#: src/components/vm/overview/vsock.tsx:315
 msgid "add"
 msgstr "lisää"
 
@@ -3409,7 +3453,7 @@ msgstr "silta"
 msgid "cdrom"
 msgstr "cd-rom"
 
-#: src/helpers.ts:236 src/components/vm/overview/cpuModal.tsx:322
+#: src/components/vm/overview/cpuModal.tsx:322 src/helpers.ts:236
 msgid "custom"
 msgstr "mukautettu"
 
@@ -3433,11 +3477,11 @@ msgstr "levy"
 msgid "down"
 msgstr "alas"
 
-#: src/components/vm/overview/vsock.tsx:315
+#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
-#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/bootOrder.tsx:387
+#: src/components/vm/overview/vsock.tsx:315
 msgid "edit"
 msgstr "muokkaa"
 
@@ -3481,8 +3525,8 @@ msgstr "iSCSI-kohde"
 msgid "iSCSI target IQN"
 msgstr "iSCSI-kohteen IQN"
 
-#: src/components/storagePools/storagePool.tsx:53
 #: src/components/networks/network.tsx:54
+#: src/components/storagePools/storagePool.tsx:53
 msgid "inactive"
 msgstr "ei aktiivinen"
 
@@ -3515,9 +3559,9 @@ msgstr "liitostunniste: vietyyn liitoskohtaan liittyvä tunniste"
 msgid "network"
 msgstr "verkko"
 
-#: src/helpers.ts:265 src/components/storagePools/storagePoolOverviewTab.tsx:56
-#: src/components/storagePools/storagePoolOverviewTab.tsx:61
 #: src/components/networks/networkOverviewTab.tsx:113
+#: src/components/storagePools/storagePoolOverviewTab.tsx:56
+#: src/components/storagePools/storagePoolOverviewTab.tsx:61 src/helpers.ts:265
 msgid "no"
 msgstr "ei"
 
@@ -3526,11 +3570,15 @@ msgid "no state saved"
 msgstr "ei tilaa tallennettuna"
 
 #: src/components/vm/nics/vmNicsCard.tsx:288
-#: src/components/vm/overview/vsock.tsx:297
 #: src/components/vm/overview/watchdog.tsx:261
+#: src/components/vm/overview/vsock.tsx:297
 #: src/components/networks/networkOverviewTab.tsx:314
 msgid "none"
 msgstr "Ei mitään"
+
+#: src/components/create-vm-dialog/passwordInput.tsx:111
+msgid "password quality"
+msgstr "salasanan laatu"
 
 #: src/manifest.json:0
 msgid "pxe"
@@ -3598,7 +3646,7 @@ msgstr ""
 "Paketti virt-install on asennettava järjestelmään virtuaalikoneiden "
 "kloonaamiseksi"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1773
+#: src/components/create-vm-dialog/createVmDialog.tsx:385
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
@@ -3626,9 +3674,9 @@ msgstr "vsock vaatii erikoisohjelmiston"
 msgid "waiting"
 msgstr "odotetaan"
 
-#: src/helpers.ts:264 src/components/storagePools/storagePoolOverviewTab.tsx:56
-#: src/components/storagePools/storagePoolOverviewTab.tsx:61
 #: src/components/networks/networkOverviewTab.tsx:113
+#: src/components/storagePools/storagePoolOverviewTab.tsx:56
+#: src/components/storagePools/storagePoolOverviewTab.tsx:61 src/helpers.ts:264
 msgid "yes"
 msgstr "kyllä"
 
@@ -4033,9 +4081,6 @@ msgstr "kyllä"
 #~ msgstr ""
 #~ "Virhe suoritettaessa semanage:ta järjestelmän muutosten löytämiseksi"
 
-#~ msgid "Excellent password"
-#~ msgstr "Erinomainen salasana"
-
 #~ msgid "Expansion chassis"
 #~ msgstr "Laajennusrunko"
 
@@ -4276,6 +4321,3 @@ msgstr "kyllä"
 
 #~ msgid "[no data]"
 #~ msgstr "[ei dataa]"
-
-#~ msgid "password quality"
-#~ msgstr "salasanan laatu"
