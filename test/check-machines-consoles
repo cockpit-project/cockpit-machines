@@ -732,33 +732,25 @@ fullscreen=0
         self.login_and_go("/machines")
 
     def waitForAuthenticationFailed(self):
-        # Quite often a connection fails with code 1006 (Abnormal
-        # Closure) instead of the expected "Authentication failed",
-        # but retrying will give us the expected error message,
-        # usually on the second try.
+        # There is a bug in cockpit-ws that makes it forget to send
+        # the last few messages when a external websocket channel is
+        # closed on the server side:
         #
-        # However, in the ws-container scenario, the 1006 failure will
-        # never go away.  (TODO - debug this)
+        #   https://github.com/cockpit-project/cockpit/issues/23790
+        #
+        # The "authentical failed" error is the second to last
+        # message, and it will not be sent with some probability. In
+        # that case, we don't get the expected "Authentication failed"
+        # error message in the UI, but the generic "Failed to connect"
+        # one.  Thus, we allow both.
 
-        b = self.browser
-        m = self.machine
-
-        if m.ws_container:
-            b.wait_in_text(".consoles-card", "Failed to connect")
-            return
-
-        for _ in range(5):
-            try:
-                b.wait_in_text(".consoles-card", "Authentication failed")
-                break
-            except testlib.Error:
-                if "Failed to connect" in b.text(".consoles-card"):
-                    print("Unexpected error message. Retrying...")
-                    b.click(".consoles-card button:contains(Retry)")
-                else:
-                    raise
-
-        b.wait_in_text(".consoles-card", "Authentication failed")
+        try:
+            self.browser.wait_in_text(".consoles-card", "Authentication failed")
+        except testlib.Error:
+            if "Failed to connect" in self.browser.text(".consoles-card"):
+                print("WARNING: VNC authentication error message lost in cockpit-ws.")
+            else:
+                raise
 
     def testGlobalVNCPassword(self):
         b = self.browser
