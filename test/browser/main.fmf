@@ -27,6 +27,13 @@
         - virtiofsd
       when: distro ~ fedora
 
+    # cockpit-machines dropped the SPICE Recommends: on Fedora 46+
+    - require+:
+        - qemu-audio-spice
+        - qemu-char-spice
+        - qemu-ui-spice-core
+      when: distro >= fedora-46
+
 /network:
   summary: Run browser integration for network functionality
   require:
