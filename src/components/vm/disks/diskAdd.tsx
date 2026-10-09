@@ -26,6 +26,7 @@ import {
 import { domainGet, virtXmlHotAdd, virtXmlHotEdit, domainIsRunning } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
 import { storageVolumeCreate } from '../../../libvirtApi/storageVolume.js';
+import { getPoolCollections } from '../../common/storage';
 import { appState } from '../../../state';
 
 import {
@@ -40,6 +41,7 @@ import {
 } from 'cockpit/dialog';
 
 import { FileAutoComplete } from '../../common/dialog';
+import { FileChooser } from "cockpit/react/FileChooser";
 
 const _ = cockpit.gettext;
 
@@ -404,10 +406,8 @@ function validate_CustomPath(field: DialogField<CustomPathValue>) {
 
 const CustomPath = ({
     field,
-    hideDeviceRow
 } : {
     field: DialogField<CustomPathValue>,
-    hideDeviceRow?: boolean,
 }) => {
     function update_file(val: string) {
         if (val.endsWith(".iso"))
@@ -421,19 +421,16 @@ const CustomPath = ({
                 field={field.sub("file", update_file)}
                 placeholder={_("Path to file on host's file system")}
             />
-            {
-                !hideDeviceRow &&
-                    <DialogDropdownSelect
-                        label={_("Device")}
-                        field={field.sub("device")}
-                        options={
-                            [
-                                { value: "disk", label: _("Disk image file") },
-                                { value: "cdrom", label: _("CD/DVD disc") },
-                            ]
-                        }
-                    />
-            }
+            <DialogDropdownSelect
+                label={_("Device")}
+                field={field.sub("device")}
+                options={
+                    [
+                        { value: "disk", label: _("Disk image file") },
+                        { value: "cdrom", label: _("CD/DVD disc") },
+                    ]
+                }
+            />
         </>
     );
 };
@@ -468,14 +465,10 @@ interface AddDiskValues {
 }
 
 export const AddDisk = ({
-    disk,
     idPrefix,
-    isMediaInsertion = false,
     vm,
 } : {
-    disk?: VMDisk,
     idPrefix: string,
-    isMediaInsertion?: boolean,
     vm: VM,
 }) => {
     const Dialogs = useDialogs();
@@ -494,9 +487,9 @@ export const AddDisk = ({
         const create_new = init_CreateNew(pools);
 
         let mode: AddDiskValues["mode"] = CUSTOM_PATH;
-        if (!isMediaInsertion && typeof create_new != "string")
+        if (typeof create_new != "string")
             mode = CREATE_NEW;
-        else if (!isMediaInsertion && typeof use_existing != "string")
+        else if (typeof use_existing != "string")
             mode = USE_EXISTING;
 
         return {
@@ -514,8 +507,7 @@ export const AddDisk = ({
             validate_CreateNew(dlg.field("create_new"));
         if (dlg.values.mode == CUSTOM_PATH)
             validate_CustomPath(dlg.field("custom_path"));
-        if (!isMediaInsertion)
-            validate_AdditionalOptions(dlg.field("additional_options"));
+        validate_AdditionalOptions(dlg.field("additional_options"));
     }
 
     function get_device(values: AddDiskValues): VMDiskDevice {
@@ -553,7 +545,7 @@ export const AddDisk = ({
     } else {
         const { mode, use_existing, create_new } = dlg.values;
 
-        let mode_options: DialogRadioSelectOption<Mode>[] = [
+        const mode_options: DialogRadioSelectOption<Mode>[] = [
             {
                 value: CREATE_NEW,
                 label: _("Create new"),
@@ -569,9 +561,6 @@ export const AddDisk = ({
                 label: _("Custom path")
             },
         ];
-
-        if (isMediaInsertion)
-            mode_options = [mode_options[2], mode_options[1]];
 
         defaultBody = (
             <>
@@ -592,10 +581,10 @@ export const AddDisk = ({
                     }
                     {
                         mode === CUSTOM_PATH &&
-                            <CustomPath field={dlg.field("custom_path", update_bus)} hideDeviceRow={isMediaInsertion} />
+                            <CustomPath field={dlg.field("custom_path", update_bus)} />
                     }
                     {
-                        !isMediaInsertion && vm.persistent && domainIsRunning(vm.state) &&
+                        vm.persistent && domainIsRunning(vm.state) &&
                             <DialogCheckbox
                                 field_label={_("Persistence")}
                                 checkbox_label={_("Always attach")}
@@ -603,48 +592,9 @@ export const AddDisk = ({
                             />
                     }
                 </Form>
-                { !isMediaInsertion &&
-                    <AdditionalOptions field={dlg.field("additional_options")} />
-                }
+                <AdditionalOptions field={dlg.field("additional_options")} />
             </>
         );
-    }
-
-    async function insert_media(values: AddDiskValues) {
-        try {
-            let xml;
-            if (values.mode === CUSTOM_PATH) {
-                xml = {
-                    type: "file",
-                    source: {
-                        file: values.custom_path.file
-                    }
-                };
-            } else if (values.mode === USE_EXISTING && typeof values.use_existing != "string") {
-                xml = {
-                    type: "volume",
-                    source: {
-                        pool: values.use_existing.pool.name,
-                        volume: values.use_existing.volume,
-                    }
-                };
-            } else
-                return;
-
-            cockpit.assert(disk);
-
-            await virtXmlHotEdit(
-                vm,
-                "disk",
-                { target: { dev: disk.target } },
-                xml
-            );
-
-            // force reload of VM data, events are not reliable (i.e. for a down VM)
-            domainGet({ connectionName: vm.connectionName, id: vm.id });
-        } catch (ex) {
-            throw DialogError.fromError(_("Media failed to be inserted"), ex);
-        }
     }
 
     async function add_disk(values: AddDiskValues) {
@@ -741,23 +691,75 @@ export const AddDisk = ({
             isOpen
             onClose={Dialogs.close}
         >
-            <ModalHeader title={isMediaInsertion ? _("Insert disc media") : _("Add disk")} />
+            <ModalHeader title={_("Add disk")} />
             <ModalBody>
                 <DialogErrorMessage dialog={dlg} />
                 {defaultBody}
             </ModalBody>
             <ModalFooter>
-                {
-                    isMediaInsertion
-                        ? <DialogActionButton dialog={dlg} action={insert_media} onClose={Dialogs.close}>
-                            {_("Insert")}
-                        </DialogActionButton>
-                        : <DialogActionButton dialog={dlg} action={add_disk} onClose={Dialogs.close}>
-                            {_("Add")}
-                        </DialogActionButton>
-                }
+                <DialogActionButton dialog={dlg} action={add_disk} onClose={Dialogs.close}>
+                    {_("Add")}
+                </DialogActionButton>
                 <DialogCancelButton dialog={dlg} onClose={Dialogs.close} />
             </ModalFooter>
         </Modal>
+    );
+};
+
+export const InsertMedia = ({
+    disk,
+    vm,
+} : {
+    disk: VMDisk,
+    vm: VM,
+}) => {
+    async function insert_media(file: string) {
+        try {
+            const xml = {
+                type: "file",
+                source: {
+                    file
+                }
+            };
+
+            await virtXmlHotEdit(
+                vm,
+                "disk",
+                { target: { dev: disk.target } },
+                xml
+            );
+
+            // force reload of VM data, events are not reliable (i.e. for a down VM)
+            domainGet({ connectionName: vm.connectionName, id: vm.id });
+        } catch (ex) {
+            throw DialogError.fromError(_("Media failed to be inserted"), ex);
+        }
+    }
+
+    return (
+        <FileChooser
+            title={_("Insert media")}
+            actionLabel={_("Insert")}
+            action={insert_media}
+            filters={
+                [
+                    {
+                        label: _("ISO files"),
+                        filter: name => !!name.match("\\.iso$"),
+                    },
+                ]
+            }
+            collections={
+                async () => {
+                    // Refresh storage volume list before displaying the dialog.
+                    // There are recently no Libvirt events for storage volumes and polling is ugly.
+                    // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
+                    //
+                    await storagePoolGetAll({ connectionName: vm.connectionName });
+
+                    return getPoolCollections(vm.connectionName);
+                }
+            }
+        />
     );
 };
