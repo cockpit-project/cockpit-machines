@@ -53,7 +53,9 @@ export function networkCreate({
     ipv4DhcpRangeStart,
     ipv4DhcpRangeEnd,
     ipv6DhcpRangeStart,
-    ipv6DhcpRangeEnd
+    ipv6DhcpRangeEnd,
+    vlanIds,
+    vlanNativeId,
 } : { connectionName: ConnectionName } & NetworkSpec): Promise<void> {
     const netXmlDesc = getNetworkXML({
         name,
@@ -66,7 +68,9 @@ export function networkCreate({
         ipv4DhcpRangeStart,
         ipv4DhcpRangeEnd,
         ipv6DhcpRangeStart,
-        ipv6DhcpRangeEnd
+        ipv6DhcpRangeEnd,
+        vlanIds,
+        vlanNativeId,
     });
 
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NetworkDefineXML', [netXmlDesc], { timeout, type: 's' });

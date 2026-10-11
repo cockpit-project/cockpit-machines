@@ -928,12 +928,25 @@ export function parseNetDumpxml(netXml: string): NetworkXML {
         };
     }
 
+    let vlan;
+    const vlanElem = get_child(netElem, "vlan");
+    if (vlanElem) {
+        vlan = {
+            trunk: get_attr(vlanElem, "trunk") === "yes",
+            tags: get_children(vlanElem, "tag").map(tagElem => ({
+                id: Number(get_attr(tagElem, "id")),
+                native: !!get_attr(tagElem, "nativeMode"),
+            })),
+        };
+    }
+
     return {
         uuid: get_text(netElem, "uuid"),
         ip: parseNetDumpxmlForIp(get_children(netElem, "ip")),
         mtu: get_attr(netElem, "mtu", "size"),
         ...(bridge ? { bridge } : { }),
         ...(forward ? { forward } : { }),
+        ...(vlan ? { vlan } : { }),
     };
 }
 
