@@ -20,7 +20,7 @@ import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainCanInstall, domainSetOSFirmware } from "../../../libvirtApi/domain.js";
-import { supportsUefiXml, labelForFirmwarePath } from './helpers.jsx';
+import { supportsUefiXml, labelForFirmwarePath, uefiFirmwareImages } from './helpers.jsx';
 import { addTPM } from '../vmActions';
 
 const _ = cockpit.gettext;
@@ -171,7 +171,7 @@ export const FirmwareLink = ({
                     {firmwareLink(true)}
                 </Tooltip>
             );
-        } else if (vm.capabilities.loader.firmware_values.length == 0) {
+        } else if (uefiFirmwareImages(vm.capabilities.loader, vm.arch).length == 0) {
             firmwareLinkWrapper = (
                 <Tooltip id='missing-uefi-images' content={_("Libvirt did not detect any UEFI/OVMF firmware image installed on the host")}>
                     {firmwareLink(true)}

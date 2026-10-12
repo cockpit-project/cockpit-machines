@@ -73,6 +73,11 @@ export function labelForFirmwarePath(path: optString, guest_arch: optString) {
     }
 }
 
+export function uefiFirmwareImages(loaderCaps: DomainLoaderCapabilities, guest_arch: optString): string[] {
+    /* Filter the loader paths for UEFI/OVMF firmware */
+    return loaderCaps.firmware_values.filter(path => labelForFirmwarePath(path, guest_arch) == "efi");
+}
+
 export function supportsUefiXml(loaderCaps: DomainLoaderCapabilities) {
     /* Return True if libvirt advertises support for proper UEFI setup  */
     return loaderCaps.readonly_values.includes("yes");
