@@ -26,7 +26,7 @@ import {
 } from '../../../libvirtApi/domain.js';
 import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
-import { AddDisk } from './diskAdd.jsx';
+import { InsertMedia } from './diskAdd.jsx';
 import { DeleteResourceModal } from '../../common/deleteResource.jsx';
 import { appState } from '../../../state';
 
@@ -205,10 +205,9 @@ export const DiskActions = ({
 
     function openMediaInsertionDialog() {
         Dialogs.show(
-            <AddDisk
-                idPrefix={idPrefixRow + "-insert-dialog-adddisk"}
+            <InsertMedia
                 vm={vm}
-                isMediaInsertion disk={disk}
+                disk={disk}
             />
         );
     }
@@ -266,7 +265,7 @@ export const DiskActions = ({
     return (
         <div className='machines-listing-actions'>
             { cdromAction }
-            { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
+            { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only for persistent disks
                 <EditDiskAction
                     disk={vm.inactiveXML.disks[disk.target]}
                     vm={vm}

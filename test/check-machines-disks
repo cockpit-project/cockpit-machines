@@ -6,6 +6,7 @@ import os
 import time
 import xml.etree.ElementTree as ET
 
+import dialoglib
 import machineslib
 import testlib
 
@@ -325,7 +326,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_not_present("#navbar-oops")
         b.wait_visible(d.id("mode", "use-existing") + ":disabled")
 
-    class VMInsertMediaDialog(machineslib.MachinesDialogHelpers):
+    class VMInsertMediaDialog(dialoglib.FileChooserHelpers):
         def __init__(
             self, test_obj,
             vm_name='subVmTest1',
@@ -335,8 +336,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             force=False,
             pixel_tag=None,
         ):
-            super().__init__(test_obj.browser,
-                             f"#vm-{vm_name}-disks-{target}-insert-dialog-adddisk-dialog-modal-window")
+            super().__init__(test_obj.browser, ".file-chooser")
 
             self.test_obj = test_obj
             self.mode = mode
@@ -381,23 +381,20 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             b = self.test_obj.browser
             prefix = f"#vm-{self.vm_name}-disks-{self.target}-insert"
             b.click(prefix)  # button
-            b.wait_in_text(".pf-v6-c-modal-box__title", "Insert disc media")
-
-            self.wait_RadioSelect("mode", "custom-path")
-            if self.mode == "use-existing":
-                self.set_RadioSelect("mode", "use-existing")
+            b.wait_in_text(".pf-v6-c-modal-box__title", "Insert media")
 
             return self
 
         def fill(self):
+            b = self.test_obj.browser
             if self.mode == "custom-path":
                 # Type in file path
-                self.set_FileAutoComplete("custom_path.file", self.file_path)
+                self.set_path(self.file_path)
             elif self.mode == "use-existing":
                 # Choose storage pool
-                self.set_DropdownSelect("use_existing.pool", self.pool_name)
+                b.click(self.sidebar(f'Pool "{self.pool_name}"'))
                 # Select from the available volumes
-                self.set_DropdownSelect("use_existing.volume", self.volume_name)
+                b.click(self.file(self.volume_name))
 
             return self
 
@@ -409,31 +406,31 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         def verify(self):
             b = self.test_obj.browser
+            m = self.test_obj.machine
+
             b.wait_not_present(".pf-v6-c-modal-box")
 
             disks = self._get_disks()
 
             self.test_obj.expandDiskRow(self.target)
             if self.mode == "custom-path":
-                # verify UI shows correct media
-                b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.target}-source-file', self.file_path)
-                # verify virsh shows correct media
-                self.test_obj.assertEqual(disks[self.target]['type'], "file")
-                self.test_obj.assertEqual(disks[self.target]['device'], "cdrom")
-                self.test_obj.assertEqual(disks[self.target]['source'], self.file_path)
+                path = self.file_path
             else:
-                # verify UI shows correct media
-                b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.target}-source-pool', self.pool_name)
-                b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.target}-source-volume', self.volume_name)
-                # verify virsh shows correct media
-                self.test_obj.assertEqual(disks[self.target]['type'], "volume")
-                self.test_obj.assertEqual(disks[self.target]['device'], "cdrom")
-                self.test_obj.assertEqual(disks[self.target]['source'], self.volume_name)
+                path = m.execute(f"virsh vol-path --pool {self.pool_name} {self.volume_name}").strip()
+
+            # verify UI shows correct media
+            b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.target}-source-file', path)
+            # verify virsh shows correct media
+            self.test_obj.assertEqual(disks[self.target]['type'], "file")
+            self.test_obj.assertEqual(disks[self.target]['device'], "cdrom")
+            self.test_obj.assertEqual(disks[self.target]['source'], path)
 
             return self
 
         def eject(self):
             b = self.test_obj.browser
+            m = self.test_obj.machine
+
             b.click(f"#vm-{self.vm_name}-disks-{self.target}-eject-button")  # button
             b.wait_in_text(".pf-v6-c-modal-box__title", "Eject disc from VM")
 
@@ -441,11 +438,11 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 b.assert_pixels(".pf-v6-c-modal-box", self.pixel_tag)
 
             if self.mode == "custom-path":
-                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-file", self.file_path)
-            elif self.mode == "use-existing":
-                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-pool dd", self.pool_name)
-                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-volume dd",
-                               self.volume_name)
+                path = self.file_path
+            else:
+                path = m.execute(f"virsh vol-path --pool {self.pool_name} {self.volume_name}").strip()
+
+            b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-file", path)
 
             b.click(".pf-v6-c-modal-box__footer button:contains(Eject)")
             b.wait_not_present(".pf-v6-c-modal-box")
