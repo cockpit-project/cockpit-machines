@@ -529,7 +529,6 @@ export async function domainCreate({
             [],
             {
                 err: "message",
-                environ: ['LC_ALL=C.UTF-8'],
                 ...(connectionName === "system" ? { superuser: "try" } : { })
             }).input(JSON.stringify(args));
     } catch (ex) {
@@ -968,7 +967,6 @@ export async function domainInstall({ vm } : { vm: VM }): Promise<string> {
         [],
         {
             err: "message",
-            environ: ['LC_ALL=C.UTF-8'],
             ...(vm.connectionName === "system" ? { superuser: "try" } : { })
         })
             .input(args)
