@@ -38,6 +38,17 @@ fullscreen=0
 """
         self.waitDownloadFile("console.vv", content=content, expected_size=len(content))
 
+    def wait_for_alpine_greeting(self, name: str) -> None:
+        b = self.browser
+
+        # WebGL2 is not supported in firefox headless mode
+        if b.browser != "firefox":
+            testlib.wait(lambda: "Welcome to Alpine Linux" in
+                b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+        else:
+            # check that empty state is shown instead of console
+            b.wait_in_text(".vm-console .pf-v6-c-empty-state", "Terminal not available")
+
     @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
     def testExternalConsole(self):
         b = self.browser
@@ -139,36 +150,26 @@ fullscreen=0
                     break
                 time.sleep(1)
 
-        def wait_for_alpine_greeting():
-            # WebGL2 is not supported in firefox headless mode
-            if b.browser != "firefox":
-                testlib.wait(lambda: "Welcome to Alpine Linux" in
-                    b.text(f"#{name}-terminal .xterm-accessibility-tree"))
-            else:
-                # check that empty state is shown instead of console
-                b.wait_in_text(".vm-console .pf-v6-c-empty-state", "Terminal not available")
-
         # Make sure the content of console is expected
-
-        wait_for_alpine_greeting()
+        self.wait_for_alpine_greeting(name)
 
         # Make sure the console keeps their content when navigating
         # around
 
         b.click(".consoles-card button:contains(Expand)")
         b.wait_visible(".consoles-page-expanded")
-        wait_for_alpine_greeting()
+        self.wait_for_alpine_greeting(name)
 
         b.click(".consoles-card button:contains(Compress)")
         b.wait_visible(".consoles-card")
-        wait_for_alpine_greeting()
+        self.wait_for_alpine_greeting(name)
 
         b.go("/machines#/")
         self.waitPageInit()
         self.waitVmRow(name)
         self.goToVmPage(name)
         b.wait_visible(f"#{name}-terminal")
-        wait_for_alpine_greeting()
+        self.wait_for_alpine_greeting(name)
 
         # Test re-connecting
 
@@ -473,11 +474,7 @@ fullscreen=0
         assert_state("Start the virtual machine to access the console")
 
         self.performAction(name, "run")
-        # WebGL2 is not supported in firefox headless mode
-        if b.browser != "firefox":
-            testlib.wait(lambda: ("Welcome to Alpine Linux" in
-                                  b.text(f"#{name}-terminal .xterm-accessibility-tree")),
-                         delay=5)
+        self.wait_for_alpine_greeting(name)
 
         # Shutdown, remove, start, and add it while VM is running
         self.performAction(name, "forceOff")
@@ -497,11 +494,7 @@ fullscreen=0
         self.performAction("subVmTest1", "forceOff")
         assert_state("Start the virtual machine to access the console")
         self.performAction(name, "run")
-        # WebGL2 is not supported in firefox headless mode
-        if b.browser != "firefox":
-            testlib.wait(lambda: ("Welcome to Alpine Linux" in
-                                  b.text(f"#{name}-terminal .xterm-accessibility-tree")),
-                         delay=5)
+        self.wait_for_alpine_greeting(name)
 
     def waitForStableVNC(self):
         initial_remote = 1280
