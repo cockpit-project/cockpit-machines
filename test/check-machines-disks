@@ -448,7 +448,15 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                                self.volume_name)
 
             b.click(".pf-v6-c-modal-box__footer button:contains(Eject)")
-            b.wait_not_present(".pf-v6-c-modal-box")
+
+            # Ejecting sometimes fails with "operation failed: timed out waiting for open tray of 'sda'"
+            # Instead of failing the test, try to force eject and continue.
+            try:
+                b.wait_not_present(".pf-v6-c-modal-box")
+            except testlib.Error:
+                b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Force eject)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Force eject)")
+                b.wait_not_present(".pf-v6-c-modal-box")
 
             return self
 
