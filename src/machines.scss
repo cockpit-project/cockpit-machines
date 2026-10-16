@@ -15,20 +15,6 @@
     @extend .ct-card;
 }
 
-/* Create a hybrid popover with an alert style */
-.ct-popover-alert .pf-v6-c-popover__content {
-    @extend .pf-v6-c-alert;
-    @extend .pf-m-danger;
-    display: block;
-    box-shadow: none;
-}
-
-/* Also style the hybrid popover alert title like an alert */
-.ct-popover-alert .pf-v6-c-title {
-    @extend .pf-v6-c-alert__title;
-    font-size: inherit;
-}
-
 .machines-listing-actions {
     display: flex;
     justify-content: flex-end;
@@ -62,10 +48,6 @@
 // Limit width for GiB/MiB dropdowns and inputs
 .ct-machines-select-unit, .ct-machines-size-input {
     max-inline-size: 5rem;
-}
-
-.ct-external-docs-link.pf-v6-c-button.pf-m-link.pf-m-inline {
-  padding-inline-start: var(--pf-t--global--spacer--sm);
 }
 
 .ct-monospace {
