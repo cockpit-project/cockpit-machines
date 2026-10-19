@@ -23,6 +23,7 @@ import cockpit from 'cockpit';
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { networkId } from '../../helpers.js';
+import { formatVlanIds } from './utils';
 import { networkGet, networkAddStaticHostEntries, networkChangeAutostart, networkRemoveStaticHostEntries } from '../../libvirtApi/network.js';
 import { DeleteResourceButton } from '../common/deleteResource.jsx';
 
@@ -127,8 +128,42 @@ export const NetworkOverviewTab = ({ network } : { network: Network }) => {
                         <DescriptionListTerm> {_("Maximum transmission unit")} </DescriptionListTerm>
                         <DescriptionListDescription id={`${idPrefix}-mtu`}> {network.mtu} </DescriptionListDescription>
                     </DescriptionListGroup> }
+
+                    { network.forward?.dev && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Forwarding device")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-forward-device`}> {network.forward.dev} </DescriptionListDescription>
+                    </DescriptionListGroup> }
                 </DescriptionList>
             </FlexItem>
+
+            { network.vlan && <FlexItem>
+                <DescriptionList>
+                    <Content component={ContentVariants.h4}>
+                        {_("VLAN tagging")}
+                    </Content>
+
+                    <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Port type")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-vlan-port-type`}>
+                            {network.vlan.trunk ? _("Trunk") : _("Access")}
+                        </DescriptionListDescription>
+                    </DescriptionListGroup>
+
+                    <DescriptionListGroup>
+                        <DescriptionListTerm> {_("VLAN IDs")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-vlan-ids`}>
+                            {formatVlanIds(network.vlan.tags.map(tag => tag.id))}
+                        </DescriptionListDescription>
+                    </DescriptionListGroup>
+
+                    { network.vlan.trunk && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Native VLAN")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-vlan-native`}>
+                            {network.vlan.tags.find(tag => tag.native)?.id ?? _("None, untagged frames are dropped")}
+                        </DescriptionListDescription>
+                    </DescriptionListGroup> }
+                </DescriptionList>
+            </FlexItem>}
 
             { ip[0] && <FlexItem>
                 <DescriptionList>
