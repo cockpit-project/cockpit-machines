@@ -1886,7 +1886,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         def _deleteVm(self, dialog):
             b = self.browser
 
-            if dialog.storage_pool == "iscsi-pool" and self.machine.image.startswith("rhel-9"):
+            if dialog.storage_pool == "iscsi-pool" and self.machine.image.startswith(("rhel-9", "centos-9")):
                 # RHEL-9 sometimes needs to be kicked before it can look up iscsi volumes by path again
                 self.machine.execute("systemctl restart virtstoraged")
                 self.machine.execute("systemctl restart libvirt-dbus")
