@@ -4,7 +4,7 @@
  * Copyright (C) 2023 Red Hat, Inc.
  */
 
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import cockpit from 'cockpit';
 
 import type { optString, VM } from '../../../types';
@@ -57,6 +57,15 @@ export const CPUModal = ({
     models: string[],
 }) => {
     const Dialogs = useDialogs();
+    const [cpuArch, setCpuArch] = useState<string | null>(null);
+
+    useEffect(() => {
+        cockpit.spawn(["uname", "-m"])
+                .then((output) => {
+                    setCpuArch(output);
+                })
+                .catch((error) => console.log(error));
+    }, []);
 
     function getInt(val: optString, def: number) {
         return val ? parseInt(val) : def;
@@ -220,6 +229,10 @@ export const CPUModal = ({
         setIsLoading(false);
     }
 
+    const isPPC = useCallback(() => {
+        return cpuArch && cpuArch.startsWith("ppc");
+    }, [cpuArch]);
+
     let caution = null;
     if (vm.state === 'running' && (
         sockets != getInt(vm.cpu.topology.sockets, 1) ||
@@ -310,18 +323,23 @@ export const CPUModal = ({
                                     setCpuModel(undefined);
                                 } else {
                                     setCpuModel(value);
-                                    setCpuMode("custom");
+                                    setCpuMode(isPPC() ? "host-model" : "custom");
                                 }
                             }}>
-                    <FormSelectOption key="host-model"
-                                      value="host-model"
-                                      label="host-model" />
+                    {!isPPC() &&
+                        <FormSelectOption key="host-model"
+                                    value="host-model"
+                                    label="host-model" /> }
                     <FormSelectOption key="host-passthrough"
-                                      value="host-passthrough"
-                                      label="host-passthrough" />
-                    <FormSelectOptionGroup key="custom" label={_("custom")}>
-                        {models.map(model => <FormSelectOption key={model} value={model} label={model} />)}
-                    </FormSelectOptionGroup>
+                                    value="host-passthrough"
+                                    label="host-passthrough" />
+                    {isPPC()
+                        ? <FormSelectOptionGroup key="host-model" label={_("host-model")}>
+                            {models.map(model => <FormSelectOption key={model.toLowerCase()} value={model.toLowerCase()} label={model.toLowerCase()} />)}
+                        </FormSelectOptionGroup>
+                        : <FormSelectOptionGroup key="custom" label={_("custom")}>
+                            {models.map(model => <FormSelectOption key={model} value={model} label={model} />)}
+                        </FormSelectOptionGroup>}
                 </FormSelect>
             </FormGroup>
         </Form>
