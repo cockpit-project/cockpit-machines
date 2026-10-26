@@ -39,11 +39,11 @@ export function downloadRhelImage(
         downloadDir
     });
 
-    return python.spawn(downloadRhelImageScript, [arg], {
+    return python.spawn(downloadRhelImageScript, [], {
         err: "message",
         ...(isSystem ? { superuser: "require" } : { }),
         environ: ['LC_ALL=C.UTF-8']
-    });
+    }).input(arg);
 }
 
 export function getAccessToken(offlineToken: string): cockpit.Spawn<string> {
@@ -67,5 +67,5 @@ export function getRhelImageUrl(
         arch,
     });
 
-    return python.spawn(getRhelImageUrlScript, [arg], { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+    return python.spawn(getRhelImageUrlScript, [], { err: "message", environ: ['LC_ALL=C.UTF-8'] }).input(arg);
 }
