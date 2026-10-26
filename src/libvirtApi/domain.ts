@@ -24,6 +24,7 @@ import type {
 import type { BootOrderDevice } from '../helpers.js';
 
 import installVmScript from '../scripts/install_machine.py';
+import virtXmlStdinScript from '../scripts/virt-xml-stdin.py';
 
 import {
     getDiskXML,
@@ -250,7 +251,14 @@ async function runVirtXml(
     }
 
     const cmd = ['virt-xml', '-c', `qemu:///${vm.connectionName}`, vm.uuid, ...args];
-    await spawn(vm.connectionName, cmd);
+
+    await python.spawn(
+        virtXmlStdinScript,
+        [],
+        {
+            err: "message",
+            ...(vm.connectionName === "system" ? { superuser: "try" } : { })
+        }).input(JSON.stringify(cmd));
 }
 
 export async function virtXmlAdd(
