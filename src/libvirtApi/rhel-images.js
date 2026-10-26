@@ -42,7 +42,7 @@ export function downloadRhelImage(accessToken, url, fileName, downloadDir, isSys
         downloadDir
     });
 
-    return python.spawn(downloadRhelImageScript, args, { err: "message", superuser: isSystem && "require", environ: ['LC_ALL=C.UTF-8'] });
+    return python.spawn(downloadRhelImageScript, [], { err: "message", superuser: isSystem && "require", environ: ['LC_ALL=C.UTF-8'] }).input(args);
 }
 
 export function getAccessToken(offlineToken) {
@@ -62,5 +62,5 @@ export function getRhelImageUrl(accessToken, rhelVersion, arch) {
         arch,
     });
 
-    return python.spawn(getRhelImageUrlScript, args, { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+    return python.spawn(getRhelImageUrlScript, [], { err: "message", environ: ['LC_ALL=C.UTF-8'] }).input(args);
 }
