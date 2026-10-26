@@ -39,11 +39,13 @@ export function downloadRhelImage(
         downloadDir
     });
 
-    return python.spawn(downloadRhelImageScript, [arg], {
+    const prom = python.spawn(downloadRhelImageScript, [], {
         err: "message",
         ...(isSystem ? { superuser: "require" } : { }),
         environ: ['LC_ALL=C.UTF-8']
     });
+    prom.input(arg);
+    return prom;
 }
 
 export function getAccessToken(offlineToken: string): Promise<string> {
@@ -67,5 +69,7 @@ export function getRhelImageUrl(
         arch,
     });
 
-    return python.spawn(getRhelImageUrlScript, [arg], { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+    const prom = python.spawn(getRhelImageUrlScript, [], { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+    prom.input(arg);
+    return prom;
 }
