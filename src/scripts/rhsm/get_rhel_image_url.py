@@ -3,7 +3,7 @@ import sys
 import urllib.error
 import urllib.request
 
-args = json.loads(sys.argv[1], strict=False)
+args = json.loads(sys.stdin.read(), strict=False)
 
 try:
     req = urllib.request.Request(f"https://api.access.redhat.com/management/v1/images/rhel/{args['rhelVersion']}/{args['arch']}")
