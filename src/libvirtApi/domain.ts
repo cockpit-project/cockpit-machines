@@ -355,31 +355,18 @@ export async function ensureBalloonPolling(vm: VM) {
     }
 }
 
-export function domainAttachHostDevices({
-    connectionName,
-    vmName,
-    live,
-    devices
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    live: boolean,
-    devices: NodeDevice[],
-}): cockpit.Spawn<string> {
-    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName];
+export async function domainAttachHostDevices(vm: VM, devices: NodeDevice[]): Promise<void> {
+    const args: virtXmlAction[] = [];
 
     devices.forEach(dev => {
         const source = getNodeDevSource(dev);
         if (!source)
-            return Promise.reject(new Error(`domainAttachHostDevices: could not determine device's source identifier`));
+            throw new Error(`domainAttachHostDevices: could not determine device's source identifier`);
 
-        args.push("--add-device", "--hostdev", source);
+        args.push({ action: "add-device", option: "hostdev", values: source });
     });
 
-    if (live)
-        args.push("--update");
-
-    return spawn(connectionName, args);
+    await runVirtXml(vm, args, hotplugExtraOptions(vm));
 }
 
 export async function domainChangeAutostart ({
