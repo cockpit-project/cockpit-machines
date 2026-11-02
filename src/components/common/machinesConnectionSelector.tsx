@@ -46,7 +46,7 @@ export const MachinesConnectionSelector = ({
         <FormGroup label={_("Connection")}
                    isInline
                    id={id}
-                   data-ouia-component-id={ouiaId}
+                   {...(ouiaId ? { ouiaId } : {})}
                    className="machines-connection-selector"
                    {...(showInfoHelper && !isReadonly)
                        ? {
