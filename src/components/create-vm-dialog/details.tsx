@@ -487,7 +487,7 @@ const OSRow = ({
         <FormGroup
             data-loading={!!isLoading}
             label={_("Operating system")}
-            data-ouia-component-id={field.ouia_id()}
+            ouiaId={field.ouia_id()}
         >
             <TypeaheadSelect
                 isDisabled={isLoading}
