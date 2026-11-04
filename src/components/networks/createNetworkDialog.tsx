@@ -23,7 +23,9 @@ import { FormHelper } from 'cockpit-components-form-helper.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { networkCreate } from '../../libvirtApi/network.js';
-import { isEmpty, LIBVIRT_SYSTEM_CONNECTION, rephraseUI, getNetworkDevices } from '../../helpers.js';
+import {
+    isEmpty, LIBVIRT_SYSTEM_CONNECTION, rephraseUI, bridgeHasVlanFiltering, getNetworkBridges, getNetworkDevices
+} from '../../helpers.js';
 import * as utils from './utils';
 import cockpit from 'cockpit';
 
@@ -54,12 +56,16 @@ interface DialogValues {
     ipv6DhcpEnabled: boolean;
     ipv6DhcpRangeStart: string;
     ipv6DhcpRangeEnd: string;
+    vlanEnabled: boolean;
+    vlanIds: string;
+    vlanNative: string;
 }
 
 type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
 
 interface ValidationFailed {
     name?: string;
+    device?: string;
     netmask?: string;
     ipv4?: string;
     ipv4DhcpRangeStart?: string;
@@ -68,6 +74,8 @@ interface ValidationFailed {
     prefix?: string;
     ipv6DhcpRangeStart?: string;
     ipv6DhcpRangeEnd?: string;
+    vlanIds?: string;
+    vlanNative?: string;
 }
 
 function validateParams(dialogValues: DialogValues): ValidationFailed {
@@ -75,6 +83,24 @@ function validateParams(dialogValues: DialogValues): ValidationFailed {
 
     if (isEmpty(dialogValues.name.trim()))
         validationFailed.name = _("Name should not be empty");
+
+    // libvirt does not create the bridge for this mode, it has to exist on the host
+    if (dialogValues.forwardMode === "bridge" && isEmpty(dialogValues.device))
+        validationFailed.device = _("No bridge devices available on the host");
+
+    if (dialogValues.forwardMode === "bridge" && dialogValues.vlanEnabled) {
+        const hasIds = !isEmpty(dialogValues.vlanIds.trim());
+        const hasNative = !isEmpty(dialogValues.vlanNative.trim());
+
+        // the native VLAN is allowed on the port implicitly, so either field alone is enough
+        if (!hasIds && !hasNative)
+            validationFailed.vlanIds = _("VLAN IDs or native VLAN should not be empty");
+        else if (hasIds && !utils.parseVlanIds(dialogValues.vlanIds))
+            validationFailed.vlanIds = _("Invalid VLAN IDs, expected numbers or ranges between 1 and 4094");
+
+        if (hasNative && !utils.validateVlanId(dialogValues.vlanNative))
+            validationFailed.vlanNative = _("Invalid VLAN ID");
+    }
 
     if (dialogValues.ip === "IPv4 only" || dialogValues.ip === "IPv4 and IPv6") {
         let ipv4_prefix: number | null = null;
@@ -187,7 +213,7 @@ const NetworkForwardModeRow = ({
     onValueChanged: OnValueChanged,
     dialogValues: DialogValues,
 }) => {
-    const forwardModes = ['nat', 'open', 'none'];
+    const forwardModes = ['nat', 'route', 'open', 'bridge', 'none'];
 
     return (
         <FormGroup fieldId='create-network-forward-mode' label={_("Forward mode")}>
@@ -232,6 +258,85 @@ const NetworkDeviceRow = ({
                 </FormSelectOptionGroup>
             </FormSelect>
         </FormGroup>
+    );
+};
+
+const NetworkBridgeRow = ({
+    onValueChanged,
+    dialogValues,
+    validationFailed
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    validationFailed: ValidationFailed,
+}) => {
+    const bridges = getNetworkBridges();
+    const validationState = validationFailed.device ? 'error' : 'default';
+
+    return (
+        <FormGroup fieldId='create-network-bridge' label={_("Bridge")}>
+            <FormSelect id='create-network-bridge'
+                        isDisabled={!bridges.length}
+                        value={dialogValues.device}
+                        validated={validationState}
+                        onChange={(_event, value) => onValueChanged('device', value)}>
+                { bridges.map(dev => {
+                    return (
+                        <FormSelectOption value={dev} key={dev}
+                                          label={dev} />
+                    );
+                })}
+            </FormSelect>
+            <FormHelper helperTextInvalid={validationFailed.device} />
+        </FormGroup>
+    );
+};
+
+const NetworkVlanRow = ({
+    onValueChanged,
+    dialogValues,
+    validationFailed
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    validationFailed: ValidationFailed,
+}) => {
+    // libvirt sets the port VLANs through the kernel's bridge VLAN filtering; without it they are ignored
+    const supported = bridgeHasVlanFiltering(dialogValues.device);
+    const validationIds = validationFailed.vlanIds ? 'error' : 'default';
+    const validationNative = validationFailed.vlanNative ? 'error' : 'default';
+
+    return (
+        <>
+            <FormGroup fieldId='create-network-vlan' hasNoPaddingTop>
+                <Checkbox id='create-network-vlan'
+                          isChecked={supported && dialogValues.vlanEnabled}
+                          isDisabled={!supported}
+                          label={_("VLAN tagging")}
+                          description={supported
+                              ? _("Guest ports behave like switch ports: tagged frames are limited to the listed VLANs")
+                              : cockpit.format(_("Bridge $0 has VLAN filtering disabled"), dialogValues.device)}
+                          onChange={() => onValueChanged('vlanEnabled', !dialogValues.vlanEnabled)} />
+            </FormGroup>
+            {supported && dialogValues.vlanEnabled && <Grid hasGutter md={6}>
+                <FormGroup fieldId='create-network-vlan-ids' label={_("VLAN IDs")}>
+                    <TextInput id='create-network-vlan-ids'
+                               placeholder={_("e.g. 10,20-29")}
+                               value={dialogValues.vlanIds}
+                               validated={validationIds}
+                               onChange={(_, value) => onValueChanged('vlanIds', value)} />
+                    <FormHelper helperTextInvalid={validationIds == "error" ? validationFailed.vlanIds : null} />
+                </FormGroup>
+                <FormGroup fieldId='create-network-vlan-native' label={_("Native VLAN")}>
+                    <TextInput id='create-network-vlan-native'
+                               placeholder={_("None, untagged frames are dropped")}
+                               value={dialogValues.vlanNative}
+                               validated={validationNative}
+                               onChange={(_, value) => onValueChanged('vlanNative', value)} />
+                    <FormHelper helperTextInvalid={validationNative == "error" ? validationFailed.vlanNative : null} />
+                </FormGroup>
+            </Grid>}
+        </>
     );
 };
 
@@ -437,6 +542,9 @@ class CreateNetworkModal extends React.Component<CreateNetworkModalProps, Create
             ipv6DhcpEnabled: false,
             ipv6DhcpRangeStart: '',
             ipv6DhcpRangeEnd: '',
+            vlanEnabled: false,
+            vlanIds: '',
+            vlanNative: '',
         };
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
         this.dialogErrorDismiss = this.dialogErrorDismiss.bind(this);
@@ -457,8 +565,14 @@ class CreateNetworkModal extends React.Component<CreateNetworkModalProps, Create
             if (this.state.ip !== "None" && (value === "bridge" || value === "vepa"))
                 this.setState({ ip: "None" });
 
-            if (this.state.ip === "None" && (value === "nat" || value === "open"))
+            if (this.state.ip === "None" && (value === "nat" || value === "route" || value === "open"))
                 this.setState({ ip: "IPv4 only" });
+
+            // "device" is the outgoing interface for nat/route, but the host bridge for bridge mode
+            if (value === "bridge")
+                this.setState({ device: getNetworkBridges()[0] || "" });
+            else if (this.state.forwardMode === "bridge")
+                this.setState({ device: "automatic" });
         }
 
         this.setState({ [key]: value } as Pick<CreateNetworkModalState, K>);
@@ -476,6 +590,14 @@ class CreateNetworkModal extends React.Component<CreateNetworkModalProps, Create
             const ipv6 = ["IPv4 only", "None"].includes(ip) ? undefined : this.state.ipv6;
             const ipv4 = ["IPv6 only", "None"].includes(ip) ? undefined : this.state.ipv4;
             const netmask = utils.netmaskConvert(this.state.netmask);
+            const vlan = forwardMode === "bridge" && this.state.vlanEnabled && bridgeHasVlanFiltering(device);
+            const vlanNativeId = vlan && !isEmpty(this.state.vlanNative.trim()) ? Number(this.state.vlanNative) : undefined;
+            const vlanIds = (vlan && !isEmpty(this.state.vlanIds.trim()) && utils.parseVlanIds(this.state.vlanIds)) || [];
+            // libvirt marks the native VLAN on one of the port's tags, so make sure it is in the list
+            if (vlanNativeId !== undefined && !vlanIds.includes(vlanNativeId)) {
+                vlanIds.push(vlanNativeId);
+                vlanIds.sort((a, b) => a - b);
+            }
 
             this.setState({ createInProgress: true });
             networkCreate({
@@ -490,7 +612,9 @@ class CreateNetworkModal extends React.Component<CreateNetworkModalProps, Create
                 ipv4DhcpRangeStart,
                 ipv4DhcpRangeEnd,
                 ipv6DhcpRangeStart,
-                ipv6DhcpRangeEnd
+                ipv6DhcpRangeEnd,
+                vlanIds,
+                vlanNativeId,
             })
                     .then(Dialogs.close)
                     .catch(exc => {
@@ -517,6 +641,16 @@ class CreateNetworkModal extends React.Component<CreateNetworkModalProps, Create
                 { (this.state.forwardMode === "nat" || this.state.forwardMode === "route") &&
                 <NetworkDeviceRow dialogValues={this.state}
                                   onValueChanged={this.onValueChanged} /> }
+
+                { this.state.forwardMode === "bridge" &&
+                <>
+                    <NetworkBridgeRow dialogValues={this.state}
+                                      onValueChanged={this.onValueChanged}
+                                      validationFailed={validationFailed} />
+                    <NetworkVlanRow dialogValues={this.state}
+                                    onValueChanged={this.onValueChanged}
+                                    validationFailed={validationFailed} />
+                </> }
 
                 { (this.state.forwardMode !== "vepa" && this.state.forwardMode !== "bridge") &&
                 <IpRow dialogValues={this.state}

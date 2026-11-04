@@ -115,6 +115,11 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
+        # host bridges for the "bridge" forward mode; interfaces are read once at page load.
+        # VLAN tagging is only offered for a bridge with VLAN filtering
+        m.execute("ip link add name br1 type bridge; ip link add name br2 type bridge vlan_filtering 1")
+        self.addCleanup(m.execute, "ip link delete br1; ip link delete br2")
+
         self.login_and_go("/machines")
         self.waitPageInit()
 
@@ -134,8 +139,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             def __init__(
                 self, test_obj, name, forward_mode=None, ip_conf=None, ipv4_address=None, ipv4_netmask=None,
                 ipv6_address=None, ipv6_prefix=None, device=None, ipv4_dhcp_start=None, ipv4_dhcp_end=None,
-                ipv6_dhcp_start=None, ipv6_dhcp_end=None, xfail=False, xfail_error=None, xfail_objects=None,
-                remove=True, activate=False
+                ipv6_dhcp_start=None, ipv6_dhcp_end=None, vlan_ids=None, vlan_native=None,
+                xfail=False, xfail_error=None, xfail_objects=None, remove=True, activate=False
             ):
                 self.test_obj = test_obj
                 self.name = name
@@ -150,6 +155,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                 self.ipv4_dhcp_end = ipv4_dhcp_end
                 self.ipv6_dhcp_start = ipv6_dhcp_start
                 self.ipv6_dhcp_end = ipv6_dhcp_end
+                self.vlan_ids = vlan_ids
+                self.vlan_native = vlan_native
                 self.xfail = xfail
                 self.xfail_objects = xfail_objects
                 self.xfail_error = xfail_error
@@ -179,9 +186,19 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                     b.set_val("#create-network-forward-mode", self.forward_mode)
 
                 if self.device:
-                    b.select_from_dropdown("#create-network-device", self.device)
+                    if self.forward_mode == "bridge":
+                        b.select_from_dropdown("#create-network-bridge", self.device)
+                    else:
+                        b.select_from_dropdown("#create-network-device", self.device)
 
-                if self.ip_conf:
+                if self.vlan_ids is not None:
+                    b.set_checked("#create-network-vlan", True)
+                    b.set_input_text("#create-network-vlan-ids", self.vlan_ids)
+                    if self.vlan_native is not None:
+                        b.set_input_text("#create-network-vlan-native", self.vlan_native)
+
+                # bridge mode has no IP configuration: libvirt does not manage the host bridge
+                if self.ip_conf and self.forward_mode != "bridge":
                     b.select_from_dropdown("#create-network-ip-configuration", self.ip_conf)
 
                     if "4" in self.ip_conf:
@@ -252,8 +269,29 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                                               m.execute(xmllint_element.format(prop='forward/@mode')).strip())
 
                 if self.device:
-                    self.test_obj.assertEqual(self.device,
-                                              m.execute(xmllint_element.format(prop='forward/interface/@dev')).strip())
+                    if self.forward_mode == "bridge":
+                        self.test_obj.assertEqual(self.device,
+                                                  m.execute(xmllint_element.format(prop='bridge/@name')).strip())
+                        if self.vlan_ids is not None:
+                            # the native VLAN is added to the allowed VLANs
+                            expected = {int(v) for v in self.vlan_ids.split(",") if v}
+                            if self.vlan_native is not None:
+                                expected.add(int(self.vlan_native))
+                            # an access port has a single tag and no trunk attribute
+                            trunk = len(expected) > 1 or self.vlan_native is not None
+                            self.test_obj.assertEqual("yes" if trunk else "",
+                                                      m.execute(xmllint_element.format(prop='vlan/@trunk')).strip())
+                            tags = m.execute(f"{net_xml} | xmllint --xpath '//network/vlan/tag/@id' - "
+                                             "| grep -o '[0-9]*' | tr '\\n' ' '")
+                            self.test_obj.assertEqual(" ".join(str(v) for v in sorted(expected)), tags.strip())
+                            self.test_obj.assertEqual(self.vlan_native or "",
+                                                      m.execute(xmllint_element.format(
+                                                          prop='vlan/tag[@nativeMode="untagged"]/@id')).strip())
+                        else:
+                            self.test_obj.assertEqual("", m.execute(xmllint_element.format(prop='vlan')).strip())
+                    else:
+                        self.test_obj.assertEqual(self.device,
+                                                  m.execute(xmllint_element.format(prop='forward/interface/@dev')).strip())
 
                 if (self.ip_conf != "None"):
                     if "4" in self.ip_conf:
@@ -287,7 +325,36 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                 connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
                 b.wait_in_text(f"#network-{self.name}-{connectionName}-forwarding", modes[self.forward_mode])
+                if self.forward_mode == "bridge":
+                    b.wait_in_text(f"#network-{self.name}-{connectionName}-device", self.device)
                 self.test_obj.toggleNetworkRow(self.name, connectionName)
+
+                if self.device and self.forward_mode != "bridge":
+                    b.wait_in_text(f"#network-{self.name}-{connectionName}-forward-device", self.device)
+
+                if self.vlan_ids is not None:
+                    # the overview collapses consecutive IDs into ranges
+                    trunk = self.vlan_ids.count(",") > 0 or self.vlan_native is not None
+                    b.wait_in_text(f"#network-{self.name}-{connectionName}-vlan-port-type",
+                                   "Trunk" if trunk else "Access")
+                    ids = sorted({int(v) for v in self.vlan_ids.split(",") if v} |
+                                 ({int(self.vlan_native)} if self.vlan_native is not None else set()))
+                    ranges = []
+                    for i in ids:
+                        if ranges and i == ranges[-1][1] + 1:
+                            ranges[-1][1] = i
+                        else:
+                            ranges.append([i, i])
+                    b.wait_text(f"#network-{self.name}-{connectionName}-vlan-ids",
+                                ", ".join(str(a) if a == z else f"{a}-{z}" for a, z in ranges))
+                    if self.vlan_native is not None:
+                        b.wait_in_text(f"#network-{self.name}-{connectionName}-vlan-native", self.vlan_native)
+                    elif trunk:
+                        b.wait_in_text(f"#network-{self.name}-{connectionName}-vlan-native", "None")
+                    else:
+                        b.wait_not_present(f"#network-{self.name}-{connectionName}-vlan-native")
+                else:
+                    b.wait_not_present(f"#network-{self.name}-{connectionName}-vlan-ids")
 
                 if self.activate:
                     b.click(f"#activate-network-{self.name}-{connectionName}")
@@ -530,6 +597,98 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             ip_conf="IPv4 only",
             ipv4_address="192.168.110.1",
             ipv4_netmask="255.255.255.0",
+        ).execute()
+
+        # Routed: like NAT, but the outgoing device forwards without address translation
+        NetworkCreateDialog(
+            self,
+            name="test_network",
+            forward_mode="route",
+            device=device,
+            ip_conf="IPv4 only",
+            ipv4_address="192.168.110.1",
+            ipv4_netmask="255.255.255.0",
+            activate=True,
+        ).execute()
+
+        # Bridge: attaches to an existing host bridge, so there is nothing to configure but the bridge
+        NetworkCreateDialog(
+            self,
+            name="test_network",
+            forward_mode="bridge",
+            device="br1",
+            ip_conf="None",
+            activate=True,
+        ).execute()
+
+        # VLAN tagging needs a bridge with VLAN filtering; br1 has none, so the checkbox is disabled
+        b.click("#create-network")
+        b.set_val("#create-network-forward-mode", "bridge")
+        b.select_from_dropdown("#create-network-bridge", "br1")
+        b.wait_visible("#create-network-vlan:disabled")
+        b.wait_in_text("#create-network-dialog", "Bridge br1 has VLAN filtering disabled")
+        b.select_from_dropdown("#create-network-bridge", "br2")
+        b.wait_visible("#create-network-vlan:not(:disabled)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-network-dialog")
+
+        # Trunk port: tagged 10-12, untagged frames belong to VLAN 20 which is allowed implicitly
+        NetworkCreateDialog(
+            self,
+            name="test_network",
+            forward_mode="bridge",
+            device="br2",
+            ip_conf="None",
+            vlan_ids="10,11,12",
+            vlan_native="20",
+            activate=True,
+        ).execute()
+
+        # Native VLAN only: untagged frames go to VLAN 20, tagged frames are dropped
+        NetworkCreateDialog(
+            self,
+            name="test_network",
+            forward_mode="bridge",
+            device="br2",
+            ip_conf="None",
+            vlan_ids="",
+            vlan_native="20",
+        ).execute()
+
+        # Access port: a single VLAN without native VLAN
+        NetworkCreateDialog(
+            self,
+            name="test_network",
+            forward_mode="bridge",
+            device="br2",
+            ip_conf="None",
+            vlan_ids="30",
+        ).execute()
+
+        # Check VLAN validation
+        NetworkCreateDialog(
+            self,
+            name="test_network",
+            forward_mode="bridge",
+            device="br2",
+            ip_conf="None",
+            vlan_ids="",
+            xfail=True,
+            xfail_objects=["vlan-ids"],
+            xfail_error="should not be empty",
+        ).execute()
+
+        NetworkCreateDialog(
+            self,
+            name="test_network",
+            forward_mode="bridge",
+            device="br2",
+            ip_conf="None",
+            vlan_ids="10,5000",
+            vlan_native="10-12",
+            xfail=True,
+            xfail_objects=["vlan-ids", "vlan-native"],
+            xfail_error="Invalid VLAN ID",
         ).execute()
 
     def testNetworkSettings(self):
