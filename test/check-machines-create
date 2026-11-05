@@ -1210,7 +1210,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             memoryUnit = "MiB" if memory < 1024 else "GiB"
             memory = memory if memory < 1024 else 1
             # Check memory and storage were set to defaults
-            self.wait_TextInput("details.memory.size", memory)
+            self.wait_TextInput("details.memory.size", str(memory))
             self.wait_DropdownSelect("details.memory.unit", memoryUnit)
             self.wait_TextInput("details.storage.newSize.size", "10")
             self.wait_DropdownSelect("details.storage.newSize.unit", "GiB")
@@ -1497,7 +1497,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                         if self.storage_size is not None:
                             self.set_TextInput("details.storage.newSize.size", str(self.storage_size))
                 else:
-                    self.wait_TextInput("details.storage.newSize.size", self.expected_storage_size)
+                    self.wait_TextInput("details.storage.newSize.size", str(self.expected_storage_size))
 
             # First select the unit so that UI will auto-adjust the memory input
             # value according to the available total memory on the host
@@ -1505,7 +1505,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 self.set_DropdownSelect("details.memory.unit", self.memory_size_unit)
                 self.set_TextInput("details.memory.size", str(self.memory_size))
             else:
-                self.wait_TextInput("details.memory.size", self.expected_memory_size)
+                self.wait_TextInput("details.memory.size", str(self.expected_memory_size))
 
             if (self.connection):
                 b.set_checked(f"#connectionName-{self.connection}", True)
