@@ -41,6 +41,7 @@ import { appState } from '../../state';
 
 import {
     useDialogState_async, DialogState,
+    useDialogOnChange,
     DialogErrorMessage,
     DialogTextInput,
     DialogActionButton, DialogCancelButton
@@ -217,13 +218,19 @@ export const CreateVmModal = ({
 
     const dlg = useDialogState_async(init, validate);
 
-    let dialogBody;
+    useDialogOnChange(
+        dlg instanceof DialogState && dlg.field("details").sub("source")
+                .sub("os"),
+        val => dlg instanceof DialogState && update_Automation_os(dlg.field("automation"), val)
+    );
 
     const handleTabClick = (event: React.MouseEvent, tabIndex: number | string) => {
         // Prevent the form from being submitted.
         event.preventDefault();
         setActiveTabKey(tabIndex);
     };
+
+    let dialogBody;
 
     if (dlg == null) {
         dialogBody = (
@@ -259,12 +266,7 @@ export const CreateVmModal = ({
                         >
                             <FormSection>
                                 <Details
-                                    field={
-                                        dlg.field(
-                                            "details",
-                                            val => update_Automation_os(dlg.field("automation"), val.source.os)
-                                        )
-                                    }
+                                    field={dlg.field("details")}
                                     osInfoList={dlg.values.osInfoList}
                                 />
                             </FormSection>
@@ -278,8 +280,8 @@ export const CreateVmModal = ({
                         >
                             <FormSection>
                                 <Automation
-                                      field={dlg.field("automation")}
-                                      state={autoState}
+                                    field={dlg.field("automation")}
+                                    state={autoState}
                                 />
                             </FormSection>
                         </Tab>
