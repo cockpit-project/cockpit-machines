@@ -59,6 +59,7 @@ import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { appState } from '../../state';
 
 import {
+    useDialogOnChange,
     DialogField,
     DialogHelperText,
     DialogTextInput, OptionalFormGroup,
@@ -267,17 +268,13 @@ const Source = ({
     field,
     connectionName,
     osInfoList,
-    osChanged,
 } : {
     field: DialogField<SourceValue>,
     connectionName: ConnectionName,
     osInfoList: OSInfo[],
-    osChanged: (os: OSInfo | null) => void,
 }) => {
     const [autodetectOSInProgress, setAutodetectOSInProgress] = useState(false);
     const { types, type, os, source } = field.get();
-
-    const os_field = field.sub("os", osChanged);
 
     function type_changed(new_type: string) {
         if (new_type == PXE_SOURCE) {
@@ -290,30 +287,37 @@ const Source = ({
         }
     }
 
-    function source_changed() {
+    function source_changed(installMedia: string) {
         if (type == LOCAL_INSTALL_MEDIA_SOURCE || type == URL_SOURCE) {
-            field.sub("source").get_async(async (installMedia, signal) => {
-                if (!installMedia || installMedia.endsWith("/"))
-                    return;
+            field.run_async(
+                "source-check",
+                async signal => {
+                    if (!installMedia || installMedia.endsWith("/"))
+                        return;
 
-                setAutodetectOSInProgress(true);
-                try {
-                    const resJSON = await autodetectOS(installMedia, signal);
-                    const res = JSON.parse(resJSON);
-                    const osEntry = osInfoList.filter(osEntry => osEntry.id == res.os);
+                    setAutodetectOSInProgress(true);
+                    try {
+                        const resJSON = await autodetectOS(installMedia, signal);
+                        const res = JSON.parse(resJSON);
+                        const osEntry = osInfoList.filter(osEntry => osEntry.id == res.os);
 
-                    if (!signal.aborted && osEntry && osEntry[0])
-                        os_field.set(osEntry[0]);
-                } catch (ex) {
-                    console.log("osinfo-detect command failed: ", String(ex));
+                        if (!signal.aborted && osEntry && osEntry[0])
+                            os_field.set(osEntry[0]);
+                    } catch (ex) {
+                        console.log("osinfo-detect command failed: ", String(ex));
+                    }
+                    if (!signal.aborted)
+                        setAutodetectOSInProgress(false);
                 }
-                if (!signal.aborted)
-                    setAutodetectOSInProgress(false);
-            });
+            );
         }
     }
 
-    const source_field = field.sub("source", source_changed);
+    const os_field = field.sub("os");
+    const source_field = field.sub("source");
+
+    useDialogOnChange(field.sub("type"), type_changed);
+    useDialogOnChange(source_field, source_changed);
 
     let installationSource;
     let installationSourceWarning;
@@ -380,7 +384,7 @@ const Source = ({
         installationSource = (
             <DialogDropdownSelect
                 label={_("Installation source")}
-                field={field.sub("source")}
+                field={source_field}
                 options={getPXENetworkOptions(connectionName)}
                 warning={installationSourceWarning}
             />
@@ -404,7 +408,7 @@ const Source = ({
             {type != EXISTING_DISK_IMAGE_SOURCE &&
                 <DialogDropdownSelect
                     label={_("Installation type")}
-                    field={field.sub("type", type_changed)}
+                    field={field.sub("type")}
                     options={
                         types.map(t => ({ value: t, label: source_type_label[t] }))
                     }
@@ -566,6 +570,16 @@ const OfflineTokenRow = ({
     const [disabled, setDisabled] = useState(false);
     const id = useId();
 
+    /* We want to validate a offline token in two slightly different
+       ways, depending on whether it was pre-filled from browser
+       storage, or whether it was pasted into the text area.  Thus, we
+       can't do the validation via useDialogOnChange, since that
+       doesn't give us any way to detect where the token came from.
+
+       Instead, we use "with_setter" to get a (debounced) change
+       notification just for events on the text area.
+     */
+
     useInit(() => {
         loadOfflineToken((token) => {
             if (token) {
@@ -594,30 +608,38 @@ const OfflineTokenRow = ({
         });
     });
 
-    const offlineTokenChanged = (offlineToken: string) => {
+    function validateOfflineToken(offlineToken: string) {
         if (isEmpty(offlineToken)) {
             accessField.set("");
             setValidationState(validationStates.DEFAULT);
         } else {
-            offlineField.get_async(async (val, signal) => {
-                setValidationState(validationStates.INPROGRESS);
-                try {
-                    const out = await getAccessToken(val);
-                    if (!signal.aborted) {
-                        accessField.set(out.trim());
-                        setValidationState(validationStates.SUCCESS);
-                        saveOfflineToken(offlineToken);
-                    }
-                } catch (ex) {
-                    console.error(`Offline token validation failed: "${JSON.stringify(ex)}"`);
-                    if (!signal.aborted) {
-                        accessField.set("");
-                        setValidationState(validationStates.FAILED);
+            offlineField.run_async(
+                "validate-offline-token",
+                async () => {
+                    setValidationState(validationStates.INPROGRESS);
+                    try {
+                        const out = await getAccessToken(offlineToken);
+                        return () => {
+                            accessField.set(out.trim());
+                            setValidationState(validationStates.SUCCESS);
+                            saveOfflineToken(offlineToken);
+                        };
+                    } catch (ex) {
+                        console.error(`Offline token validation failed: "${JSON.stringify(ex)}"`);
+                        return () => {
+                            accessField.set("");
+                            setValidationState(validationStates.FAILED);
+                        };
                     }
                 }
-            });
+            );
         }
-    };
+    }
+
+    const offlineHandle = offlineField.with_setter(
+        val => offlineField.set(val),
+        validateOfflineToken,
+    );
 
     return (
         <FormGroup
@@ -631,7 +653,7 @@ const OfflineTokenRow = ({
                 disabled={disabled}
                 minLength={1}
                 value={offlineField.get()}
-                onChange={(_, value) => offlineField.notify(offlineTokenChanged).set_debounced(value)}
+                onChange={(_, value) => offlineHandle.set_debounced(value)}
                 rows={4}
             />
             <DialogHelperText field={offlineField} explanation={validationState.message} />
@@ -658,9 +680,18 @@ const SizeInput = ({
     const { size, unit } = field.get();
     const id = useId();
 
-    function unit_changed(newUnit: string) {
-        field.sub("size").set(String(convertToUnit(size, unit, newUnit)));
-    }
+    /* When the user changes the unit, we want to convert the size
+       input text to the new unit so that the resulting size stays the
+       same.  This should not happen when other parts of the code set
+       the size (when changing the OS, for example). That means we
+       can't use useDialogOnChange and have to hook into the
+       FormSelect event handler directly via "with_stter".
+     */
+
+    const unit_handle = field.sub("unit").with_setter(
+        newUnit => field.sub("unit").set(newUnit),
+        newUnit => field.sub("size").set(String(convertToUnit(size, unit, newUnit))),
+    );
 
     return (
         <OptionalFormGroup
@@ -677,7 +708,7 @@ const SizeInput = ({
                 />
                 <DialogDropdownSelect
                     className="unit-select"
-                    field={field.sub("unit", unit_changed)}
+                    field={unit_handle}
                     options={[
                         { value: units.MiB.name, label: _("MiB") },
                         { value: units.GiB.name, label: _("GiB") },
@@ -978,17 +1009,20 @@ export const Details = ({
 }) => {
     const sub_connectionName = field.sub("connectionName");
 
-    function osChanged(os: OSInfo | null) {
-        if (os) {
-            field.sub("suggestedName").set(getVmName(sub_connectionName.get(), appState.vms, os));
-            field.sub("memory").set(init_Memory(os.minimumResources.ram));
-            update_Storage_minimum(field.sub("storage"), os.minimumResources.storage || 0);
-        } else {
-            field.sub("suggestedName").set("");
-            field.sub("memory").set(init_Memory());
-            field.sub("storage").set(init_Storage(sub_connectionName.get()));
+    useDialogOnChange(
+        field.sub("source").sub("os"),
+        (os: OSInfo | null) => {
+            if (os) {
+                field.sub("suggestedName").set(getVmName(sub_connectionName.get(), appState.vms, os));
+                field.sub("memory").set(init_Memory(os.minimumResources.ram));
+                update_Storage_minimum(field.sub("storage"), os.minimumResources.storage || 0);
+            } else {
+                field.sub("suggestedName").set("");
+                field.sub("memory").set(init_Memory());
+                field.sub("storage").set(init_Storage(sub_connectionName.get()));
+            }
         }
-    }
+    );
 
     const sourceType = field.get().source.type;
 
@@ -1016,7 +1050,6 @@ export const Details = ({
                 field={field.sub("source")}
                 connectionName={sub_connectionName.get()}
                 osInfoList={osInfoList}
-                osChanged={osChanged}
             />
 
             { sourceType != EXISTING_DISK_IMAGE_SOURCE &&

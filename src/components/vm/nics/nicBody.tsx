@@ -23,6 +23,7 @@ import { InfoPopover } from '../../common/infoPopover.jsx';
 import cockpit from 'cockpit';
 
 import {
+    useDialogOnChange,
     DialogError,
     DialogField,
     DialogTextInput,
@@ -241,10 +242,13 @@ export const NetworkTypeAndSourceRow = ({
         };
     });
 
-    function updateType(type: NetworkType) {
-        const sources = _availableSourcesForType[type] || [];
-        field.sub("source").set(sources.length > 0 ? sources[0] : "");
-    }
+    useDialogOnChange(
+        field.sub("type"),
+        type => {
+            const sources = _availableSourcesForType[type] || [];
+            field.sub("source").set(sources.length > 0 ? sources[0] : "");
+        }
+    );
 
     function makeTypeOption(type: NetworkTypeDescription): DialogRadioSelectOption<NetworkType> {
         return {
@@ -260,7 +264,7 @@ export const NetworkTypeAndSourceRow = ({
             { _availableTypes.length > 0 &&
                 <DialogRadioSelect<NetworkType>
                     label={_("Interface type")}
-                    field={field.sub("type", updateType)}
+                    field={field.sub("type")}
                     options={_availableTypes.map(makeTypeOption)}
                 />
             }
