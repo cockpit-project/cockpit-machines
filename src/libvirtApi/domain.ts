@@ -189,11 +189,7 @@ interface virtXmlAction {
     values: unknown,
 }
 
-async function runVirtXml(
-    vm: VM,
-    actions: virtXmlAction[],
-    extra_options: Record<string, boolean>,
-): Promise<void> {
+export function encodeVirtArg(values: unknown): string {
     // We don't pass the arguments for virt-xml through a shell, but
     // virt-xml does its own parsing with the Python shlex module. So
     // we need to do the equivalent of shlex.quote here.
@@ -211,6 +207,16 @@ async function runVirtXml(
         }
     }
 
+    const a: string[] = [];
+    encode_into(a, "", values);
+    return a.join(",");
+}
+
+async function runVirtXml(
+    vm: VM,
+    actions: virtXmlAction[],
+    extra_options: Record<string, boolean>,
+): Promise<void> {
     const args: string[] = [];
 
     function add_option(opt: string) {
@@ -226,10 +232,9 @@ async function runVirtXml(
             // for example.
             args.push(String(val));
         } else {
-            const a: string[] = [];
-            encode_into(a, "", val);
-            if (a.length > 0)
-                args.push(a.join(","));
+            const a = encodeVirtArg(val);
+            if (a)
+                args.push(a);
         }
     }
 
@@ -413,6 +418,7 @@ interface DomainSpec {
     source: optString,
     sourceType: string,
     startVm: boolean,
+    storageDisk: string | null,
     storagePool: string,
     storageSize: number,
     storageVolume: optString,
@@ -434,6 +440,7 @@ export async function domainCreate({
     source,
     sourceType,
     startVm,
+    storageDisk,
     storagePool,
     storageSize,
     storageVolume,
@@ -463,6 +470,7 @@ export async function domainCreate({
         source,
         sourceType,
         startVm,
+        storageDisk,
         storagePool,
         storageSize,
         storageVolume,
