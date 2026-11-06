@@ -16,6 +16,7 @@ import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/ind
 import { Progress, ProgressMeasureLocation, ProgressSize, type ProgressProps } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
 
 import {
+    useDialogOnChange,
     DialogField,
     DialogHelperText, OptionalFormGroup,
 } from "cockpit/dialog";
@@ -71,15 +72,24 @@ export const PasswordInput = ({
     const [passwordHidden, setPasswordHidden] = useState(true);
     const id = useId();
 
-    function onPasswordChange() {
-        field.get_async(async value => {
-            if (value) {
-                setPasswordStrength(await password_quality(value));
-            } else {
-                setPasswordStrength(-1);
-            }
-        });
-    }
+    useDialogOnChange(
+        field,
+        value => {
+            field.run_async(
+                "password-quality",
+                async () => {
+                    if (value) {
+                        const q = await password_quality(value);
+                        return () => {
+                            setPasswordStrength(q);
+                        };
+                    } else {
+                        setPasswordStrength(-1);
+                    }
+                }
+            );
+        },
+    );
 
     let variant: ProgressProps['variant'];
     let message;
@@ -151,7 +161,7 @@ export const PasswordInput = ({
                         ouiaId={field.ouia_id()}
                         autoComplete="new-password"
                         value={field.get()}
-                        onChange={(_event, val) => field.notify(onPasswordChange).set_debounced(val)}
+                        onChange={(_event, val) => field.set_debounced(val)}
                     />
                 </InputGroupItem>
                 <InputGroupItem>

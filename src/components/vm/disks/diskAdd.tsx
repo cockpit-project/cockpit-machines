@@ -31,6 +31,7 @@ import { appState } from '../../../state';
 
 import {
     useDialogState_async, DialogState,
+    useDialogOnChange,
     DialogField,
     DialogError, DialogErrorMessage,
     DialogRadioSelect, DialogRadioSelectOption,
@@ -238,28 +239,24 @@ function validate_CreateNew(field: DialogField<CreateNewValue | string>) {
 const CreateNew = ({
     field,
 } : {
-    field: DialogField<CreateNewValue | string>,
+    field: DialogField<CreateNewValue>,
 }) => {
-    const val = field.get();
-    if (typeof val == "string")
-        return null;
+    const { _pools } = field.get();
 
-    const vc_field = field.at(val);
-    const { _pools } = val;
-
-    function update_pool(p: StoragePool) {
-        update_VolumeCreate(vc_field.sub("volume"), p);
-    }
+    useDialogOnChange(
+        field.sub("pool"),
+        p => update_VolumeCreate(field.sub("volume"), p)
+    );
 
     return (
         <>
             <DialogDropdownSelectObject
                 label={_("Pool")}
-                field={vc_field.sub("pool", update_pool)}
+                field={field.sub("pool")}
                 options={_pools}
                 option_label={p => p.name}
             />
-            <VolumeCreate field={vc_field.sub("volume")} />
+            <VolumeCreate field={field.sub("volume")} />
         </>
     );
 };
@@ -309,18 +306,14 @@ function init_UseExisting(vm: VM, vms: VM[], pools: StoragePool[]): UseExistingV
 const UseExisting = ({
     field,
 } : {
-    field: DialogField<UseExistingValue | string>,
+    field: DialogField<UseExistingValue>,
 }) => {
-    const val = field.get();
-    if (typeof val == "string")
-        return null;
+    const { pool, volume, _pools, _vms } = field.get();
 
-    const ue_field = field.at(val);
-    const { pool, volume, _pools, _vms } = val;
-
-    function update_pool(p: ExistingPool) {
-        ue_field.sub("volume").set(p.volumes[0]);
-    }
+    useDialogOnChange(
+        field.sub("pool"),
+        p => field.sub("volume").set(p.volumes[0])
+    );
 
     const diskUsageMessage = pool._storagePool && getDiskUsageMessage(_vms, pool._storagePool, volume);
 
@@ -328,13 +321,13 @@ const UseExisting = ({
         <>
             <DialogDropdownSelectObject
                 label={_("Pool")}
-                field={ue_field.sub("pool", update_pool)}
+                field={field.sub("pool")}
                 options={_pools}
                 option_label={p => p.name}
             />
             <DialogDropdownSelectObject
                 label={_("Volume")}
-                field={ue_field.sub("volume")}
+                field={field.sub("volume")}
                 options={pool.volumes}
                 warning={diskUsageMessage}
             />
@@ -409,16 +402,19 @@ const CustomPath = ({
 } : {
     field: DialogField<CustomPathValue>,
 }) => {
-    function update_file(val: string) {
-        if (val.match(/\.iso$/i))
-            field.sub("device").set("cdrom");
-    }
+    useDialogOnChange(
+        field.sub("file"),
+        val => {
+            if (val.match(/\.iso$/i))
+                field.sub("device").set("cdrom");
+        }
+    );
 
     return (
         <>
             <FileAutoComplete
                 label={_("Custom path")}
-                field={field.sub("file", update_file)}
+                field={field.sub("file")}
                 placeholder={_("Path to file on host's file system")}
             />
             <DialogDropdownSelect
@@ -532,6 +528,20 @@ export const AddDisk = ({
 
     const dlg = useDialogState_async<AddDiskValues>(init, validate);
 
+    /* XXX - this is annoying. We want to update the bus type on every
+       change to the dialog, except in the AdditionalOptions
+       component.
+     */
+
+    function useUpateBus(tag: keyof AddDiskValues) {
+        useDialogOnChange(dlg instanceof DialogState && dlg.field(tag), update_bus);
+    }
+
+    useUpateBus("mode");
+    useUpateBus("create_new");
+    useUpateBus("use_existing");
+    useUpateBus("custom_path");
+
     let defaultBody;
 
     if (!dlg) {
@@ -568,20 +578,22 @@ export const AddDisk = ({
                     <DialogRadioSelect
                         isInline
                         label={_("Source")}
-                        field={dlg.field("mode", update_bus)}
+                        field={dlg.field("mode")}
                         options={mode_options}
                     />
                     {
-                        mode === CREATE_NEW &&
-                            <CreateNew field={dlg.field("create_new", update_bus)} />
+                        mode === CREATE_NEW && typeof dlg.values.create_new !== "string"
+                            ? <CreateNew field={dlg.field("create_new").at(dlg.values.create_new)} />
+                            : null
                     }
                     {
-                        mode === USE_EXISTING &&
-                            <UseExisting field={dlg.field("use_existing", update_bus)} />
+                        mode === USE_EXISTING && typeof dlg.values.use_existing !== "string"
+                            ? <UseExisting field={dlg.field("use_existing").at(dlg.values.use_existing)} />
+                            : null
                     }
                     {
                         mode === CUSTOM_PATH &&
-                            <CustomPath field={dlg.field("custom_path", update_bus)} />
+                            <CustomPath field={dlg.field("custom_path")} />
                     }
                     {
                         vm.persistent && domainIsRunning(vm.state) &&
