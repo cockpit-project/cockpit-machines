@@ -115,25 +115,33 @@ const SshKeysRow = ({
 }) => {
     const { text, parsedKey } = field.get();
 
-    const textChanged = () => {
-        field.get_async(async (value, signal) => {
-            const lines = value.text.split(/\r?\n/);
-            const keys = [];
-            for (const l of lines) {
-                keys.push(await parseKey(l));
-            }
-            if (!signal.aborted) {
-                // First is for us
-                field.sub("text").set(lines[0]);
-                field.sub("parsedKey").set(keys[0]);
-                // Rest will be added as new items
-                for (let i = 1; i < lines.length; i++) {
-                    if (lines[i].trim())
-                        addItem({ text: lines[i], parsedKey: keys[i] });
+    const parseText = (value: string) => {
+        field.run_async(
+            "ssh-parsing",
+            async () => {
+                const lines = value.split(/\r?\n/);
+                const keys: (SshKey | null)[] = [];
+                for (const l of lines) {
+                    keys.push(await parseKey(l));
                 }
+                return () => {
+                    // First is for us
+                    field.sub("text").set(lines[0]);
+                    field.sub("parsedKey").set(keys[0]);
+                    // Rest will be added as new items
+                    for (let i = 1; i < lines.length; i++) {
+                        if (lines[i].trim())
+                            addItem({ text: lines[i], parsedKey: keys[i] });
+                    }
+                };
             }
-        });
+        );
     };
+
+    const textHandle = field.sub("text").with_setter(
+        val => field.sub("text").set(val),
+        parseText
+    );
 
     return (
         <Grid data-ouia-component-id={field.ouia_id()}>
@@ -155,7 +163,7 @@ const SshKeysRow = ({
                             <TextArea
                                 value={text}
                                 aria-label={_("Public SSH key")}
-                                onChange={(_, value) => field.sub("text", textChanged).set_debounced(value)}
+                                onChange={(_, value) => textHandle.set_debounced(value)}
                                 rows={3}
                             />
                             <DialogHelperText
