@@ -112,3 +112,48 @@ export function isIpv6InNetwork(network: string, prefix: string, address: string
     const b_ipaddr = ipaddr.IPv6.broadcastAddressFromCIDR(`${address}/${prefix}`).toString();
     return b_network === b_ipaddr;
 }
+
+/**
+ * Validates a single VLAN ID (1-4094)
+ */
+export function validateVlanId(id: string): boolean {
+    return /^\s*[0-9]+\s*$/.test(id) && Number(id) >= 1 && Number(id) <= 4094;
+}
+
+/**
+ * Parses a list of VLAN IDs like "10,20-25" into sorted unique numbers; null on any invalid entry
+ */
+export function parseVlanIds(list: string): number[] | null {
+    const ids = new Set<number>();
+
+    for (const item of list.split(',')) {
+        const match = /^\s*([0-9]+)\s*(?:-\s*([0-9]+)\s*)?$/.exec(item);
+        if (!match)
+            return null;
+        const start = Number(match[1]);
+        const end = match[2] === undefined ? start : Number(match[2]);
+        if (start < 1 || end > 4094 || start > end)
+            return null;
+        for (let id = start; id <= end; id++)
+            ids.add(id);
+    }
+
+    return [...ids].sort((a, b) => a - b);
+}
+
+/**
+ * Formats VLAN IDs the way parseVlanIds() reads them, collapsing consecutive IDs into ranges: "10-12, 20"
+ */
+export function formatVlanIds(ids: number[]): string {
+    const sorted = [...new Set(ids)].sort((a, b) => a - b);
+    const ranges: string[] = [];
+
+    for (let i = 0; i < sorted.length; i++) {
+        const start = sorted[i];
+        while (i + 1 < sorted.length && sorted[i + 1] === sorted[i] + 1)
+            i++;
+        ranges.push(start === sorted[i] ? String(start) : `${start}-${sorted[i]}`);
+    }
+
+    return ranges.join(", ");
+}

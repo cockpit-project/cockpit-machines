@@ -9,6 +9,7 @@ import type { optString } from './types';
 export interface NetworkSpec {
     name: string,
     forwardMode: string,
+    // outgoing host interface for nat/route ("automatic" for any), the host bridge to attach to for bridge
     device: string,
     ipv4: string | undefined,
     netmask: string,
@@ -18,6 +19,10 @@ export interface NetworkSpec {
     ipv4DhcpRangeEnd: string,
     ipv6DhcpRangeStart: string,
     ipv6DhcpRangeEnd: string,
+    // bridge mode only: VLANs allowed on the guest ports (empty for no VLAN tagging)
+    vlanIds: number[],
+    // one of vlanIds that untagged frames belong to; undefined drops untagged frames
+    vlanNativeId: number | undefined,
 }
 
 export function getNetworkXML({
@@ -31,7 +36,9 @@ export function getNetworkXML({
     ipv4DhcpRangeStart,
     ipv4DhcpRangeEnd,
     ipv6DhcpRangeStart,
-    ipv6DhcpRangeEnd
+    ipv6DhcpRangeEnd,
+    vlanIds,
+    vlanNativeId,
 }: NetworkSpec): string {
     const doc = document.implementation.createDocument('', '', null);
 
@@ -47,6 +54,28 @@ export function getNetworkXML({
         if ((forwardMode === 'nat' || forwardMode === 'route') && device !== 'automatic')
             forwardElem.setAttribute('dev', device);
         networkElem.appendChild(forwardElem);
+    }
+
+    if (forwardMode === 'bridge') {
+        // an existing host bridge; libvirt does not create or configure it
+        const bridgeElem = doc.createElement('bridge');
+        bridgeElem.setAttribute('name', device);
+        networkElem.appendChild(bridgeElem);
+
+        if (vlanIds.length) {
+            const vlanElem = doc.createElement('vlan');
+            // a single tag without trunk is an access port; a native VLAN only exists on a trunk
+            if (vlanIds.length > 1 || vlanNativeId !== undefined)
+                vlanElem.setAttribute('trunk', 'yes');
+            for (const id of vlanIds) {
+                const tagElem = doc.createElement('tag');
+                tagElem.setAttribute('id', String(id));
+                if (id === vlanNativeId)
+                    tagElem.setAttribute('nativeMode', 'untagged');
+                vlanElem.appendChild(tagElem);
+            }
+            networkElem.appendChild(vlanElem);
+        }
     }
 
     if (forwardMode === 'none' ||
