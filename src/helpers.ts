@@ -212,6 +212,11 @@ const transform: Record<string, Record<string, string>> = {
         system: _("System"),
         session: _("User session"),
     },
+    drivers: {
+        QEMU: "QEMU/KVM",
+        LXC: "LXC",
+        Xen: "Xen",
+    },
     resourceStates: {
         running: _("Running"),
         idle: _("Idle"),

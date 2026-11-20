@@ -9,7 +9,7 @@ import { EventEmitter } from 'cockpit/event';
 import { superuser } from "superuser.js";
 
 import type {
-    ConnectionName, VM, VMState, UIVM, UIVMProps,
+    ConnectionName, Driver, VM, VMState, UIVM, UIVMProps,
     HypervisorCapabilities, VirtInstallCapabilities,
     NodeDevice, NodeInterface,
     StoragePool,
@@ -37,6 +37,16 @@ async function getConnectionNames(): Promise<ConnectionName[]> {
         return ["system"];
     else
         return ["system", "session"];
+}
+
+function getDrivers(connectionName: ConnectionName): Driver[] {
+    // libvirt-dbus only exports the LXC and Xen drivers on the system bus.
+    // These are optional, domainGetAll() silently skips them when their
+    // daemon is not available.
+    if (connectionName == "system")
+        return ["QEMU", "LXC", "Xen"];
+    else
+        return ["QEMU"];
 }
 
 interface AppStateEvents {
@@ -152,8 +162,9 @@ export class AppState extends EventEmitter<AppStateEvents> {
         this.#update();
     }
 
-    deleteUnlistedVMs(connectionName: ConnectionName, ids: string[]) {
-        this.vms = this.vms.filter(vm => (connectionName !== vm.connectionName || ids.indexOf(vm.id) >= 0));
+    deleteUnlistedVMs(connectionName: ConnectionName, driver: Driver, ids: string[]) {
+        this.vms = this.vms.filter(vm => (connectionName !== vm.connectionName || driver !== vm.driver ||
+                                          ids.indexOf(vm.id) >= 0));
         this.#update();
     }
 
@@ -327,9 +338,9 @@ export class AppState extends EventEmitter<AppStateEvents> {
             if (!quiet)
                 this.#vmsInited = false;
             this.#update();
-            await Promise.allSettled(connectionNames.map(async connectionName => {
-                await domainGetAll({ connectionName }); // never fails
-            }));
+            await Promise.allSettled(connectionNames.flatMap(connectionName =>
+                getDrivers(connectionName).map(driver => domainGetAll({ connectionName, driver }))
+            ));
             this.#vmsInited = true;
             this.#update();
         };

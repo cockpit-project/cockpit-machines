@@ -46,6 +46,15 @@ import type {
 
 import "./hostvmslist.scss";
 
+// Domains of other hypervisor drivers than QEMU (LXC, Xen) are only listed, not managed
+const isListOnly = (vm: VM | UIVM) => !vm.isUi && vm.driver != "QEMU";
+
+// QEMU keeps the established "<name>-<connection>" row id; other drivers get a
+// suffix, as domain names are only unique per driver
+const rowId = (vm: VM | UIVM) => (isListOnly(vm)
+    ? cockpit.format("$0-$1-$2", vmId(vm.name), vm.connectionName, (vm as VM).driver.toLowerCase())
+    : cockpit.format("$0-$1", vmId(vm.name), vm.connectionName));
+
 const VmState = ({
     vm,
     vms,
@@ -68,14 +77,14 @@ const VmState = ({
     return (
         <StateIcon
             state={state}
-            valueId={`${vmId(vm.name)}-${vm.connectionName}-state`}
+            valueId={`${rowId(vm)}-state`}
             additionalState={!vm.isUi && <><VmNeedsShutdown vm={vm} /><VmUsesSpice vm={vm} vms={vms} /></>}
         />
     );
 };
 
 const VmUsageCpu = ({ vm } : {vm: VM | UIVM, }) => {
-    if (vm.isUi || vm.state != "running")
+    if (vm.isUi || vm.state != "running" || isListOnly(vm))
         return null;
 
     const vmCpuUsage: number = vm.cpuUsage ? vm.cpuUsage : 0;
@@ -93,7 +102,7 @@ const VmUsageCpu = ({ vm } : {vm: VM | UIVM, }) => {
 };
 
 const VmUsageMem = ({ vm } : {vm: VM | UIVM, }) => {
-    if (vm.isUi || vm.state != "running" || vm.memoryUsed === undefined)
+    if (vm.isUi || vm.state != "running" || vm.memoryUsed === undefined || isListOnly(vm))
         return null;
 
     const memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
@@ -282,6 +291,13 @@ export const HostVmsList = ({
         </Toolbar>
     );
 
+    // Only show the hypervisor type when there are domains of other drivers
+    // than QEMU (LXC, Xen); these are only listed, not managed
+    const showDriver = vms.some(vm => vm.driver != "QEMU");
+
+    const driverColumns: ListingTableColumnProps[] =
+          showDriver ? [{ title: _("Type"), props: { width: 10 } }] : [];
+
     const usageColumns: ListingTableColumnProps[] =
           showUsage
               ? [
@@ -306,6 +322,7 @@ export const HostVmsList = ({
                                 columns={[
                                     { title: _("Name"), header: true, props: { width: 20 } },
                                     { title: _("Connection"), props: { width: 20 } },
+                                    ...driverColumns,
                                     { title: _("State"), props: { width: 15 } },
                                     ...usageColumns,
                                     { title: "", props: { width: 15, "aria-label": _("Actions") } },
@@ -315,7 +332,7 @@ export const HostVmsList = ({
                                         .sort(sortFunction)
                                         .map(vm => {
                                             let vmActions = null;
-                                            if (!vm.isUi)
+                                            if (!vm.isUi && !isListOnly(vm))
                                                 vmActions = (
                                                     <VmActions
                                                         vm={vm}
@@ -326,7 +343,9 @@ export const HostVmsList = ({
                                             return {
                                                 columns: [
                                                     {
-                                                        title: <Button id={`${vmId(vm.name)}-${vm.connectionName}-name`}
+                                                        title: isListOnly(vm)
+                                                            ? <span id={`${rowId(vm)}-name`} className="vm-list-item-name">{vm.name}</span>
+                                                            : <Button id={`${vmId(vm.name)}-${vm.connectionName}-name`}
                                                               variant="link"
                                                               isInline
                                                               isDisabled={!!vm.isUi && !vm.createInProgress}
@@ -335,6 +354,7 @@ export const HostVmsList = ({
                                                               className="vm-list-item-name">{vm.name}</Button>
                                                     },
                                                     { title: rephraseUI('connections', vm.connectionName) },
+                                                    ...(showDriver ? [{ title: vm.isUi ? "" : rephraseUI('drivers', vm.driver) }] : []),
                                                     {
                                                         title: (
                                                             <VmState vm={vm} vms={vms} />
@@ -349,8 +369,8 @@ export const HostVmsList = ({
                                                     { title: vmActions },
                                                 ],
                                                 props: {
-                                                    key: cockpit.format("$0-$1-row", vmId(vm.name), vm.connectionName),
-                                                    'data-row-id': cockpit.format("$0-$1", vmId(vm.name), vm.connectionName),
+                                                    key: rowId(vm) + "-row",
+                                                    'data-row-id': rowId(vm),
                                                     'data-vm-transient': !vm.isUi && !vm.persistent,
                                                 },
                                             };

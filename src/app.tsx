@@ -212,7 +212,9 @@ const AppVM = ({
     const { vms, uivms, storagePools, networks } = appState;
     const combinedVms = [...vms, ...dummyVmsFilter(vms, uivms)];
 
-    const vm = combinedVms.find(vm => vm.name == name && vm.connectionName == connection);
+    // The details page only handles QEMU domains; LXC and Xen domains are only listed
+    const vm = combinedVms.find(vm => vm.name == name && vm.connectionName == connection &&
+                                      (vm.isUi || vm.driver == "QEMU"));
     if (!vm) {
         return (
             <>
