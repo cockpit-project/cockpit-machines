@@ -27,6 +27,11 @@
         - virtiofsd
       when: distro ~ fedora
 
+    # required by TestMachinesLXC; RHEL does not ship the LXC driver
+    - require+:
+        - libvirt-daemon-driver-lxc
+      when: distro ~ fedora and distro != fedora-eln
+
     - require+:
         # cockpit-machines dropped the SPICE Recommends: on Fedora 46+, explicitly install it.
         # since qemu-char-spice is not available on fedora-eln, exclude it

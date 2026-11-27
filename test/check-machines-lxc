@@ -1,0 +1,91 @@
+#!/usr/bin/python3 -cimport os, sys; os.execv(os.path.dirname(sys.argv[1]) + "/common/pywrap", sys.argv)
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# Copyright (C) 2026 Red Hat, Inc.
+
+import machineslib
+import testlib
+
+# Minimal application container: shares the host file system and network,
+# and just sleeps. Needs no image.
+LXC_DOMAIN_XML = """
+<domain type='lxc'>
+  <name>{name}</name>
+  <memory unit='MiB'>64</memory>
+  <os>
+    <type>exe</type>
+    <init>/bin/sleep</init>
+    <initarg>infinity</initarg>
+  </os>
+  <devices>
+    <console type='pty'/>
+  </devices>
+</domain>
+"""
+
+
+@testlib.nondestructive
+class TestMachinesLXC(machineslib.VirtualMachinesCase):
+
+    def setUp(self) -> None:
+        super().setUp()
+        m = self.machine
+
+        if not m.execute("ls /usr/lib*/libvirt/connection-driver/libvirt_driver_lxc.so "
+                         "/usr/lib/*/libvirt/connection-driver/libvirt_driver_lxc.so 2>/dev/null || true").strip():
+            self.skipTest("libvirt LXC driver not installed")
+
+        if not machineslib.hasMonolithicDaemon(m.image):
+            m.execute("systemctl start virtlxcd.socket")
+            self.addCleanup(m.execute, "systemctl stop virtlxcd.service virtlxcd.socket")
+
+        self.addCleanup(m.execute, "for d in $(virsh -c lxc:///system list --all --name); do "
+                                   "  virsh -c lxc:///system destroy $d 2>/dev/null; "
+                                   "  virsh -c lxc:///system undefine $d; "
+                                   "done")
+
+    def createLxc(self, name: str) -> None:
+        m = self.machine
+        m.write(f"/tmp/{name}-lxc.xml", LXC_DOMAIN_XML.format(name=name))
+        m.execute(f"virsh -c lxc:///system define /tmp/{name}-lxc.xml; virsh -c lxc:///system start {name}")
+
+    def testList(self) -> None:
+        b = self.browser
+        m = self.machine
+
+        # Same name on purpose: domain names are only unique per hypervisor driver
+        self.createVm("subVmTest1", running=False)
+        self.createLxc("subVmTest1")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+
+        qemu_row = "tbody tr[data-row-id='vm-subVmTest1-system']"
+        lxc_row = "tbody tr[data-row-id='vm-subVmTest1-system-lxc']"
+
+        # Both domains are listed, with their hypervisor type
+        b.wait_visible("#virtual-machines-listing th:contains('Type')")
+        b.wait_in_text(f"{qemu_row} td[data-label=Type]", "QEMU/KVM")
+        b.wait_in_text(f"{qemu_row} td[data-label=State]", "Shut off")
+        b.wait_in_text(f"{lxc_row} td[data-label=Type]", "LXC")
+        b.wait_in_text(f"{lxc_row} td[data-label=State]", "Running")
+
+        # LXC domains are only listed: no link to a details page and no actions
+        b.wait_visible(f"{qemu_row} a.vm-list-item-name")
+        b.wait_not_present(f"{lxc_row} a.vm-list-item-name")
+        b.wait_visible(f"{qemu_row} #vm-subVmTest1-system-action-kebab")
+        b.wait_not_present(f"{lxc_row} [id$=action-kebab]")
+
+        # Life cycle events of the LXC driver get picked up
+        m.execute("virsh -c lxc:///system destroy subVmTest1")
+        b.wait_in_text(f"{lxc_row} td[data-label=State]", "Shut off")
+
+        # Without LXC domains, the list looks exactly as before
+        m.execute("virsh -c lxc:///system undefine subVmTest1")
+        b.wait_not_present(lxc_row)
+        b.wait_not_present("#virtual-machines-listing th:contains('Type')")
+        b.wait_visible(qemu_row)
+
+
+if __name__ == '__main__':
+    testlib.test_main()

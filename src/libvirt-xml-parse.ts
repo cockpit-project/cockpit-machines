@@ -36,6 +36,7 @@ import {
     units,
     HostDevSourceObject,
 } from './helpers.js';
+import { driverFromPath } from './libvirtApi/helpers.js';
 
 const METADATA_NAMESPACE = "https://github.com/cockpit-project/cockpit-machines";
 
@@ -368,6 +369,7 @@ export function parseDomainDumpxml(connectionName: ConnectionName, domXml: strin
     return {
         // General
         connectionName,
+        driver: driverFromPath(objPath),
         name: get_text(domainElem, "name") || "",
         uuid: get_text(domainElem, "uuid") || "",
         description: get_text(domainElem, "description"),

@@ -8,7 +8,7 @@ import cockpit, { Variant } from 'cockpit';
 
 import { logDebug } from '../helpers.js';
 
-import { ConnectionName } from '../types';
+import { ConnectionName, Driver } from '../types';
 
 /* Default timeout for libvirt-dbus method calls */
 export const timeout = 30000;
@@ -178,6 +178,20 @@ export function get_number_prop(props: DBusProps, name: string): number {
 
 export function get_boolean_prop(props: DBusProps, name: string): boolean {
     return get_variant_boolean(get_variant_variant(get_prop(props, name)));
+}
+
+/**
+ * Object path of the org.libvirt.Connect object for a hypervisor driver
+ */
+export function connectPath(driver: Driver = "QEMU"): string {
+    return "/org/libvirt/" + driver;
+}
+
+/**
+ * Hypervisor driver of a libvirt-dbus object path, e.g. "/org/libvirt/LXC/domain/_<uuid>"
+ */
+export function driverFromPath(objPath: string): Driver {
+    return objPath.split("/")[3] as Driver;
 }
 
 /**

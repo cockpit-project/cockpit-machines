@@ -29,6 +29,7 @@ import {
     get_string_prop,
     get_variant_number,
     call,
+    connectPath,
     dbusClient,
     Enum,
     timeout,
@@ -92,7 +93,7 @@ export async function getLibvirtVersion({
 } : {
     connectionName: ConnectionName
 }): Promise<number> {
-    const [version] = await call<[cockpit.Variant]>(connectionName, "/org/libvirt/QEMU", "org.freedesktop.DBus.Properties", "Get", ["org.libvirt.Connect", "LibVersion"], { timeout, type: "ss" });
+    const [version] = await call<[cockpit.Variant]>(connectionName, connectPath(), "org.freedesktop.DBus.Properties", "Get", ["org.libvirt.Connect", "LibVersion"], { timeout, type: "ss" });
     return get_variant_number(version);
 }
 
@@ -102,7 +103,7 @@ async function getCapabilities({
     connectionName: ConnectionName
 }): Promise<void> {
     try {
-        const [capabilitiesXML] = await call<[string]>(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "GetCapabilities", [],
+        const [capabilitiesXML] = await call<[string]>(connectionName, connectPath(), "org.libvirt.Connect", "GetCapabilities", [],
                                                        { timeout, type: "" });
         const capabilities = parseDumpxmlForCapabilities(capabilitiesXML);
         appState.setHypervisorCapabilities(capabilities);
@@ -120,7 +121,7 @@ async function getNodeMaxMemory({
     // Some nodes don't return all memory in just one cell.
     // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
     try {
-        const [stats] = await call<[{ total: number }]>(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "NodeGetMemoryStats", [-1, 0], { timeout, type: "iu" });
+        const [stats] = await call<[{ total: number }]>(connectionName, connectPath(), "org.libvirt.Connect", "NodeGetMemoryStats", [-1, 0], { timeout, type: "iu" });
         appState.setNodeMaxMemory(stats.total);
     } catch (ex) {
         console.warn("NodeGetMemoryStats failed:", String(ex));
@@ -152,7 +153,7 @@ async function networkUpdateOrDelete(
     netPath: string,
 ): Promise<void> {
     try {
-        const [objPaths] = await call<[string[]]>(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListNetworks", [0],
+        const [objPaths] = await call<[string[]]>(connectionName, connectPath(), "org.libvirt.Connect", "ListNetworks", [0],
                                                   { timeout, type: "u" });
         if (objPaths.includes(netPath))
             return networkGet({ connectionName, id: netPath, updateOnly: true });
@@ -345,7 +346,7 @@ function startEventMonitorStoragePools(connectionName: ConnectionName): void {
 
 async function storagePoolStopOrUndefine(connectionName: ConnectionName, poolPath: string): Promise<void> {
     try {
-        const [objPaths] = await call<[string[]]>(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" });
+        const [objPaths] = await call<[string[]]>(connectionName, connectPath(), "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" });
         if (objPaths.includes(poolPath))
             await storagePoolGet({ connectionName, id: poolPath, updateOnly: true });
         else // Transient pool which got undefined when stopped
@@ -426,6 +427,10 @@ function timeSampleUsageData(props: Partial<VM>, vm: VM) {
 }
 
 async function pollVmUsage(vm: VM) {
+    // Domains of other hypervisor drivers (LXC, Xen) are only listed for now
+    if (vm.driver != "QEMU")
+        return;
+
     const flags = Enum.VIR_DOMAIN_STATS_BALLOON | Enum.VIR_DOMAIN_STATS_VCPU | Enum.VIR_DOMAIN_STATS_BLOCK | Enum.VIR_DOMAIN_STATS_STATE;
 
     try {

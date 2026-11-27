@@ -16,7 +16,7 @@ import type { NetworkSpec } from '../libvirt-xml-create.js';
 
 import { getNetworkXML } from '../libvirt-xml-create.js';
 import { parseNetDumpxml } from '../libvirt-xml-parse.js';
-import { DBusProps, get_string_prop, get_boolean_prop, call, timeout, Enum } from './helpers.js';
+import { DBusProps, get_string_prop, get_boolean_prop, call, connectPath, timeout, Enum } from './helpers.js';
 
 export function networkActivate({
     connectionName,
@@ -69,7 +69,7 @@ export function networkCreate({
         ipv6DhcpRangeEnd
     });
 
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NetworkDefineXML', [netXmlDesc], { timeout, type: 's' });
+    return call(connectionName, connectPath(), 'org.libvirt.Connect', 'NetworkDefineXML', [netXmlDesc], { timeout, type: 's' });
 }
 
 export function networkDeactivate({
@@ -88,7 +88,7 @@ export async function networkGetAll({
     connectionName: ConnectionName,
 }): Promise<void> {
     try {
-        const [objPaths]: [string[]] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNetworks', [0], { timeout, type: 'u' });
+        const [objPaths]: [string[]] = await call(connectionName, connectPath(), 'org.libvirt.Connect', 'ListNetworks', [0], { timeout, type: 'u' });
         await Promise.all(objPaths.map(path => networkGet({ connectionName, id: path })));
     } catch (ex) {
         console.warn('GET_ALL_NETWORKS action failed:', String(ex));
@@ -152,7 +152,7 @@ export async function networkChangeAutostart({
     network: Network,
     autostart: boolean,
 }): Promise<void> {
-    const [networkPath] = await call<[string]>(network.connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect',
+    const [networkPath] = await call<[string]>(network.connectionName, connectPath(), 'org.libvirt.Connect',
                                                'NetworkLookupByName', [network.name], { timeout, type: 's' });
     const args = ['org.libvirt.Network', 'Autostart', cockpit.variant('b', autostart)];
 

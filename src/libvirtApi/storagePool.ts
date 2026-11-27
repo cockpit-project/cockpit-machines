@@ -17,7 +17,7 @@ import type { StoragePoolSource } from '../libvirt-xml-create.js';
 import { getPoolXML } from '../libvirt-xml-create.js';
 import { parsePoolCapabilities, parseStoragePoolDumpxml } from '../libvirt-xml-parse.js';
 import { storageVolumeGetAll } from './storageVolume.js';
-import { DBusProps, get_boolean_prop, get_variant_boolean, call, Enum, timeout } from './helpers.js';
+import { DBusProps, get_boolean_prop, get_variant_boolean, call, connectPath, Enum, timeout } from './helpers.js';
 
 export function storagePoolActivate({
     connectionName,
@@ -50,7 +50,7 @@ export async function storagePoolCreate({
 
     let storagePoolPath;
     try {
-        [storagePoolPath] = await call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolDefineXML',
+        [storagePoolPath] = await call<[string]>(connectionName, connectPath(), 'org.libvirt.Connect', 'StoragePoolDefineXML',
                                                  [poolXmlDesc, 0], { timeout, type: 'su' });
         const args = ['org.libvirt.StoragePool', 'Autostart', cockpit.variant('b', autostart)];
 
@@ -133,7 +133,7 @@ export async function storagePoolGetAll({
 }): Promise<void> {
     try {
         const [objPaths]: [string[]] = await call(
-            connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListStoragePools', [0],
+            connectionName, connectPath(), 'org.libvirt.Connect', 'ListStoragePools', [0],
             { timeout, type: 'u' });
         await Promise.all(objPaths.map(async path => {
             const [active] = await call<[cockpit.Variant]>(connectionName, path, 'org.freedesktop.DBus.Properties', 'Get',

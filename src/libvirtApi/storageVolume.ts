@@ -18,7 +18,7 @@ import type {
 import { getVolumeXML } from '../libvirt-xml-create.js';
 import { parseStorageVolumeDumpxml } from '../libvirt-xml-parse.js';
 import { storagePoolRefresh } from './storagePool.js';
-import { call, timeout } from './helpers.js';
+import { call, connectPath, timeout } from './helpers.js';
 
 export async function storageVolumeCreate({
     connectionName,
@@ -35,7 +35,7 @@ export async function storageVolumeCreate({
 }): Promise<void> {
     const volXmlDesc = getVolumeXML(volName, size, format);
 
-    const [path] = await call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName',
+    const [path] = await call<[string]>(connectionName, connectPath(), 'org.libvirt.Connect', 'StoragePoolLookupByName',
                                         [poolName], { timeout, type: 's' });
     await call(connectionName, path, 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' });
     await storagePoolRefresh({ connectionName, objPath: path });
@@ -50,7 +50,7 @@ export async function storageVolumeDelete({
     poolName: string,
     volName: string,
 }): Promise<void> {
-    const [poolPath] = await call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName',
+    const [poolPath] = await call<[string]>(connectionName, connectPath(), 'org.libvirt.Connect', 'StoragePoolLookupByName',
                                             [poolName], { timeout, type: 's' });
     const [volPath] = await call<[string]>(connectionName, poolPath, 'org.libvirt.StoragePool', 'StorageVolLookupByName',
                                            [volName], { timeout, type: 's' });
@@ -65,7 +65,7 @@ export async function storageVolumeGetAll({
     poolName: optString,
 }): Promise<StorageVolume[] | undefined> {
     try {
-        const [storagePoolPath] = await call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName',
+        const [storagePoolPath] = await call<[string]>(connectionName, connectPath(), 'org.libvirt.Connect', 'StoragePoolLookupByName',
                                                        [poolName], { timeout, type: 's' });
         const [objPaths] = await call<[string[]]>(connectionName, storagePoolPath, 'org.libvirt.StoragePool', 'ListStorageVolumes', [0],
                                                   { timeout, type: 'u' });

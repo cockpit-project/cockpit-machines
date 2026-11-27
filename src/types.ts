@@ -23,6 +23,9 @@ export type optString = string | null | undefined;
 
 export type ConnectionName = "session" | "system";
 
+/* libvirt-dbus exports one org.libvirt.Connect object per hypervisor driver */
+export type Driver = "QEMU" | "LXC" | "Xen";
+
 /** Capabilities **/
 
 export interface GuestCapabilities {
@@ -338,6 +341,7 @@ export interface VMSnapshot {
 
 export interface VMXML {
     connectionName: ConnectionName;
+    driver: Driver;
     uuid: string;
     name: string;
     description: optString;

@@ -83,6 +83,7 @@ case "$PLAN" in
         TESTS="TestMachinesCreate
                TestMachinesHostDevs
                TestMachinesLifecycle
+               TestMachinesLXC
                ";;
 
     network)

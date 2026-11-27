@@ -15,7 +15,7 @@ import { appState } from '../state';
 import type { optString, ConnectionName, NodeDevice } from '../types';
 
 import { parseNodeDeviceDumpxml } from '../libvirt-xml-parse.js';
-import { call, timeout } from './helpers.js';
+import { call, connectPath, timeout } from './helpers.js';
 
 const _ = cockpit.gettext;
 
@@ -104,7 +104,7 @@ export async function nodeDeviceGetAll({
     connectionName: ConnectionName
 }): Promise<void> {
     try {
-        const [objPaths] : [string[]] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' });
+        const [objPaths] : [string[]] = await call(connectionName, connectPath(), 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' });
         // Chunk calls to nodeDeviceGet, without this systems with a lot of pci
         // devices will reach the open file limit
         const chunkSize = 200;
